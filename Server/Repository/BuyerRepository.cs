@@ -4,13 +4,13 @@
 
 namespace SharedClassLibrary.IRepository
 {
-    using SharedClassLibrary.Domain;
-    using SharedClassLibrary.IRepository;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using MarketPlace924.DBConnection;
     using Microsoft.Data.SqlClient;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository class for managing buyer-related database operations.

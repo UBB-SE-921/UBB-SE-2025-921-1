@@ -10,13 +10,9 @@ namespace SharedClassLibrary.IRepository
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using MarketPlace924.DBConnection;
-    using SharedClassLibrary.Domain;
     using Microsoft.Data.SqlClient;
-    using Microsoft.IdentityModel.Tokens;
-    using Microsoft.UI.Xaml.Controls;
-    using Windows.System;
-    using User = SharedClassLibrary.Domain.User;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
 
     /// <summary>
     /// Repository for managing seller-related data operations.
