@@ -8,6 +8,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Platforms>AnyCPU;x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MarketPlace924\MarketPlace924.csproj" />
+    <ProjectReference Include="..\Server\Server.csproj" />
+    <ProjectReference Include="..\SharedClassLibrary\SharedClassLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

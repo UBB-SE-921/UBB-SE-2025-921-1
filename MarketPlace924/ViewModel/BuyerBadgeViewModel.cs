@@ -6,7 +6,7 @@ namespace MarketPlace924.ViewModel
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using MarketPlace924.Service;
 
     /// <summary>

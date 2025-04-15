@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace MarketPlace924.Domain
+namespace SharedClassLibrary.Domain
 {
     /// <summary>
     /// Represents the different badge levels that a buyer can achieve.

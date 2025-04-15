@@ -5,7 +5,7 @@
 namespace MarketPlace924.Service
 {
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
 
     /// <summary>
     /// Provides administrative operations related to user management.

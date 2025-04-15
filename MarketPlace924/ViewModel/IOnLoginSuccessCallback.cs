@@ -5,7 +5,7 @@
 namespace MarketPlace924.ViewModel
 {
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
 
     /// <summary>
     /// Defines a callback interface for handling actions to be performed upon a successful login.

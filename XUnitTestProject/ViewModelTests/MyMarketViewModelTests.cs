@@ -2,7 +2,7 @@
 {
     using Xunit;
     using MarketPlace924.ViewModel;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using MarketPlace924.Service;
     using Moq;
     using System.Collections.ObjectModel;

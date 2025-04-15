@@ -72,6 +72,9 @@
   <ItemGroup>
     <Folder Include="Assets\Products\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedClassLibrary\SharedClassLibrary.csproj" />
+  </ItemGroup>
 
   <!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
