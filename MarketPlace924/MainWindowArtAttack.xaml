@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Marketplace924.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Marketplace924"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Marketplace924">
+    <Grid x:Name="RootGrid" Loaded="RootGrid_Loaded">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <!--Button x:Name="myButton" Click="myButton_Click">Click Me</Button!-->
+            <Button x:Name="purchaseButton" Click="PurchaseButton_Clicked">Purchase</Button>
+            <Button x:Name="bidProductButton" Click="BidProductButton_Clicked">Order Bid Product</Button>
+            <Button x:Name="walletrefillButton" Click="WalletRefillButton_Clicked">Refill Wallet</Button>
+            <Button x:Name="generateContractButton" Click="GenerateContractButton_Clicked">Generate Contract</Button>
+            <Button x:Name="borrowButton" Click="BorrowButton_Clicked">Borrow Product</Button>
+            <Button x:Name="notificationButton" Click="NotificationButton_Clicked">Notification Window</Button>
+            <Button x:Name="OrderHistoryButton" Click="OrderHistoryButton_Clicked">Order History</Button>
+            <Button x:Name="renewContractButton" Click="RenewContractButton_Clicked">Renew Contract</Button>
+            <Button x:Name="trackOrderButton" Click="TrackOrderButton_Clicked">Track Order</Button>
+        </StackPanel>
+    </Grid>
+
+</Window>
