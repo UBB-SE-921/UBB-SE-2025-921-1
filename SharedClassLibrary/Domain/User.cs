@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace MarketPlace924.Domain;
+namespace SharedClassLibrary.Domain;
 
 using System;
 

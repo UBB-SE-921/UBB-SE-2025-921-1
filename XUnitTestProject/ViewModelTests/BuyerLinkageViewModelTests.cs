@@ -1,4 +1,4 @@
-﻿using MarketPlace924.Domain;
+﻿using SharedClassLibrary.Domain;
 using MarketPlace924.Service;
 using MarketPlace924.ViewModel;
 using Microsoft.UI.Xaml;

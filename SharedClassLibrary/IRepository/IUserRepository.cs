@@ -4,11 +4,11 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace MarketPlace924.Repository
+namespace SharedClassLibrary.IRepository
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
 
     /// <summary>
     /// Provides methods for interacting with the Users table in the database.

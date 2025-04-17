@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketPlace924.DBConnection;
-using MarketPlace924.Domain;
-using MarketPlace924.Repository;
+using SharedClassLibrary.Domain;
+using SharedClassLibrary.IRepository;
 using Microsoft.Data.SqlClient;
 using Xunit;
 

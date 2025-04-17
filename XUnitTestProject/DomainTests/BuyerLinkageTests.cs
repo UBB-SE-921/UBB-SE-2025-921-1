@@ -1,10 +1,10 @@
-using MarketPlace924.Domain;
+using SharedClassLibrary.Domain;
 using Xunit;
 
 namespace XUnitTestProject.DomainTests
 {
     /// <summary>
-    /// Contains unit tests for the <see cref="MarketPlace924.Domain.BuyerLinkage"/> class.
+    /// Contains unit tests for the <see cref="SharedClassLibrary.Domain.BuyerLinkage"/> class.
     /// </summary>
     public class BuyerLinkageTests
     {

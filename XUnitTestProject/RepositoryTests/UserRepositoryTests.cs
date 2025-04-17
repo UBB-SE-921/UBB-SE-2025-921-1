@@ -1,6 +1,6 @@
 ﻿using MarketPlace924.DBConnection;
-using MarketPlace924.Domain;
-using MarketPlace924.Repository;
+using SharedClassLibrary.Domain;
+using SharedClassLibrary.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;

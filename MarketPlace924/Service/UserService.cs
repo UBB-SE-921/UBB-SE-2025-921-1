@@ -10,9 +10,9 @@ namespace MarketPlace924.Service
     using System.Security.Cryptography;
     using System.Text;
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
-    using MarketPlace924.Repository;
     using MarketPlace924.Helper;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Provides operations related to user management.

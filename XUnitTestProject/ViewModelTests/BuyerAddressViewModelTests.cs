@@ -1,4 +1,4 @@
-﻿using MarketPlace924.Domain;
+﻿using SharedClassLibrary.Domain;
 using MarketPlace924.ViewModel;
 using Moq;
 using System;

@@ -8,9 +8,9 @@ namespace MarketPlace924.Service
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
-    using MarketPlace924.Repository;
     using MarketPlace924.Helper;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Represents the different segments of buyer data that can be loaded.

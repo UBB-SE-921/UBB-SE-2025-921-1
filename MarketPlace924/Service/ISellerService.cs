@@ -8,7 +8,7 @@ namespace MarketPlace924.Service
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
 
     /// <summary>
     /// Defines the interface for seller-related operations.

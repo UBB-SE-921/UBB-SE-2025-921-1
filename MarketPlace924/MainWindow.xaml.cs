@@ -4,9 +4,8 @@
 namespace MarketPlace924
 {
     using System.Threading.Tasks;
-    using MarketPlace924.DBConnection;
-    using MarketPlace924.Domain;
-    using MarketPlace924.Repository;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
     using MarketPlace924.Service;
     using MarketPlace924.View;
     using MarketPlace924.View.Admin;
@@ -35,10 +34,9 @@ namespace MarketPlace924
             this.InitializeComponent();
 
             // Initialize Database Connection and Services
-            var dbConnection = new DatabaseConnection(); // Using your DBConnection class
-            IUserRepository userRepo = new UserRepository(dbConnection);
-            IBuyerRepository buyerRepo = new BuyerRepository(dbConnection);
-            ISellerRepository sellerRepo = new SellerRepository(dbConnection, userRepo);
+            IUserRepository userRepo = new UserProxyRepository();
+            IBuyerRepository buyerRepo = new BuyerProxyRepository();
+            ISellerRepository sellerRepo = new SellerProxyRepository(userRepo);
 
             // Initialize Services
             this.userService = new UserService(userRepo);

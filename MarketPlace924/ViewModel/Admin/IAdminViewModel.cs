@@ -8,7 +8,7 @@ namespace MarketPlace924.ViewModel.Admin
     using System.Collections.ObjectModel;
     using System.Windows.Input;
     using LiveChartsCore;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
 
     /// <summary>
     /// The admin view model interface.

@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace MarketPlace924.Domain
+namespace SharedClassLibrary.Domain
 {
     /// <summary>
     /// Represents an item in a buyer's wishlist.
