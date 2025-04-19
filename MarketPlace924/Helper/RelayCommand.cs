@@ -89,5 +89,12 @@ namespace MarketPlace924.Helper
         {
             this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
+
+        // Fix for CS0029: Cannot implicitly convert type 'System.Action' to 'System.Func<System.Threading.Tasks.Task>'
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
+        {
+            this.execute = () => { execute(); return Task.CompletedTask; }; // Wrap Action in a Func<Task>
+            this.canExecute = canExecute;
+        }
     }
 }
