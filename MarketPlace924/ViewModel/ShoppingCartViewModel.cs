@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System;
 
-public class ShoppingCartViewModel : INotifyPropertyChanged
+public class ShoppingCartViewModel : IShoppingCartViewModel
 {
     public event PropertyChangedEventHandler PropertyChanged;
 

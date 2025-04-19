@@ -103,5 +103,32 @@ namespace MarketPlace924.View
                 this.Frame.Navigate(typeof(MyMarketProfileView), profileViewModel);
             }
         }
+
+        /// <summary>
+        /// Handles the click event for the View Cart button.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void ViewCartButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Create a view model for the shopping cart
+            var shoppingCartViewModel = new ShoppingCartViewModel();
+
+            // Create a page containing the BuyerCartWindow control
+            var buyerCartPage = new Page();
+
+            // Create the BuyerCartWindow control and set its ViewModel
+            var cartControl = new BuyerCartWindow
+            {
+                ViewModel = shoppingCartViewModel
+            };
+
+            // Set the content of the page to the cart control
+            buyerCartPage.Content = cartControl;
+
+            // Navigate to the page
+            this.Frame.Navigate(typeof(Page), buyerCartPage);
+        }
+
     }
 }

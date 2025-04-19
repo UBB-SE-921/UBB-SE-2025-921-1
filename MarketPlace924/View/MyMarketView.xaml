@@ -74,6 +74,16 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Style="{StaticResource PrimaryLabel}" Text="My Market" FontSize="40" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
+
+                <!-- Button for testing shopping cart-->
+                <Button x:Name="ViewCartButton" 
+                    Content="View Cart" 
+                    Style="{StaticResource PrimaryButton}"
+                    Click="ViewCartButton_Click"
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right" />
             </Grid>
 
             <!-- Search -->
