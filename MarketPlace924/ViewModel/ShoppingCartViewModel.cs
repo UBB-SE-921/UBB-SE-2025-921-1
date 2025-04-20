@@ -4,9 +4,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using System;
+using System.Threading.Tasks;
+
+using Marketplace924.Services;
+using MarketPlace924.Service;
+using System.Diagnostics;
 
 public class ShoppingCartViewModel : INotifyPropertyChanged
 {
+
+    IShoppingCartService shoppingCartService = new ShoppingCartService();
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     public ObservableCollection<CartItemViewModel> CartItems { get; set; }
@@ -19,6 +27,9 @@ public class ShoppingCartViewModel : INotifyPropertyChanged
 
     public ShoppingCartViewModel()
     {
+        // Load cart items asynchronously
+        this.shoppingCartService = shoppingCartService;
+        LoadCartItemsAsync();
         // Initialize the cart with some sample items (replace with actual data)
         CartItems = new ObservableCollection<CartItemViewModel>
         {
@@ -34,6 +45,22 @@ public class ShoppingCartViewModel : INotifyPropertyChanged
     private bool CanCheckout()
     {
         return CartItems.Count > 0;
+    }
+
+    private async Task LoadCartItemsAsync()
+    {
+        var items = await shoppingCartService.GetCartItemsAsync(1); // Replace with actual buyer ID
+        CartItems.Clear();
+        foreach (var item in items)
+        {
+            CartItems.Add(new CartItemViewModel
+            {
+                ProductName = item.Key.Name,
+                Price = (decimal)item.Key.Price, // Explicitly cast 'double' to 'decimal'
+                Quantity = item.Value
+            });
+            Debug.WriteLine($"Loaded item: {item.Key.Name}, Quantity: {item.Value}");
+        }
     }
 
     // Handle the checkout process
