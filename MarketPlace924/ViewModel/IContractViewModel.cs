@@ -117,6 +117,6 @@ namespace Marketplace924.ViewModel
         /// <param name="contract">The contract object for which to generate the document.</param>
         /// <param name="contractType">The type of the predefined contract.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task GenerateAndSaveContractAsync(IContract contract, PredefinedContractType contractType);
+        Task GenerateAndSaveContractAsync();
     }
 }

@@ -371,8 +371,10 @@ namespace Marketplace924.ViewModel
         /// <param name="contract" type="Contract">The contract to generate and save</param>
         /// <param name="contractType" type="PredefinedContractType">The type of the predefined contract</param>
         /// <returns The task></returns>
-        public async Task GenerateAndSaveContractAsync(IContract contract, PredefinedContractType contractType)
+        public async Task GenerateAndSaveContractAsync()
         {
+            IContract contract = new Contract();
+            PredefinedContractType contractType = PredefinedContractType.BorrowingContract; // Example contract type
             // Check if the contract is null.
             if (contract == null)
             {

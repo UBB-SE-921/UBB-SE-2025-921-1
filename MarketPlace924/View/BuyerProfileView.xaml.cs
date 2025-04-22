@@ -14,7 +14,6 @@
 
     public sealed partial class BuyerProfileView : Page
     {
-        private IContract? contract;
         private IContractViewModel? contractViewModel;
         private ITrackedOrderViewModel? trackedOrderViewModel;
 
@@ -23,7 +22,7 @@
             this.InitializeComponent();
 
             // Initialize contract and contractViewModel
-            contract = new Contract();
+            
             contractViewModel = new ContractViewModel(Configuration.CONNECTION_STRING);
 
             // Initialize trackedOrderViewModel
@@ -168,9 +167,7 @@
 
         private async void GenerateContractButton_Clicked(object sender, RoutedEventArgs e)
         {
-            if (contract != null)
-            {
-                await contractViewModel.GenerateAndSaveContractAsync(contract, PredefinedContractType.BorrowingContract);
+                await contractViewModel.GenerateAndSaveContractAsync();
 
                 var successDialog = new ContentDialog
                 {
@@ -180,11 +177,7 @@
                     XamlRoot = this.Content.XamlRoot
                 };
                 await successDialog.ShowAsync();
-            }
-            else
-            {
-                await ShowNoContractDialogAsync();
-            }
+
         }
 
         private async void BorrowButton_Clicked(object sender, RoutedEventArgs e)
