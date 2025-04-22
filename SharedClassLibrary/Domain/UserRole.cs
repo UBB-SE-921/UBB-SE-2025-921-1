@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace MarketPlace924.Domain;
+namespace SharedClassLibrary.Domain;
 
 /// <summary>
 /// Defines the roles a user can have within the system.

@@ -1,7 +1,7 @@
 namespace XUnitTestProject
 {
     using Xunit;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using Windows.Security.Authentication.OnlineId;
     using Microsoft.Web.WebView2.Core;
 

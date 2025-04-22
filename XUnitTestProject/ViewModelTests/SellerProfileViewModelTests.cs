@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using MarketPlace924.Domain;
+using SharedClassLibrary.Domain;
 using MarketPlace924.Service;
 using MarketPlace924.ViewModel;
 using Moq;

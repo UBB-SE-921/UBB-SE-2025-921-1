@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MarketPlace924.Domain;
-using MarketPlace924.Repository;
+using SharedClassLibrary.Domain;
+using SharedClassLibrary.IRepository;
 using MarketPlace924.Service;
 using Moq;
 using Xunit;

@@ -2,12 +2,12 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace MarketPlace924.DBConnection
+namespace Server.DBConnection
 {
     using System;
     using System.Threading.Tasks;
-    using MarketPlace924.Helper;
     using Microsoft.Data.SqlClient;
+    using Server.Helper;
 
     /// <summary>
     /// Represents a database connection.

@@ -5,7 +5,7 @@
 namespace MarketPlace924.Service
 {
     using System.Threading.Tasks;
-    using MarketPlace924.Repository;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Provides services related to users and buyers.

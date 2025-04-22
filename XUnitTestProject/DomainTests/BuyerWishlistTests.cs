@@ -1,4 +1,4 @@
-using MarketPlace924.Domain;
+using SharedClassLibrary.Domain;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -6,7 +6,7 @@ using Xunit;
 namespace XUnitTestProject.DomainTests
 {
     /// <summary>
-    /// Contains unit tests for the <see cref="MarketPlace924.Domain.BuyerWishlist"/> class.
+    /// Contains unit tests for the <see cref="SharedClassLibrary.Domain.BuyerWishlist"/> class.
     /// </summary>
     public class BuyerWishlistTests
     {

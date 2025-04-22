@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using MarketPlace924.Domain;
+using SharedClassLibrary.Domain;
 using MarketPlace924.Helper;
 using MarketPlace924.Service;
 using MarketPlace924.ViewModel.Admin;

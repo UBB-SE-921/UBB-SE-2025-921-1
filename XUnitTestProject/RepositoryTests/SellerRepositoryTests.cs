@@ -1,8 +1,8 @@
 ﻿namespace XUnitTestProject.RepositoryTests
 {
     using MarketPlace924.DBConnection;
-    using MarketPlace924.Domain;
-    using MarketPlace924.Repository;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
     using MarketPlace924.Service;
     using Microsoft.Data.SqlClient;
     using Xunit;

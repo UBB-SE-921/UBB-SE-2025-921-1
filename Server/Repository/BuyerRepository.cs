@@ -2,15 +2,15 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace MarketPlace924.Repository
+namespace SharedClassLibrary.IRepository
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using MarketPlace924.DBConnection;
-    using MarketPlace924.Domain;
     using Microsoft.Data.SqlClient;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository class for managing buyer-related database operations.
@@ -55,7 +55,7 @@ namespace MarketPlace924.Repository
 
             var billingAddress = (await this.LoadAddress(billingAddressId, sqlConnection)) !;
             buyerEntity.BillingAddress = billingAddress;
-            
+
             if (useSameAddress)
             {
                 buyerEntity.ShippingAddress = billingAddress;

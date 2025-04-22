@@ -4,19 +4,15 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace MarketPlace924.Repository
+namespace SharedClassLibrary.IRepository
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using MarketPlace924.DBConnection;
-    using MarketPlace924.Domain;
     using Microsoft.Data.SqlClient;
-    using Microsoft.IdentityModel.Tokens;
-    using Microsoft.UI.Xaml.Controls;
-    using Windows.System;
-    using User = MarketPlace924.Domain.User;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
 
     /// <summary>
     /// Repository for managing seller-related data operations.
