@@ -39,5 +39,7 @@ namespace MarketPlace924.View
                 this.ViewModel = viewModel;
             }
         }
+
+
     }
 }
