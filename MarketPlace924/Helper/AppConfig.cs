@@ -43,7 +43,7 @@ namespace MarketPlace924.Helper
         private static void LoadConfiguration()
         {
             Debug.WriteLine("LMAOOOOO");
-            string jsonFilePath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\..\appsettings.json"));
+            string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
             Debug.WriteLine(jsonFilePath);
 
             var builder = new ConfigurationBuilder()
