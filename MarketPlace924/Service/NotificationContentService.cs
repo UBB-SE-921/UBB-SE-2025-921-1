@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Repository;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
+using SharedClassLibrary.IRepository;
 
 namespace Marketplace924.Service
 {
@@ -13,7 +14,7 @@ namespace Marketplace924.Service
 
         public NotificationContentService()
         {
-            this.notificationRepository = new NotificationRepository(Configuration.CONNECTION_STRING);
+            this.notificationRepository = new NotificationProxyRepository();
         }
 
         public string GetUnreadNotificationsCountText(int unreadCount)

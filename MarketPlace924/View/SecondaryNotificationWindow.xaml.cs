@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Microsoft.UI.Xaml;
 using Marketplace924.Services;
 using Marketplace924.Service;

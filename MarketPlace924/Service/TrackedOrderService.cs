@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Repository;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
 using Microsoft.Data.SqlClient; // Assuming Configuration and SqlDatabaseProvider are here
+using SharedClassLibrary.IRepository;
 
 namespace Marketplace924.Service
 {
@@ -17,7 +18,7 @@ namespace Marketplace924.Service
         // Constructor for dependency injection
         public TrackedOrderService()
         {
-            this.trackedOrderRepository = new TrackedOrderRepository(Configuration.CONNECTION_STRING);
+            this.trackedOrderRepository = new TrackedOrderProxyRepository();
         }
 
         public async Task<int> AddOrderCheckpointAsync(OrderCheckpoint checkpoint)

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Repository; // Added using for Repository namespace
+using SharedClassLibrary.IRepository;
 
 namespace Marketplace924.Service
 {

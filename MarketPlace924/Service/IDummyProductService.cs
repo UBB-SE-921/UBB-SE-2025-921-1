@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 
 namespace Marketplace924.Service
 {

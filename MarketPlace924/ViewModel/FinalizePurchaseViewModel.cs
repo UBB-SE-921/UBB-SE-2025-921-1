@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Service;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
 using Microsoft.UI.Xaml.Controls;
 
 namespace Marketplace924.ViewModel

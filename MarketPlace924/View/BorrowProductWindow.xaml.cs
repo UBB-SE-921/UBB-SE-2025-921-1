@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Data.SqlClient;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Services;
 using Marketplace924.ViewModel;
 

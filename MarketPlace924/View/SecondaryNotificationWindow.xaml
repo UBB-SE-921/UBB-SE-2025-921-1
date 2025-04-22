@@ -6,7 +6,7 @@
     xmlns:local="using:Marketplace924"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:Domain="using:Marketplace924.Domain"
+    xmlns:Domain="using:SharedClassLibrary.Domain"
     mc:Ignorable="d">
 
     <Grid Background="WhiteSmoke">

@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
-using Marketplace924.Shared;
+using SharedClassLibrary.Domain;
+using SharedClassLibrary.Shared;
 using Marketplace924.ViewModel;
 using Marketplace924.Views;
 using Microsoft.UI.Xaml;

@@ -1,8 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Repository;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
+using SharedClassLibrary.IRepository;
 
 namespace Marketplace924.Service
 {
@@ -39,7 +40,7 @@ namespace Marketplace924.Service
                 throw new ArgumentNullException(nameof(databaseProvider));
             }
 
-            this.orderSummaryRepository = new OrderSummaryRepository(connectionString, databaseProvider);
+            this.orderSummaryRepository = new OrderSummaryProxyRepository();
         }
 
         /// <inheritdoc/>

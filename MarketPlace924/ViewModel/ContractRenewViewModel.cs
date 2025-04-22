@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Service; // Added using for Service namespace
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using Marketplace924.Repository;
@@ -31,9 +31,9 @@ namespace Marketplace924.ViewModel
         public ContractRenewViewModel(string connectionString)
         {
             // Assign injected services to fields
-            this.contractService = new ContractService(new ContractRepository(Configuration.CONNECTION_STRING));
+            this.contractService = new ContractService(new ContractProxyRepository());
             this.pdfService = new PDFService();
-            this.renewalService = new ContractRenewalService(new ContractRenewalRepository(Configuration.CONNECTION_STRING));
+            this.renewalService = new ContractRenewalService(new ContractRenewalProxyRepository());
             this.notificationContentService = new NotificationContentService();
             this.fileSystem = new FileSystemWrapper();
             this.dateTimeProvider = new DateTimeProvider();

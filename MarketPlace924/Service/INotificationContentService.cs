@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 
 namespace Marketplace924.Service
 {
