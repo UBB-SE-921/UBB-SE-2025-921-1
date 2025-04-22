@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Repository;
 using Microsoft.Data.SqlClient;
 using Marketplace924.Repository;
+using SharedClassLibrary.IRepository;
+
 [ExcludeFromCodeCoverage]
 public class WaitListNotifier
 {
@@ -19,8 +21,8 @@ public class WaitListNotifier
     /// <exception cref="ArgumentNullException">Thrown when the connection string is null or empty.</exception>
     public WaitListNotifier(string connectionString)
     {
-        waitListModel = new WaitListRepository(connectionString);
-        notificationAdapter = new NotificationRepository(connectionString);
+        waitListModel = new WaitListProxyRepository();
+        notificationAdapter = new NotificationProxyRepository();
         this.connectionString = connectionString;
     }
 

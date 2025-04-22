@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Marketplace924.Repository;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
+using SharedClassLibrary.IRepository;
 
 namespace Marketplace924.Service
 {
@@ -13,7 +14,7 @@ namespace Marketplace924.Service
         private IPDFRepository pdfRepository;
         public PDFService()
         {
-            pdfRepository = new PDFRepository(Configuration.CONNECTION_STRING);
+            pdfRepository = new PDFProxyRepository();
         }
 
         public async Task<int> InsertPdfAsync(byte[] fileBytes)

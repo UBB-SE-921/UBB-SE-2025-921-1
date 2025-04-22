@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Repository;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
+using SharedClassLibrary.IRepository;
 
 namespace Marketplace924.Service
 {
@@ -18,7 +19,7 @@ namespace Marketplace924.Service
 
         public OrderService(string connectionString, IDatabaseProvider databaseProvider)
         {
-            this.orderRepository = new OrderRepository(connectionString, databaseProvider);
+            this.orderRepository = new OrderProxyRepository();
         }
 
         public async Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)

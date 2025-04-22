@@ -5,9 +5,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Repository;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
 using Marketplace924.Repository;
 using Marketplace924.Service;
 

@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Marketplace924.Domain;
+using SharedClassLibrary.Domain;
 using Marketplace924.Service;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
 using Marketplace924.Utils;
 
 namespace Marketplace924.ViewModel

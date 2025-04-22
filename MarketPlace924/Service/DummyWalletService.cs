@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Marketplace924.Repository;
-using Marketplace924.Shared;
+using SharedClassLibrary.Shared;
+using SharedClassLibrary.IRepository;
 
 namespace Marketplace924.Service
 {
@@ -38,7 +39,7 @@ namespace Marketplace924.Service
                 throw new ArgumentNullException(nameof(databaseProvider));
             }
 
-            this.dummyWalletRepository = new DummyWalletRepository(connectionString, databaseProvider);
+            this.dummyWalletRepository = new DummyWalletProxyRepository();
         }
 
         /// <inheritdoc/>
