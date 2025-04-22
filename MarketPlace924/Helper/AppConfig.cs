@@ -44,7 +44,6 @@ namespace MarketPlace924.Helper
         {
             Debug.WriteLine("LMAOOOOO");
              string jsonFilePath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\..\appsettings.json"));
-  
             Debug.WriteLine(jsonFilePath);
 
             var builder = new ConfigurationBuilder()
