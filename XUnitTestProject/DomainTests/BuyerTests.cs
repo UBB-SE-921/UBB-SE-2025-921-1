@@ -5,11 +5,11 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using Windows.ApplicationModel.VoiceCommands;
 
     /// <summary>
-    /// Contains unit tests for the <see cref="MarketPlace924.Domain.Buyer"/> class.
+    /// Contains unit tests for the <see cref="SharedClassLibrary.Domain.Buyer"/> class.
     /// </summary>
     public class BuyerTests
     {

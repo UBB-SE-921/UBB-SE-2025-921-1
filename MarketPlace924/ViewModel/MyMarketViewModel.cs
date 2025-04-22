@@ -11,7 +11,7 @@ namespace MarketPlace924.ViewModel
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using MarketPlace924.Helper;
     using MarketPlace924.Service;
     using Microsoft.UI.Xaml;

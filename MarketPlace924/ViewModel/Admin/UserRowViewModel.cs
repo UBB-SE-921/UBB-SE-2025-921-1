@@ -6,7 +6,7 @@ namespace MarketPlace924.ViewModel.Admin
     using System;
     using System.Threading.Tasks;
     using System.Windows.Input;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using MarketPlace924.Helper;
     using MarketPlace924.Service;
 

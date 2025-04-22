@@ -11,7 +11,7 @@ namespace MarketPlace924.ViewModel.Admin
     using LiveChartsCore;
     using LiveChartsCore.SkiaSharpView;
     using LiveChartsCore.SkiaSharpView.Painting;
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using MarketPlace924.Helper;
     using MarketPlace924.Service;
     using Microsoft.UI.Xaml.Controls;

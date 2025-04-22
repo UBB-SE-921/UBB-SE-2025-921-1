@@ -6,7 +6,7 @@
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 namespace MarketPlace924.View
 {
-    using MarketPlace924.Domain;
+    using SharedClassLibrary.Domain;
     using MarketPlace924.ViewModel;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;

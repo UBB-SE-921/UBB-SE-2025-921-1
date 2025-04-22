@@ -41,7 +41,6 @@ sdk/
 .vscode/
 .env
 
-# Ignore the build files from XUnitTestProject folder
-XUnitTestProject/bin
-XUnitTestProject/obj
-XUnitTestProject/packages/
+# Ignore all bin and obj folders
+**/bin/
+**/obj/

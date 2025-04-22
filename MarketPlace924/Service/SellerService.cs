@@ -11,8 +11,8 @@ namespace MarketPlace924.Service
     using System.Linq;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using MarketPlace924.Domain;
-    using MarketPlace924.Repository;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Provides services related to seller operations.
