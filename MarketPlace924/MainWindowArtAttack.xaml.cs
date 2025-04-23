@@ -96,7 +96,7 @@ namespace Marketplace924
         {
             if (contract != null)
             {
-                await contractViewModel.GenerateAndSaveContractAsync(contract, PredefinedContractType.BorrowingContract);
+                await contractViewModel.GenerateAndSaveContractAsync();
 
                 // Optionally, show a success dialog after generating the contract.
                 var successDialog = new ContentDialog
