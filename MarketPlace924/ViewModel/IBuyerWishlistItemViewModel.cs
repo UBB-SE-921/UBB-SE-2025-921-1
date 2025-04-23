@@ -4,11 +4,13 @@
 
 namespace MarketPlace924.ViewModel
 {
+    using MarketPlace924.Domain;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Windows.Input;
 
     /// <summary>
     /// Interface for managing buyer wishlist item view model operations.
@@ -54,5 +56,7 @@ namespace MarketPlace924.ViewModel
         /// Removes the item from the wishlist.
         /// </summary>
         void Remove();
+        Product Product { get; set; }
+        ICommand AddToCartCommand { get; }
     }
 }

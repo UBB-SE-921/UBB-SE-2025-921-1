@@ -51,6 +51,9 @@
                         </Image.Source>
                     </Image>
                 </Button>
+                <Button Content="Add to Cart" Command="{x:Bind ViewModel.AddToCartCommand}" CommandParameter="{x:Bind ViewModel.Product}" />
+
+
             </StackPanel>
         </StackPanel>
     </Border>

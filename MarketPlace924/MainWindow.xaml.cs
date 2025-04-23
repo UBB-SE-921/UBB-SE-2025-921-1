@@ -168,5 +168,14 @@ namespace MarketPlace924
                     break;
             }
         }
+        private void NavigateToShoppingCart()
+        {
+            var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartRepository(new DatabaseConnection()), buyerId: 2);
+            this.Stage.Navigate(typeof(ShoppingCartView), shoppingCartViewModel);
+        }
+        public void NavigateToMyCart(object sender, RoutedEventArgs e)
+        {
+            this.Stage.Navigate(typeof(MyCartView));
+        }
     }
 }
