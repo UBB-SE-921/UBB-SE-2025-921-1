@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Threading.Tasks;
 using SharedClassLibrary.Shared;
+using SharedClassLibrary.IRepository;
 
 namespace MarketPlace924.Repository
 {
