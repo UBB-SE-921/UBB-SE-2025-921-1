@@ -3,7 +3,7 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 

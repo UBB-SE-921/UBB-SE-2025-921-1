@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Defines operations for handling contracts including retrieval, addition, and associated order information.

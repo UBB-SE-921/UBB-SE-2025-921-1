@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SharedClassLibrary.Shared;
 
-namespace Marketplace924.Repository
+namespace MarketPlace924.Repository
 {
     public class PDFRepository : IPDFRepository
     {

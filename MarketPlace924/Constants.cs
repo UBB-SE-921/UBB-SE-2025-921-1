@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Marketplace924
+namespace MarketPlace924
 {
     [ExcludeFromCodeCoverage]
     public class Constants

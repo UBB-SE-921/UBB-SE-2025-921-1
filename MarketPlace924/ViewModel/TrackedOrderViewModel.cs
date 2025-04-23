@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
-using Marketplace924.Service;
+using MarketPlace924.Service;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Interface for sending notifications about order shipping progress

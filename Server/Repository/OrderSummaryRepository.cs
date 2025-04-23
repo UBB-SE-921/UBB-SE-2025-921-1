@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
 
-namespace Marketplace924.Repository
+namespace MarketPlace924.Repository
 {
     /// <summary>
     /// Provides database operations for order summary management.

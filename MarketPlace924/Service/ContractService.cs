@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository; // Add this using directive
+using MarketPlace924.Repository; // Add this using directive
 using SharedClassLibrary.IRepository;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     // Make the class public and implement the interface
     public class ContractService : IContractService

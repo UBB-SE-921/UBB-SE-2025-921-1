@@ -2,9 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using Microsoft.Data.SqlClient;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using SharedClassLibrary.IRepository;
 
 [ExcludeFromCodeCoverage]

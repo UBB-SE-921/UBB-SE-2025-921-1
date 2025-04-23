@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Defines the methods required for a billing information view model.

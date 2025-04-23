@@ -5,11 +5,11 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Represents the view model for card payment information and handles card payment processing.

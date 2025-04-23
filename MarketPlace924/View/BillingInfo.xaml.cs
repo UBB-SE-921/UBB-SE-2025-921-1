@@ -2,11 +2,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.ViewModel;
+using MarketPlace924.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace Marketplace924.Views
+namespace MarketPlace924.Views
 {
     [ExcludeFromCodeCoverage]
     public sealed partial class BillingInfo : Page

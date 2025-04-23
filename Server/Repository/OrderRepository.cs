@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
 
-namespace Marketplace924.Repository
+namespace MarketPlace924.Repository
 {
     public class OrderRepository : IOrderRepository
     {

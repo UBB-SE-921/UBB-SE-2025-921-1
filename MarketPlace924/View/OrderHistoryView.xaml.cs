@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SharedClassLibrary.Domain;
-using Marketplace924.ViewModel;
+using MarketPlace924.ViewModel;
 using Microsoft.UI.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Marketplace924.Service; // Add this using directive if not present
+using MarketPlace924.Service; // Add this using directive if not present
 using SharedClassLibrary.Shared; // Add this using directive for Configuration
 
-namespace Marketplace924
+namespace MarketPlace924
 {
     [ExcludeFromCodeCoverage]
     public sealed partial class OrderHistoryView : Window

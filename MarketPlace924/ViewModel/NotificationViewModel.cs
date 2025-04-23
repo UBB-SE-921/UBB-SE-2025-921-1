@@ -6,12 +6,12 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
-using Marketplace924.Repository;
-using Marketplace924.Service;
+using MarketPlace924.Repository;
+using MarketPlace924.Service;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Manages notifications by loading, updating, and marking them as read.

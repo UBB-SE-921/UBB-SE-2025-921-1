@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Service;
+using MarketPlace924.Service;
 using SharedClassLibrary.Shared;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Represents the view model for orders and facilitates order management operations.

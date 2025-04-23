@@ -7,10 +7,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Data.SqlClient;
 using SharedClassLibrary.Domain;
-using Marketplace924.Services;
-using Marketplace924.ViewModel;
+using MarketPlace924.Services;
+using MarketPlace924.ViewModel;
 
-namespace Marketplace924
+namespace MarketPlace924
 {
     [ExcludeFromCodeCoverage]
     public sealed partial class BorrowProductWindow : Window

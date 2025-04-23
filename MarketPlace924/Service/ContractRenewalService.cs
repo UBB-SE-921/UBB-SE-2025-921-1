@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository; // Added using for Repository namespace
+using MarketPlace924.Repository; // Added using for Repository namespace
 using SharedClassLibrary.IRepository;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     public class ContractRenewalService : IContractRenewalService
     {

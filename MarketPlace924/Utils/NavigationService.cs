@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.UI.Xaml.Controls;
 
-namespace Marketplace924.Utils
+namespace MarketPlace924.Utils
 {
     /*
     [ExcludeFromCodeCoverage]
@@ -19,7 +19,7 @@ namespace Marketplace924.Utils
         {
             if (mainFrame != null)
             {
-                Type pageType = Type.GetType($"Marketplace924.Views.{pageName}");
+                Type pageType = Type.GetType($"MarketPlace924.Views.{pageName}");
 
                 if (pageType != null)
                 {

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     /// <summary>
     /// Defines operations for managing wallet operations.

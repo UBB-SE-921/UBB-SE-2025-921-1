@@ -5,11 +5,11 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Service;
+using MarketPlace924.Service;
 using SharedClassLibrary.Shared;
-using Marketplace924.Utils;
+using MarketPlace924.Utils;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Represents the view model for billing information and processes order history and payment details.

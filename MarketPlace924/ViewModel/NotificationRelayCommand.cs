@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Input;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     [ExcludeFromCodeCoverage]
     /// <summary>
