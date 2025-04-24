@@ -13,6 +13,7 @@ namespace MarketPlace924
     using MarketPlace924.ViewModel.Admin;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
+    using MarketPlace924.Helper;
 
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
@@ -34,9 +35,9 @@ namespace MarketPlace924
             this.InitializeComponent();
 
             // Initialize Database Connection and Services
-            IUserRepository userRepo = new UserProxyRepository();
-            IBuyerRepository buyerRepo = new BuyerProxyRepository();
-            ISellerRepository sellerRepo = new SellerProxyRepository(userRepo);
+            IUserRepository userRepo = new UserProxyRepository(AppConfig.GetBaseApiUrl());
+            IBuyerRepository buyerRepo = new BuyerProxyRepository(AppConfig.GetBaseApiUrl());
+            ISellerRepository sellerRepo = new SellerProxyRepository(AppConfig.GetBaseApiUrl());
 
             // Initialize Services
             this.userService = new UserService(userRepo);

@@ -8,15 +8,23 @@ namespace SharedClassLibrary.IRepository
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Provides methods for interacting with the Users table in the database.
     /// </summary>
     public class UserProxyRepository : IUserRepository
     {
+        private readonly HttpClient httpClient;
+
+        public UserProxyRepository(string baseApiUrl)
+        {
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+        }
+
         public Task AddUser(User user)
         {
             throw new NotImplementedException();

@@ -1,13 +1,13 @@
-﻿// <copyright file="BuyerRepository.cs" company="PlaceholderCompany">
+﻿// <copyright file="BuyerProxyRepository.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace SharedClassLibrary.IRepository
 {
     using System.Collections.Generic;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository class for managing buyer-related database operations.
@@ -15,6 +15,14 @@ namespace SharedClassLibrary.IRepository
     /// <param name="databaseConnection">The database connection instance.</param>
     public class BuyerProxyRepository : IBuyerRepository
     {
+        private readonly HttpClient httpClient;
+
+        public BuyerProxyRepository(string baseApiUrl)
+        {
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+        }
+
         public Task<bool> CheckIfBuyerExists(int buyerId)
         {
             throw new System.NotImplementedException();

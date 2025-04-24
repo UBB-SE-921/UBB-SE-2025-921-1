@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SellerRepository.cs" company="PlaceholderCompany">
+// <copyright file="SellerProxyRepository.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
@@ -7,18 +7,21 @@
 namespace SharedClassLibrary.IRepository
 {
     using System.Collections.Generic;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository for managing seller-related data operations.
     /// </summary>
     public class SellerProxyRepository : ISellerRepository
     {
-        public SellerProxyRepository(IUserRepository userRepository)
+        private readonly HttpClient httpClient;
+
+        public SellerProxyRepository(string baseApiUrl)
         {
-            throw new System.NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
         public Task AddNewFollowerNotification(int sellerId, int currentFollowerCount, string message)
