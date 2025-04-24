@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     /// <summary>
     /// Defines operations for managing order summaries.

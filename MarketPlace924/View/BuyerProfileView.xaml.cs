@@ -1,10 +1,10 @@
 ﻿namespace MarketPlace924.View
 {
-    using Marketplace924.Domain;
-    using Marketplace924.Shared;
-    using Marketplace924.ViewModel;
-    using Marketplace924.Views;
-    using Marketplace924;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.Shared;
+    using MarketPlace924.ViewModel;
+    using MarketPlace924.Views;
+    using MarketPlace924;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Navigation;

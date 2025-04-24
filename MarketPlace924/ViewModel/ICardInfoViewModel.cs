@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Defines operations for managing card information and processing card payments.

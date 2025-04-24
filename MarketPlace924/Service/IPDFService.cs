@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     public interface IPDFService
     {

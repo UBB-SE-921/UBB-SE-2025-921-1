@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Service;
+using MarketPlace924.Service;
 using SharedClassLibrary.Shared;
 using Microsoft.UI.Xaml.Controls;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     /// <summary>
     /// Represents the view model for finalizing a purchase and updating order history and notifications.

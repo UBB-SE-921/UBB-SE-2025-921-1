@@ -6,7 +6,7 @@ using SharedClassLibrary.IRepository;
 using MarketPlace924.Repository;
 using SharedClassLibrary.IRepository;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     /// <summary>
     /// Service for managing dummy product operations.

@@ -3,17 +3,17 @@ using System;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
-using Marketplace924.ViewModel;
-using Marketplace924.Views;
+using MarketPlace924.ViewModel;
+using MarketPlace924.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using QuestPDF.Infrastructure;
-using Marketplace924.Repository; // Add this using directive
-using Marketplace924.Service; // Add this using directive
+using MarketPlace924.Repository; // Add this using directive
+using MarketPlace924.Service; // Add this using directive
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-namespace Marketplace924
+namespace MarketPlace924
 {
     [ExcludeFromCodeCoverage]
     public sealed partial class MainWindow : Window

@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     /// <summary>
     /// Service for managing order history operations.

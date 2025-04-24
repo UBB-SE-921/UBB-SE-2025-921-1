@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using SharedClassLibrary.Domain;
 using Microsoft.UI.Xaml;
-using Marketplace924.Services;
-using Marketplace924.Service;
+using MarketPlace924.Services;
+using MarketPlace924.Service;
 
-namespace Marketplace924
+namespace MarketPlace924
 {
     [ExcludeFromCodeCoverage]
     public sealed partial class SecondaryNotificationWindow : Window

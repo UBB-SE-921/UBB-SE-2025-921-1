@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using SharedClassLibrary.Domain;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     public interface INotificationContentService : IDisposable
     {

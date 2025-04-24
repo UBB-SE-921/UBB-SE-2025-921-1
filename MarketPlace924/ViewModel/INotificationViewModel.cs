@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using SharedClassLibrary.Domain;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     public interface INotificationViewModel
     {

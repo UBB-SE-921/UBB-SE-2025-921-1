@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
-using MarketPlace924.Repository;
+using SharedClassLibrary.IRepository;
 using Microsoft.Data.SqlClient;
+using MarketPlace924.Repository;
 
-namespace Marketplace924.Services
+namespace MarketPlace924.Services
 {
     public class WaitListViewModel : IWaitListViewModel
     {
@@ -23,8 +23,8 @@ namespace Marketplace924.Services
         /// </remarks>
         public WaitListViewModel(string connectionString)
         {
-            waitListModel = new WaitListRepository(connectionString);
-            dummyProductModel = new DummyProductRepository(connectionString);
+            waitListModel = new WaitListProxyRepository();
+            dummyProductModel = new DummyProductProxyRepository();
         }
 
         /// <summary>

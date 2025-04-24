@@ -6,13 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Service; // Added using for Service namespace
+using MarketPlace924.Service; // Added using for Service namespace
 using SharedClassLibrary.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     public class ContractRenewViewModel : IContractRenewViewModel
     {

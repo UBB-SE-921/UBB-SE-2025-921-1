@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
+using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     public class NotificationContentService : INotificationContentService
     {

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using Marketplace924.Repository;
-using Marketplace924.Service; // Add this using directive
+using MarketPlace924.Repository;
+using MarketPlace924.Service; // Add this using directive
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Windows.Storage;
 using Windows.System;
 
-namespace Marketplace924.ViewModel
+namespace MarketPlace924.ViewModel
 {
     public class ContractViewModel : IContractViewModel
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 
-namespace Marketplace924.Service
+namespace MarketPlace924.Service
 {
     public interface IContractRenewalService
     {
