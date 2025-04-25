@@ -1,5 +1,5 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="UserRepository.cs" company="PlaceholderCompany">
+// <copyright file="UserProxyRepository.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
@@ -9,6 +9,7 @@ namespace SharedClassLibrary.IRepository
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
+    using System.Net.Http.Json;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
 
@@ -25,64 +26,107 @@ namespace SharedClassLibrary.IRepository
             this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task AddUser(User user)
+        public async Task AddUser(User user)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PostAsJsonAsync($"/users", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
-        public Task<bool> EmailExists(string email)
+        public async Task<bool> EmailExists(string email)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"users/email-exists?email={email}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var found = await response.Content.ReadFromJsonAsync<bool>();
+            return found;
         }
 
-        public Task<List<User>> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"users");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var users = await response.Content.ReadFromJsonAsync<List<User>>();
+            if (users == null)
+            {
+                users = new List<User>();
+            }
+
+            return users;
         }
 
-        public Task<int> GetFailedLoginsCountByUserId(int userId)
+        public async Task<int> GetFailedLoginsCountByUserId(int userId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"users/failed-logins-count/{userId}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var failedLoginsCount = await response.Content.ReadFromJsonAsync<int>();
+            return failedLoginsCount;
         }
 
-        public Task<int> GetTotalNumberOfUsers()
+        public async Task<int> GetTotalNumberOfUsers()
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"users/count");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var userCount = await response.Content.ReadFromJsonAsync<int>();
+            return userCount;
         }
 
-        public Task<User?> GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"users/email/{email}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var user = await response.Content.ReadFromJsonAsync<User>();
+            return user;
         }
 
-        public Task<User?> GetUserByUsername(string username)
+        public async Task<User?> GetUserByUsername(string username)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"users/username/{username}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var user = await response.Content.ReadFromJsonAsync<User>();
+            return user;
         }
 
-        public Task LoadUserPhoneNumberAndEmailById(User user)
+        public async Task LoadUserPhoneNumberAndEmailById(User user)
         {
-            throw new NotImplementedException();
+            int userId = user.UserId;
+            var response = await this.httpClient.GetAsync($"users/phone-email/{user.UserId}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var newUser = await response.Content.ReadFromJsonAsync<User>();
+            user.PhoneNumber = newUser.PhoneNumber;
+            user.Email = newUser.Email;
         }
 
-        public Task UpdateUser(User user)
+        public async Task UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PutAsJsonAsync($"/users", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
-        public Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
+        public async Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PutAsJsonAsync($"/users/update-failed-logins/{newValueOfFailedLogIns}", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
-        public Task UpdateUserPhoneNumber(User user)
+        public async Task UpdateUserPhoneNumber(User user)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PutAsJsonAsync($"/users/update-phone-number", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
-        public Task<bool> UsernameExists(string username)
+        public async Task<bool> UsernameExists(string username)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"users/username-exists?username={username}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var found = await response.Content.ReadFromJsonAsync<bool>();
+            return found;
         }
     }
 }
