@@ -1,5 +1,7 @@
 # Ignore the appsettings.json file
 MarketPlace924/appsettings.json
+Server/appsettings.json
+Server/appsettings.Development.json
 
 # Ignore Visual Studio specific files
 .vs/
