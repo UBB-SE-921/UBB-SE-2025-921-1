@@ -168,14 +168,19 @@ namespace MarketPlace924
                     break;
             }
         }
-        private void NavigateToShoppingCart()
+        /// <summary>
+        /// Navigates to the My Cart view.
+        /// </summary>
+        private void NavigateToMyCart()
         {
-            var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartRepository(new DatabaseConnection()), buyerId: 2);
-            this.Stage.Navigate(typeof(ShoppingCartView), shoppingCartViewModel);
-        }
-        public void NavigateToMyCart(object sender, RoutedEventArgs e)
-        {
-            this.Stage.Navigate(typeof(MyCartView));
+            if (this.user == null || this.user.Role != UserRole.Buyer)
+            {
+                return; // Ensure only buyers can access the cart
+            }
+
+            var buyerId = this.user.UserId; // Use the current user's ID as the buyer ID
+            var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartRepository(new DatabaseConnection()), buyerId);
+            this.Stage.Navigate(typeof(MyCartView), shoppingCartViewModel);
         }
     }
 }

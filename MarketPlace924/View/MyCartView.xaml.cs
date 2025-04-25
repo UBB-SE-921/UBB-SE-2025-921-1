@@ -22,20 +22,34 @@ using MarketPlace924.DBConnection;
 namespace MarketPlace924.View
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// A page that displays the shopping cart.
     /// </summary>
     public sealed partial class MyCartView : Page
     {
-        public ShoppingCartViewModel ViewModel { get; }
+        public ShoppingCartViewModel ViewModel { get; set; }
 
         public MyCartView()
         {
             this.InitializeComponent();
-            /// <summary>
-            /// Initializes a new instance of the <see cref="ShoppingCartViewModel"/> class.
-            /// /// </summary>
-            /// TODO change to be dynamic, but for testing, let buyerID=2
-            this.ViewModel = new ShoppingCartViewModel(new Repository.ShoppingCartRepository(new DBConnection.DatabaseConnection()), buyerId: 2);
+            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartRepository(new DatabaseConnection()), buyerId: 2);
+            this.DataContext = this.ViewModel;
+
+            // Load cart items when the page is initialized
+            _ = this.ViewModel.LoadCartItemsAsync();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is ShoppingCartViewModel viewModel)
+            {
+                this.ViewModel = viewModel;
+                this.DataContext = this.ViewModel;
+            }
+
+            // Ensure cart items are loaded
+            _ = this.ViewModel.LoadCartItemsAsync();
         }
     }
 }

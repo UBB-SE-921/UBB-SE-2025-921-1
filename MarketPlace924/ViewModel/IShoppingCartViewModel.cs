@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using MarketPlace924.Domain;
+using MarketPlace924.ViewModel;
 
 namespace MarketPlace924.ViewModel
 {
     public interface IShoppingCartViewModel
+
     {
         ObservableCollection<CartItemViewModel> CartItems { get; }
         Task LoadCartItemsAsync();

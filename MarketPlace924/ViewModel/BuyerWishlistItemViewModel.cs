@@ -10,7 +10,6 @@ namespace MarketPlace924.ViewModel
     using MarketPlace924.Service;
     using CommunityToolkit.Mvvm.Input;
     using MarketPlace924.Domain;
-
     using MarketPlace924.Repository;  
     using MarketPlace924.DBConnection;  
     /// <summary>
@@ -27,7 +26,6 @@ namespace MarketPlace924.ViewModel
         public IOnBuyerWishlistItemRemoveCallback RemoveCallback { get; set; } = null!;
         public ICommand AddToCartCommand { get; }
 
-        // Add the Product property
         public Product Product { get; set; }
 
         public BuyerWishlistItemViewModel()

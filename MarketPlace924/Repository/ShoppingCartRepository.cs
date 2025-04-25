@@ -212,7 +212,7 @@ namespace MarketPlace924.Repository
                         reader.GetInt32(reader.GetOrdinal("ProductID")),
                         reader.GetString(reader.GetOrdinal("ProductName")),
                         reader.GetString(reader.GetOrdinal("ProductDescription")),
-                        reader.GetFloat(reader.GetOrdinal("ProductPrice")),
+                        reader.GetDouble(reader.GetOrdinal("ProductPrice")),
                         0, // Category - not present in your structure, using default
                         reader.GetInt32(reader.GetOrdinal("SellerID"))
                     );

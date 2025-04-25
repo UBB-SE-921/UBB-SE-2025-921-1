@@ -4,7 +4,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModel="using:MarketPlace924.ViewModel"
-    xmlns:domain="using:MarketPlace924.Domain"
     x:Name="Root"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -17,10 +16,10 @@
                         <TextBlock Text="{x:Bind Product.Name}" Width="200" />
                         <TextBlock Text="{x:Bind Product.Price, Mode=OneWay}" Width="100" />
                         <TextBox Text="{x:Bind Quantity, Mode=TwoWay}" Width="50" />
+                        <TextBlock Text="{x:Bind TotalPrice, Mode=OneWay}" Width="100" />
                         <Button Content="Remove"
-                                Command="{Binding DataContext.RemoveFromCartCommand, ElementName=Root}"
+                                Command="{x:Bind RemoveFromCartCommand}"
                                 CommandParameter="{x:Bind Product}" />
-
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
