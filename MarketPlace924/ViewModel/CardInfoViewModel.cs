@@ -75,10 +75,10 @@ namespace MarketPlace924.ViewModel
         /// <param name="orderHistoryID">The unique identifier of the order history.</param>
         public CardInfoViewModel(int orderHistoryID)
         {
-            orderHistoryModel = new OrderHistoryRepository(Configuration.CONNECTION_STRING);
-            orderModel = new OrderRepository(Configuration.CONNECTION_STRING);
-            orderSummaryModel = new OrderSummaryRepository(Configuration.CONNECTION_STRING);
-            dummyCardModel = new DummyCardRepository(Configuration.CONNECTION_STRING);
+            orderHistoryModel = new OrderHistoryProxyRepository();
+            orderModel = new OrderProxyRepository();
+            orderSummaryModel = new OrderSummaryProxyRepository();
+            dummyCardModel = new DummyCardProxyRepository();
 
             this.orderHistoryID = orderHistoryID;
 

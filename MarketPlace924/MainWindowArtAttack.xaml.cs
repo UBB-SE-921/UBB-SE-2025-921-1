@@ -16,13 +16,13 @@ using MarketPlace924.Service; // Add this using directive
 namespace MarketPlace924
 {
     [ExcludeFromCodeCoverage]
-    public sealed partial class MainWindow : Window
+    public sealed partial class MainWindowArtAttack : Window
     {
         private IContract contract;
         private IContractViewModel contractViewModel;
         private ITrackedOrderViewModel trackedOrderViewModel;
 
-        public MainWindow()
+        public MainWindowArtAttack()
         {
             QuestPDF.Settings.License = LicenseType.Community;
 

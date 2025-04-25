@@ -34,6 +34,7 @@ namespace MarketPlace924
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            // MainWindow = new MainWindowArtAttack();
             MainWindow = new MainWindow();
             MainWindow.Activate();
             this.UnhandledException += (_, e) =>
