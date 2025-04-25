@@ -258,11 +258,5 @@ namespace Server.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting total number of users.");
             }
         }
-
-        // DELETE api/<UserApiController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
