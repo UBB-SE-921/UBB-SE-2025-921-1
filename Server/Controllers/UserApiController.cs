@@ -47,7 +47,7 @@ namespace Server.Controllers
             // Basic validation: Check if username is provided
             if (string.IsNullOrEmpty(username))
             {
-                return this.BadRequest("user name is required."); // Return 400 Bad Request
+                return this.BadRequest("Username is required."); // Return 400 Bad Request
             }
 
             try
