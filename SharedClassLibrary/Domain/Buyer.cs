@@ -69,7 +69,7 @@ namespace SharedClassLibrary.Domain
         /// Gets the unique identifier of the buyer.
         /// This property is derived from the associated User's ID.
         /// </summary>
-        public int Id => this.User.UserId;
+        public int Id { get => this.User.UserId; set => this.User.UserId = value; }
 
         /// <summary>
         /// Gets or sets the buyer's first name.
