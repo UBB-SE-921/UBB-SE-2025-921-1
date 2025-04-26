@@ -1,34 +1,73 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SharedClassLibrary.Domain;
-using Server.DataModels;
+﻿// <copyright file="MarketPlaceDbContext.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Server.DBConnection
 {
-    public class MarketPlaceDbContext: DbContext
+    using Microsoft.EntityFrameworkCore;
+    using Server.DataModels;
+    using SharedClassLibrary.Domain;
+
+    /// <summary>
+    /// Represents the database context for the MarketPlace application.
+    /// </summary>
+    public class MarketPlaceDbContext : DbContext
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MarketPlaceDbContext"/> class.
+        /// </summary>
+        /// <param name="options">The options for the database context.</param>
         public MarketPlaceDbContext(DbContextOptions<MarketPlaceDbContext> options)
             : base(options)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the users table.
+        /// </summary>
         public DbSet<User> Users { get; set; }
 
+        /// <summary>
+        /// Gets or sets the buyers table.
+        /// </summary>
         public DbSet<Buyer> Buyers { get; set; }
 
+        /// <summary>
+        /// Gets or sets the buyers wishlist items table.
+        /// </summary>
         public DbSet<BuyerWishlistItemsEntity> BuyersWishlistItems { get; set; }
 
-        // We use BuyerLinkageEntity in orde to have the corresponding table created in the database
-        // We do not change the BuyerLinkage class in order to avoid breaking changes
+        /// <summary>
+        /// Gets or sets the buyers linkages table.
+        /// We use BuyerLinkageEntity in orde to have the corresponding table created in the database
+        /// We do not change the BuyerLinkage class in order to avoid breaking changes.
+        /// </summary>
         public DbSet<BuyerLinkageEntity> BuyerLinkages { get; set; }
 
+        /// <summary>
+        /// Gets or sets the addresses table.
+        /// </summary>
         public DbSet<Address> Addresses { get; set; } // buyer's address
 
+        /// <summary>
+        /// Gets or sets the sellers table.
+        /// </summary>
         public DbSet<Seller> Sellers { get; set; }
 
+        /// <summary>
+        /// Gets or sets the products table.
+        /// </summary>
         public DbSet<Product> Products { get; set; }
 
+        /// <summary>
+        /// Gets or sets the followings table.
+        /// </summary>
         public DbSet<FollowingEntity> Followings { get; set; }
 
+        /// <summary>
+        /// On model creating.
+        /// </summary>
+        /// <param name="modelBuilder">The model builder.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

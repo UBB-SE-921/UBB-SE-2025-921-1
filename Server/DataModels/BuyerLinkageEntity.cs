@@ -1,3 +1,7 @@
+// <copyright file="BuyerLinkageEntity.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace Server.DataModels
 {
     using System.ComponentModel.DataAnnotations.Schema;
@@ -9,17 +13,15 @@ namespace Server.DataModels
     [Table("BuyerLinkages")] // Explicitly set table name
     public class BuyerLinkageEntity
     {
-        // Composite Key Part 1
+        /// <summary>
+        /// Gets or sets the requesting buyer ID.
+        /// </summary>
         public int RequestingBuyerId { get; set; }
 
-        // Navigation property for the requesting buyer (optional, configure in DbContext)
-        // public Buyer RequestingBuyer { get; set; }
-
-        // Composite Key Part 2
+        /// <summary>
+        /// Gets or sets the requesting buyer.
+        /// </summary>
         public int ReceivingBuyerId { get; set; }
-
-        // Navigation property for the receiving buyer (optional, configure in DbContext)
-        // public Buyer ReceivingBuyer { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the linkage request has been approved.

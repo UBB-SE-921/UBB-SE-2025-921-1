@@ -260,7 +260,6 @@ namespace SharedClassLibrary.IRepository
         /// Loads address information from the database.
         /// </summary>
         /// <param name="addressId">The ID of the address to load.</param>
-        /// <param name="sqlConnection">The SQL connection to use.</param>
         /// <returns>A task containing the loaded address or null if not found.</returns>
         public async Task<Address?> LoadAddress(int addressId)
         {
@@ -270,8 +269,8 @@ namespace SharedClassLibrary.IRepository
         /// <summary>
         /// Reads buyer linkage information from a SQL data reader.
         /// </summary>
-        /// <param name="sqlDataReader">The SQL data reader containing linkage information.</param>
-        /// <param name="userId">The ID of the current user.</param>
+        /// <param name="linkageEntity">The linkage entity containing linkage information.</param>
+        /// <param name="buyerId">The ID of the current user.</param>
         /// <returns>A BuyerLinkage object containing the read information.</returns>
         private static BuyerLinkage ReadBuyerLinkage(BuyerLinkageEntity linkageEntity, int buyerId)
         {
@@ -312,7 +311,6 @@ namespace SharedClassLibrary.IRepository
         /// Persists an address to the database.
         /// </summary>
         /// <param name="address">The address to persist.</param>
-        /// <param name="sqlConnection">The SQL connection to use.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task PersistAddress(Address address)
         {
