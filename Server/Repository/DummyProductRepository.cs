@@ -7,6 +7,7 @@ using SharedClassLibrary.IRepository;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 
+// WILL NOT IMPLEMENT DUMMY PRODUCT REPOSITORY - SHOULD BE REPLACED WITH ACTUAL PRODUCT REPOSITORY -Alex
 namespace MarketPlace924.Repository
 {
     public class DummyProductRepository : IDummyProductRepository
