@@ -4,12 +4,13 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SharedClassLibrary.IRepository
+namespace MarketPlace924.Repository
 {
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository for managing seller-related data operations.

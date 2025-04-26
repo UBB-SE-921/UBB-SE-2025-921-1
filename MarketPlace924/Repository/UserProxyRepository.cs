@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SharedClassLibrary.IRepository
+namespace MarketPlace924.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace SharedClassLibrary.IRepository
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-
+    using SharedClassLibrary.IRepository;
     /// <summary>
     /// Provides methods for interacting with the Users table in the database.
     /// </summary>

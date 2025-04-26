@@ -2,12 +2,13 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace SharedClassLibrary.IRepository
+namespace MarketPlace924.Repository
 {
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository class for managing buyer-related database operations.
