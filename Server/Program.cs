@@ -5,8 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Register your IUserRepository implementation
-// Assuming your implementation class is named UserRepository
 builder.Services.AddScoped<DatabaseConnection>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
