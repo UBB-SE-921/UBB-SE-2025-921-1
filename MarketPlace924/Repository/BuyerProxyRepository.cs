@@ -19,6 +19,7 @@ namespace MarketPlace924.Repository
     /// <param name="databaseConnection">The database connection instance.</param>
     public class BuyerProxyRepository : IBuyerRepository
     {
+        private const string ApiBaseRoute = "api/buyers";
         private readonly HttpClient httpClient;
 
         /// <summary>
@@ -34,7 +35,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<bool> CheckIfBuyerExists(int buyerId)
         {
-            var response = await this.httpClient.GetAsync($"api/buyers/{buyerId}/exists");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/exists");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
@@ -42,7 +43,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task CreateBuyer(Buyer buyerEntity)
         {
-            var response = await this.httpClient.PostAsJsonAsync("api/buyers/create", buyerEntity);
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/create", buyerEntity);
             response.EnsureSuccessStatusCode();
         }
 
@@ -54,7 +55,7 @@ namespace MarketPlace924.Repository
             query["receivingBuyerId"] = receivingBuyerId.ToString();
             string queryString = query.ToString() ?? string.Empty;
 
-            var response = await this.httpClient.PostAsync($"api/buyers/linkages/create?{queryString}", null); // No body needed for this POST
+            var response = await this.httpClient.PostAsync($"{ApiBaseRoute}/linkages/create?{queryString}", null); // No body needed for this POST
             response.EnsureSuccessStatusCode();
         }
 
@@ -66,7 +67,7 @@ namespace MarketPlace924.Repository
             query["receivingBuyerId"] = receivingBuyerId.ToString();
             string queryString = query.ToString() ?? string.Empty;
 
-            var response = await this.httpClient.DeleteAsync($"api/buyers/linkages/delete?{queryString}");
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/linkages/delete?{queryString}");
 
             // Check for 404 specifically if the API returns it when not found
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -81,7 +82,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<List<Buyer>> FindBuyersWithShippingAddress(Address shippingAddress)
         {
-            var response = await this.httpClient.PostAsJsonAsync("api/buyers/find-by-shipping-address", shippingAddress);
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/find-by-shipping-address", shippingAddress);
             response.EnsureSuccessStatusCode();
             var buyers = await response.Content.ReadFromJsonAsync<List<Buyer>>();
             return buyers ?? new List<Buyer>();
@@ -90,14 +91,14 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task FollowSeller(int buyerId, int sellerId)
         {
-            var response = await this.httpClient.PostAsync($"api/buyers/{buyerId}/follow/{sellerId}", null); // No body
+            var response = await this.httpClient.PostAsync($"{ApiBaseRoute}/{buyerId}/follow/{sellerId}", null); // No body
             response.EnsureSuccessStatusCode();
         }
 
         /// <inheritdoc />
         public async Task<List<Seller>> GetAllSellers()
         {
-            var response = await this.httpClient.GetAsync("api/buyers/sellers/all");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/sellers/all");
             response.EnsureSuccessStatusCode();
             var sellers = await response.Content.ReadFromJsonAsync<List<Seller>>();
             return sellers ?? new List<Seller>();
@@ -106,7 +107,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<List<BuyerLinkage>> GetBuyerLinkages(int buyerId)
         {
-            var response = await this.httpClient.GetAsync($"api/buyers/{buyerId}/linkages");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/linkages");
             response.EnsureSuccessStatusCode();
             var linkages = await response.Content.ReadFromJsonAsync<List<BuyerLinkage>>();
             return linkages ?? new List<BuyerLinkage>();
@@ -120,7 +121,7 @@ namespace MarketPlace924.Repository
                 followingUsersIds = new List<int>();
             }
 
-            var response = await this.httpClient.PostAsJsonAsync($"api/buyers/followed-sellers", followingUsersIds);
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/followed-sellers", followingUsersIds);
             response.EnsureSuccessStatusCode();
             var sellers = await response.Content.ReadFromJsonAsync<List<Seller>>();
             return sellers ?? new List<Seller>();
@@ -129,7 +130,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<List<int>> GetFollowingUsersIds(int buyerId)
         {
-            var response = await this.httpClient.GetAsync($"api/buyers/{buyerId}/following/ids");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/following/ids");
             response.EnsureSuccessStatusCode();
             var ids = await response.Content.ReadFromJsonAsync<List<int>>();
             return ids ?? new List<int>();
@@ -138,7 +139,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<List<Product>> GetProductsFromSeller(int sellerId)
         {
-            var response = await this.httpClient.GetAsync($"api/buyers/sellers/{sellerId}/products");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/sellers/{sellerId}/products");
             response.EnsureSuccessStatusCode();
             var products = await response.Content.ReadFromJsonAsync<List<Product>>();
             return products ?? new List<Product>();
@@ -147,7 +148,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<int> GetTotalCount()
         {
-            var response = await this.httpClient.GetAsync("api/buyers/count");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/count");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<int>();
         }
@@ -155,7 +156,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<BuyerWishlist> GetWishlist(int buyerId)
         {
-            var response = await this.httpClient.GetAsync($"api/buyers/{buyerId}/wishlist");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/wishlist");
             response.EnsureSuccessStatusCode();
             var wishlist = await response.Content.ReadFromJsonAsync<BuyerWishlist>();
             return wishlist ?? new BuyerWishlist(); // Return empty wishlist if null
@@ -164,7 +165,7 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task<bool> IsFollowing(int buyerId, int sellerId)
         {
-            var response = await this.httpClient.GetAsync($"api/buyers/{buyerId}/following/check/{sellerId}");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/following/check/{sellerId}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<bool>();
         }
@@ -173,7 +174,7 @@ namespace MarketPlace924.Repository
         public async Task LoadBuyerInfo(Buyer buyerEntity)
         {
             int buyerId = buyerEntity.Id;
-            var response = await this.httpClient.GetAsync($"api/buyers/{buyerId}/info");
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/info");
             response.EnsureSuccessStatusCode();
             var loadedBuyer = await response.Content.ReadFromJsonAsync<Buyer>();
             if (loadedBuyer == null)
@@ -197,28 +198,28 @@ namespace MarketPlace924.Repository
         /// <inheritdoc />
         public async Task RemoveWishilistItem(int buyerId, int productId)
         {
-            var response = await this.httpClient.DeleteAsync($"api/buyers/{buyerId}/wishlist/remove/{productId}");
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{buyerId}/wishlist/remove/{productId}");
             response.EnsureSuccessStatusCode();
         }
 
         /// <inheritdoc />
         public async Task SaveInfo(Buyer buyerEntity)
         {
-            var response = await this.httpClient.PostAsJsonAsync("api/buyers/save", buyerEntity);
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/save", buyerEntity);
             response.EnsureSuccessStatusCode();
         }
 
         /// <inheritdoc />
         public async Task UnfollowSeller(int buyerId, int sellerId)
         {
-            var response = await this.httpClient.DeleteAsync($"api/buyers/{buyerId}/unfollow/{sellerId}");
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{buyerId}/unfollow/{sellerId}");
             response.EnsureSuccessStatusCode();
         }
 
         /// <inheritdoc />
         public async Task UpdateAfterPurchase(Buyer buyerEntity)
         {
-            var response = await this.httpClient.PutAsJsonAsync("api/buyers/update-after-purchase", buyerEntity);
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update-after-purchase", buyerEntity);
             response.EnsureSuccessStatusCode();
         }
 
@@ -230,7 +231,7 @@ namespace MarketPlace924.Repository
             query["receivingBuyerId"] = receivingBuyerId.ToString();
             string queryString = query.ToString() ?? string.Empty;
 
-            var response = await this.httpClient.PutAsync($"api/buyers/linkages/update?{queryString}", null); // No body needed for this PUT
+            var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/linkages/update?{queryString}", null); // No body needed for this PUT
             response.EnsureSuccessStatusCode();
         }
     }
