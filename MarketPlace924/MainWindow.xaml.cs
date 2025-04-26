@@ -4,8 +4,8 @@
 namespace MarketPlace924
 {
     using System.Threading.Tasks;
-    using SharedClassLibrary.Domain;
-    using SharedClassLibrary.IRepository;
+    using MarketPlace924.Helper;
+    using MarketPlace924.Repository;
     using MarketPlace924.Service;
     using MarketPlace924.View;
     using MarketPlace924.View.Admin;
@@ -13,7 +13,8 @@ namespace MarketPlace924
     using MarketPlace924.ViewModel.Admin;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using MarketPlace924.Helper;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
