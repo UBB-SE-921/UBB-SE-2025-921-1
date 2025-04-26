@@ -67,15 +67,15 @@ namespace MarketPlace924.Repository
         private static void AddContractParameters(IDbCommand command, IContract contract, byte[] pdfFile)
         {
             command.Parameters.AddWithValue("@OrderID", contract.OrderID);
-            command.Parameters.AddWithValue("@ContractStatus", contract.ContractStatus);
+            //command.Parameters.AddWithValue("@ContractStatus", contract.ContractStatus);
             command.Parameters.AddWithValue("@ContractContent", contract.ContractContent);
             command.Parameters.AddWithValue("@RenewalCount", contract.RenewalCount);
             command.Parameters.AddWithValue("@PDFID", contract.PDFID);
 
-            if (pdfFile != null)
-            {
-                command.Parameters.AddWithValue("@PDFFile", pdfFile);
-            }
+            //if (pdfFile != null)
+            //{
+            //    command.Parameters.AddWithValue("@PDFFile", pdfFile);
+            //}
 
             command.Parameters.AddWithValue("@PredefinedContractID",
                 contract.PredefinedContractID.HasValue ? (object)contract.PredefinedContractID.Value : DBNull.Value);
@@ -142,7 +142,7 @@ namespace MarketPlace924.Repository
         {
             return new Contract
             {
-                ContractID = reader.GetInt64(reader.GetOrdinal("ID")),
+                ContractID = reader.GetInt32(reader.GetOrdinal("ID")),
                 OrderID = reader.GetInt32(reader.GetOrdinal("orderID")),
                 ContractStatus = reader.GetString(reader.GetOrdinal("contractStatus")),
                 ContractContent = (string)reader["contractContent"],
