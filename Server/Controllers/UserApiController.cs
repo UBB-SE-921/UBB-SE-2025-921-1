@@ -11,7 +11,7 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing user data.
     /// </summary>
-    [Route("/users")]
+    [Route("api/users")]
     [ApiController]
     public class UserApiController : ControllerBase
     {
