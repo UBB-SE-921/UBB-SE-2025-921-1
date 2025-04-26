@@ -22,13 +22,13 @@ namespace MarketPlace924.Service
             this.orderRepository = new OrderProxyRepository();
         }
 
-        public async Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
+        public async Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
         {
             ValidateOrderParameters(productId, buyerId, productType, paymentMethod, orderSummaryId);
             await orderRepository.AddOrderAsync(productId, buyerId, productType, paymentMethod, orderSummaryId, orderDate);
         }
 
-        public async Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate)
+        public async Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate)
         {
             if (orderId <= 0)
             {
@@ -218,7 +218,7 @@ namespace MarketPlace924.Service
             return await orderRepository.GetOrderSummaryAsync(orderSummaryId);
         }
 
-        private void ValidateOrderParameters(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId)
+        private void ValidateOrderParameters(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId)
         {
             if (productId <= 0)
             {
@@ -228,9 +228,9 @@ namespace MarketPlace924.Service
             {
                 throw new ArgumentException("Buyer ID must be positive", nameof(buyerId));
             }
-            if (productType <= 0)
+            if (string.IsNullOrWhiteSpace(productType))
             {
-                throw new ArgumentException("Product type must be positive", nameof(productType));
+                throw new ArgumentException("Product type cannot be empty", nameof(productType));
             }
             if (string.IsNullOrWhiteSpace(paymentMethod))
             {

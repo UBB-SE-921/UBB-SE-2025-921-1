@@ -24,7 +24,7 @@ namespace MarketPlace924.Repository
             this.databaseProvider = databaseProvider;
         }
 
-        public async Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
+        public async Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
         {
             using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
             {
@@ -45,7 +45,7 @@ namespace MarketPlace924.Repository
             }
         }
 
-        public async Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate)
+        public async Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate)
         {
             using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
             {
@@ -103,9 +103,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -138,9 +138,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -174,9 +174,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -209,9 +209,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -244,9 +244,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -279,9 +279,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -314,9 +314,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -349,9 +349,9 @@ namespace MarketPlace924.Repository
                                 BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
                                 OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
                                 OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
+                                ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 PaymentMethod = reader.IsDBNull(reader.GetOrdinal("PaymentMethod")) ? string.Empty : reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.IsDBNull(reader.GetOrdinal("OrderDate")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("OrderDate"))
+                                OrderDate = reader.IsDBNull(reader.GetOrdinal("OrderDate")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("OrderDate")),
                             };
                             orders.Add(order);
                         }
@@ -378,7 +378,7 @@ namespace MarketPlace924.Repository
                         o.PaymentMethod, 
                         o.OrderSummaryID
                     FROM [Order] o
-                    JOIN [DummyProduct] p ON o.ProductType = p.ID
+                    JOIN [DummyProduct] p ON o.ProductID = p.ID
                     WHERE o.BuyerID = @UserId";
 
                     if (!string.IsNullOrEmpty(searchText))
@@ -413,23 +413,22 @@ namespace MarketPlace924.Repository
                         {
                             var orderId = reader.GetInt32(reader.GetOrdinal("OrderID"));
                             var productName = reader.GetString(reader.GetOrdinal("ProductName"));
-                            var productType = reader.GetInt32(reader.GetOrdinal("ProductType"));
-                            var productTypeName = reader.GetString(reader.GetOrdinal("ProductTypeName"));
+                            var productType = reader.GetString(reader.GetOrdinal("ProductType"));
                             var orderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"));
                             var paymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod"));
                             var orderSummaryId = reader.GetInt32(reader.GetOrdinal("OrderSummaryID"));
 
-                            string productCategory = (productTypeName == "new" || productTypeName == "used") ? "new" : "borrowed";
+                            string productCategory = (productType == "new" || productType == "used") ? "new" : "borrowed";
 
                             orderDisplayInfos.Add(new OrderDisplayInfo
                             {
                                 OrderID = orderId,
                                 ProductName = productName,
-                                ProductTypeName = productTypeName,
+                                ProductTypeName = productType,
                                 OrderDate = orderDate.ToString("yyyy-MM-dd"),
                                 PaymentMethod = paymentMethod,
                                 OrderSummaryID = orderSummaryId,
-                                ProductCategory = productCategory
+                                ProductCategory = productCategory,
                             });
                         }
                     }
@@ -451,7 +450,7 @@ namespace MarketPlace924.Repository
                         o.OrderSummaryID,
                         p.productType
                     FROM [Order] o
-                    JOIN [DummyProduct] p ON o.ProductType = p.ID
+                    JOIN [DummyProduct] p ON o.ProductID = p.ID
                     WHERE o.BuyerID = @UserId";
 
                     command.CommandText = query;

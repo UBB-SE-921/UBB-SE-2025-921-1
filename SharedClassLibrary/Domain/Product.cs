@@ -70,7 +70,7 @@ public class Product
     public int Stock { get; set; }
 
     // from Art-Attack - added by Alex, not merged by who needed to do it
-    public string? ProductType { get; set; }
+    public string ProductType { get; set; }
 
     public DateTimeOffset? StartDate { get; set; }
 

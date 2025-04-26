@@ -65,6 +65,51 @@ namespace Server.DBConnection
         public DbSet<FollowingEntity> Followings { get; set; }
 
         /// <summary>
+        /// Gets or sets the seller notifications table.
+        /// </summary>
+        public DbSet<SellerNotificationEntity> SellerNotifications { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order notifications table.
+        /// </summary>
+        public DbSet<OrderNotificationEntity> OrderNotifications { get; set; }
+
+        /// <summary>
+        /// Gets or sets the reviews table.
+        /// </summary>
+        public DbSet<Review> Reviews { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order summaries table.
+        /// </summary>
+        public DbSet<OrderSummary> OrderSummary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order history table.
+        /// </summary>
+        public DbSet<OrderHistory> OrderHistory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the orders table.
+        /// </summary>
+        public DbSet<Order> Orders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the PDFs table.
+        /// </summary>
+        public DbSet<PDF> PDFs { get; set; }
+
+        /// <summary>
+        /// Gets or sets the predefined contracts table.
+        /// </summary>
+        public DbSet<PredefinedContract> PredefinedContracts { get; set; }
+
+        /// <summary>
+        /// Gets or sets the contracts table.
+        /// </summary>
+        public DbSet<Contract> Contracts { get; set; }
+
+        /// <summary>
         /// On model creating.
         /// </summary>
         /// <param name="modelBuilder">The model builder.</param>
@@ -187,6 +232,130 @@ namespace Server.DBConnection
                 .WithMany()
                 .HasForeignKey(f => f.SellerId)
                 .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // --- Seller Notification Entity Configuration ---
+            modelBuilder.Ignore<Notification>();
+            modelBuilder.Ignore<ContractRenewalAnswerNotification>();
+            modelBuilder.Ignore<ContractRenewalWaitlistNotification>();
+            modelBuilder.Ignore<OutbiddedNotification>();
+            modelBuilder.Ignore<OrderShippingProgressNotification>();
+            modelBuilder.Ignore<PaymentConfirmationNotification>();
+            modelBuilder.Ignore<ProductRemovedNotification>();
+            modelBuilder.Ignore<ProductAvailableNotification>();
+            modelBuilder.Ignore<ContractRenewalRequestNotification>();
+            modelBuilder.Ignore<ContractExpirationNotification>();
+
+            modelBuilder.Entity<SellerNotificationEntity>(entity =>
+            {
+                entity.HasKey(sn => sn.NotificationID);
+
+                entity.HasOne<Seller>()
+                .WithMany()
+                .HasForeignKey(sn => sn.SellerID)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // --- Order Notification Entity Configuration ---
+            modelBuilder.Entity<OrderNotificationEntity>(entity =>
+            {
+                entity.HasKey(on => on.NotificationID);
+
+                entity.HasOne<Buyer>()
+                    .WithMany()
+                    .HasForeignKey(on => on.RecipientID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint("NotificationCategoryConstraint", "[Category] IN ('CONTRACT_EXPIRATION', 'OUTBIDDED', 'ORDER_SHIPPING_PROGRESS', 'PRODUCT_AVAILABLE', 'PAYMENT_CONFIRMATION', 'PRODUCT_REMOVED', 'CONTRACT_RENEWAL_REQ', 'CONTRACT_RENEWAL_ANS', 'CONTRACT_RENEWAL_WAITLIST')"));
+            });
+
+            // --- Review Configuration ---
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.HasKey(r => r.ReviewId);
+
+                entity.HasOne<Seller>()
+                    .WithMany()
+                    .HasForeignKey(r => r.SellerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // --- Order Summary Configuration ---
+            modelBuilder.Entity<OrderSummary>(entity =>
+            {
+                entity.HasKey(os => os.ID);
+            });
+
+            // --- Order History Configuration ---
+            modelBuilder.Entity<OrderHistory>(entity =>
+            {
+                entity.HasKey(oh => oh.OrderID);
+            });
+
+            // --- Order Configuration ---
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.HasKey(o => o.OrderID);
+
+                entity.HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey(o => o.ProductID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Buyer>()
+                    .WithMany()
+                    .HasForeignKey(o => o.BuyerID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<OrderSummary>()
+                    .WithMany()
+                    .HasForeignKey(o => o.OrderSummaryID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<OrderHistory>()
+                    .WithMany()
+                    .HasForeignKey(o => o.OrderHistoryID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint("PaymentMethodConstraint", "[PaymentMethod] IN ('card', 'wallet', 'cash')"));
+            });
+
+            // --- PDF Configuration ---
+            modelBuilder.Entity<PDF>(entity =>
+            {
+                entity.HasKey(p => p.PdfID);
+                entity.Ignore(p => p.ContractID); // ignored to respect Maria's DB design (but not deleted to avoid breaking changes)
+            });
+
+            // --- Predefined Contract Configuration ---
+            modelBuilder.Entity<PredefinedContract>(entity =>
+            {
+                entity.HasKey(pc => pc.ContractID);
+                entity.Ignore(pc => pc.ID); // ignored to respect Maria's DB design (but not deleted to avoid breaking changes)
+            });
+
+            // --- Contract Configuration ---
+            modelBuilder.Entity<Contract>(entity =>
+            {
+                entity.HasKey(c => c.ContractID);
+
+                entity.HasOne<Order>()
+                    .WithMany()
+                    .HasForeignKey(c => c.OrderID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<PredefinedContract>()
+                    .WithMany()
+                    .HasForeignKey(pc => pc.PredefinedContractID)
+                    .IsRequired(false) // nullable to respect Maria's DB design
+                    .OnDelete(DeleteBehavior.SetNull); // SetNull because it is Nullable
+
+                entity.HasOne<PDF>()
+                    .WithMany()
+                    .HasForeignKey(p => p.PDFID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint("ContractStatusConstraint", "[ContractStatus] IN ('ACTIVE', 'RENEWED', 'EXPIRED')"));
             });
         }
     }

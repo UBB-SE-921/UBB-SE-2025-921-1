@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.DBConnection;
 
@@ -11,9 +12,11 @@ using Server.DBConnection;
 namespace Server.Migrations
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    partial class MarketPlaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426152458_ServiceRepository3")]
+    partial class ServiceRepository3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,55 +227,6 @@ namespace Server.Migrations
                     b.ToTable("Buyers");
                 });
 
-            modelBuilder.Entity("SharedClassLibrary.Domain.Contract", b =>
-                {
-                    b.Property<long>("ContractID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ContractID"));
-
-                    b.Property<string>("AdditionalTerms")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContractContent")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContractStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrderID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PDFID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PredefinedContractID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RenewalCount")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("RenewedFromContractID")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ContractID");
-
-                    b.HasIndex("OrderID");
-
-                    b.HasIndex("PDFID");
-
-                    b.HasIndex("PredefinedContractID");
-
-                    b.ToTable("Contracts", t =>
-                        {
-                            t.HasCheckConstraint("ContractStatusConstraint", "[ContractStatus] IN ('ACTIVE', 'RENEWED', 'EXPIRED')");
-                        });
-                });
-
             modelBuilder.Entity("SharedClassLibrary.Domain.Order", b =>
                 {
                     b.Property<int>("OrderID")
@@ -377,40 +331,6 @@ namespace Server.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("OrderSummary");
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.PDF", b =>
-                {
-                    b.Property<int>("PdfID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PdfID"));
-
-                    b.Property<byte[]>("File")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.HasKey("PdfID");
-
-                    b.ToTable("PDFs");
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.PredefinedContract", b =>
-                {
-                    b.Property<int>("ContractID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractID"));
-
-                    b.Property<string>("ContractContent")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ContractID");
-
-                    b.ToTable("PredefinedContracts");
                 });
 
             modelBuilder.Entity("SharedClassLibrary.Domain.Product", b =>
@@ -637,26 +557,6 @@ namespace Server.Migrations
                     b.Navigation("ShippingAddress");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.Contract", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SharedClassLibrary.Domain.PDF", null)
-                        .WithMany()
-                        .HasForeignKey("PDFID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SharedClassLibrary.Domain.PredefinedContract", null)
-                        .WithMany()
-                        .HasForeignKey("PredefinedContractID")
-                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("SharedClassLibrary.Domain.Order", b =>

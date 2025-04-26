@@ -7,10 +7,10 @@ namespace SharedClassLibrary.Domain
         public int OrderID { get; set; }
         public int ProductID { get; set; }
         public int BuyerID { get; set; }
-        public int ProductType { get; set; }
+        public string ProductType { get; set; } // will be populated from Products table based on ProductID
+        public string PaymentMethod { get; set; } // constraint {'card', 'wallet', 'cash'}
         public int OrderSummaryID { get; set; }
+        public DateTimeOffset OrderDate { get; set; }
         public int OrderHistoryID { get; set; }
-        public string? PaymentMethod { get; set; }
-        public DateTime OrderDate { get; set; }
     }
 }

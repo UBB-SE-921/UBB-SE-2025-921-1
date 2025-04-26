@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.DBConnection;
 
@@ -11,9 +12,11 @@ using Server.DBConnection;
 namespace Server.Migrations
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    partial class MarketPlaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426143006_ServiceRepository0")]
+    partial class ServiceRepository0
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,10 +122,7 @@ namespace Server.Migrations
 
                     b.HasIndex("RecipientID");
 
-                    b.ToTable("OrderNotifications", t =>
-                        {
-                            t.HasCheckConstraint("NotificationCategoryConstraint", "[Category] IN ('CONTRACT_EXPIRATION', 'OUTBIDDED', 'ORDER_SHIPPING_PROGRESS', 'PRODUCT_AVAILABLE', 'PAYMENT_CONFIRMATION', 'PRODUCT_REMOVED', 'CONTRACT_RENEWAL_REQ', 'CONTRACT_RENEWAL_ANS', 'CONTRACT_RENEWAL_WAITLIST')");
-                        });
+                    b.ToTable("OrderNotifications");
                 });
 
             modelBuilder.Entity("Server.DataModels.SellerNotificationEntity", b =>
@@ -224,195 +224,6 @@ namespace Server.Migrations
                     b.ToTable("Buyers");
                 });
 
-            modelBuilder.Entity("SharedClassLibrary.Domain.Contract", b =>
-                {
-                    b.Property<long>("ContractID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ContractID"));
-
-                    b.Property<string>("AdditionalTerms")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContractContent")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContractStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrderID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PDFID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PredefinedContractID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RenewalCount")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("RenewedFromContractID")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("ContractID");
-
-                    b.HasIndex("OrderID");
-
-                    b.HasIndex("PDFID");
-
-                    b.HasIndex("PredefinedContractID");
-
-                    b.ToTable("Contracts", t =>
-                        {
-                            t.HasCheckConstraint("ContractStatusConstraint", "[ContractStatus] IN ('ACTIVE', 'RENEWED', 'EXPIRED')");
-                        });
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.Order", b =>
-                {
-                    b.Property<int>("OrderID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
-
-                    b.Property<int>("BuyerID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("OrderDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("OrderHistoryID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderSummaryID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("OrderID");
-
-                    b.HasIndex("BuyerID");
-
-                    b.HasIndex("OrderHistoryID");
-
-                    b.HasIndex("OrderSummaryID");
-
-                    b.HasIndex("ProductID");
-
-                    b.ToTable("Orders", t =>
-                        {
-                            t.HasCheckConstraint("PaymentMethodConstraint", "[PaymentMethod] IN ('card', 'wallet', 'cash')");
-                        });
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.OrderHistory", b =>
-                {
-                    b.Property<int>("OrderID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
-
-                    b.HasKey("OrderID");
-
-                    b.ToTable("OrderHistory");
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.OrderSummary", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("AdditionalInfo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContractDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("DeliveryFee")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("FinalTotal")
-                        .HasColumnType("real");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostalCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("Subtotal")
-                        .HasColumnType("real");
-
-                    b.Property<float>("WarrantyTax")
-                        .HasColumnType("real");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("OrderSummary");
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.PDF", b =>
-                {
-                    b.Property<int>("PdfID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PdfID"));
-
-                    b.Property<byte[]>("File")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.HasKey("PdfID");
-
-                    b.ToTable("PDFs");
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.PredefinedContract", b =>
-                {
-                    b.Property<int>("ContractID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractID"));
-
-                    b.Property<string>("ContractContent")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ContractID");
-
-                    b.ToTable("PredefinedContracts");
-                });
-
             modelBuilder.Entity("SharedClassLibrary.Domain.Product", b =>
                 {
                     b.Property<int>("ProductId")
@@ -436,7 +247,6 @@ namespace Server.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("ProductType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SellerId")
@@ -453,27 +263,6 @@ namespace Server.Migrations
                     b.HasIndex("SellerId");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.Review", b =>
-                {
-                    b.Property<int>("ReviewId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
-
-                    b.Property<double>("Score")
-                        .HasColumnType("float");
-
-                    b.Property<int>("SellerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReviewId");
-
-                    b.HasIndex("SellerId");
-
-                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("SharedClassLibrary.Domain.Seller", b =>
@@ -639,63 +428,7 @@ namespace Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SharedClassLibrary.Domain.Contract", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SharedClassLibrary.Domain.PDF", null)
-                        .WithMany()
-                        .HasForeignKey("PDFID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SharedClassLibrary.Domain.PredefinedContract", null)
-                        .WithMany()
-                        .HasForeignKey("PredefinedContractID")
-                        .OnDelete(DeleteBehavior.SetNull);
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.Order", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.Buyer", null)
-                        .WithMany()
-                        .HasForeignKey("BuyerID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SharedClassLibrary.Domain.OrderHistory", null)
-                        .WithMany()
-                        .HasForeignKey("OrderHistoryID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SharedClassLibrary.Domain.OrderSummary", null)
-                        .WithMany()
-                        .HasForeignKey("OrderSummaryID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SharedClassLibrary.Domain.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SharedClassLibrary.Domain.Product", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.Seller", null)
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.Review", b =>
                 {
                     b.HasOne("SharedClassLibrary.Domain.Seller", null)
                         .WithMany()
