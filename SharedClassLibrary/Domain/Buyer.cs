@@ -19,7 +19,7 @@ namespace SharedClassLibrary.Domain
     /// <seealso cref="BuyerWishlist"/>
     /// <seealso cref="BuyerLinkage"/>
     /// <seealso cref="Address"/>
-    public class Buyer : User
+    public class Buyer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Buyer"/> class.
@@ -50,7 +50,7 @@ namespace SharedClassLibrary.Domain
         /// <summary>
         /// Gets or sets the buyer's phone number, hiding the base User.PhoneNumber property.
         /// </summary>
-        public new string PhoneNumber
+        public string PhoneNumber
         {
             get => this.User.PhoneNumber;
             set => this.User.PhoneNumber = value;
@@ -59,7 +59,7 @@ namespace SharedClassLibrary.Domain
         /// <summary>
         /// Gets or sets the buyer's email address, hiding the base User.Email property.
         /// </summary>
-        public new string Email
+        public string Email
         {
             get => this.User.Email;
             set => this.User.Email = value;

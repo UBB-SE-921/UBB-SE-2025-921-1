@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 /// </summary>
 public class Product
 {
+    // Add this private parameterless constructor for Entity Framework Core
+    private Product() { }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
     /// </summary>
