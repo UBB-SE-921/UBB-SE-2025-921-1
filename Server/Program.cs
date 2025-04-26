@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Assuming your implementation class is named UserRepository
 builder.Services.AddScoped<DatabaseConnection>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
 
 builder.Services.AddControllers();
 

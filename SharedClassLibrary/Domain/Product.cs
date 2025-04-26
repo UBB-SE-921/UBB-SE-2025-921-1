@@ -26,9 +26,9 @@ public class Product
     /// <param name="price">The price of the product.</param>
     /// <param name="stock">The available stock quantity.</param>
     /// <param name="sellerId">The identifier of the seller.</param>
-    public Product(int id, string name, string description, double price, int stock, int sellerId)
+    public Product(int productId, string name, string description, double price, int stock, int sellerId)
     {
-        this.ProductId = id;
+        this.ProductId = productId;
         this.Name = name;
         this.Description = description;
         this.Price = price;
