@@ -11,6 +11,7 @@ using SharedClassLibrary.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using MarketPlace924.Repository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.ViewModel
 {
@@ -33,7 +34,7 @@ namespace MarketPlace924.ViewModel
             // Assign injected services to fields
             this.contractService = new ContractService(new ContractProxyRepository());
             this.pdfService = new PDFService();
-            this.renewalService = new ContractRenewalService(new ContractRenewalProxyRepository());
+            this.renewalService = new ContractRenewalService(new ContractRenewalProxyRepository(AppConfig.GetBaseApiUrl()));
             this.notificationContentService = new NotificationContentService();
             this.fileSystem = new FileSystemWrapper();
             this.dateTimeProvider = new DateTimeProvider();
