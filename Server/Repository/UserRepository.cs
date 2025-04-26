@@ -6,10 +6,9 @@
 
 namespace SharedClassLibrary.IRepository
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Data.SqlClient;
+    using Microsoft.EntityFrameworkCore;
     using Server.DBConnection;
     using SharedClassLibrary.Domain;
 
@@ -18,15 +17,15 @@ namespace SharedClassLibrary.IRepository
     /// </summary>
     public class UserRepository : IUserRepository
     {
-        private DatabaseConnection databaseConnection;
+        private readonly MarketPlaceDbContext dbContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserRepository"/> class.
         /// </summary>
-        /// <param name="databaseConnection">The database connection to be used by the repository.</param>
-        public UserRepository(DatabaseConnection databaseConnection)
+        /// <param name="dbContext">The database context to be used by the repository.</param>
+        public UserRepository(MarketPlaceDbContext dbContext)
         {
-            this.databaseConnection = databaseConnection;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -36,35 +35,8 @@ namespace SharedClassLibrary.IRepository
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         public async Task AddUser(User user)
         {
-            await this.databaseConnection.OpenConnection();
-
-            var sqlConnection = this.databaseConnection.GetConnection();
-            var sqlCommand = sqlConnection.CreateCommand();
-
-            sqlCommand.CommandText = @"
-			INSERT INTO Users (Username, Email, PhoneNumber, Password, Role, FailedLogins, BannedUntil, IsBanned)
-			VALUES (@Username, @Email, @PhoneNumber, @Password, @Role, @FailedLogins, @BannedUntil, @IsBanned)";
-
-            sqlCommand.Parameters.AddWithValue("@Username", user.Username);
-            sqlCommand.Parameters.AddWithValue("@Email", user.Email);
-            sqlCommand.Parameters.AddWithValue("@PhoneNumber", user.PhoneNumber);
-            sqlCommand.Parameters.AddWithValue("@Password", user.Password);
-            sqlCommand.Parameters.AddWithValue("@Role", (int)user.Role);
-            sqlCommand.Parameters.AddWithValue("@FailedLogins", user.FailedLogins);
-
-            if (user.BannedUntil == null)
-            {
-                sqlCommand.Parameters.AddWithValue("@BannedUntil", DBNull.Value);
-            }
-            else
-            {
-                sqlCommand.Parameters.AddWithValue("@BannedUntil", user.BannedUntil);
-            }
-
-            sqlCommand.Parameters.AddWithValue("@IsBanned", user.IsBanned);
-
-            sqlCommand.ExecuteNonQuery();
-            this.databaseConnection.CloseConnection();
+            this.dbContext.Users.Add(user);
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -74,34 +46,7 @@ namespace SharedClassLibrary.IRepository
         /// <returns>A <see cref="Task{User?}"/> representing the result of the asynchronous operation, with a result of the user if found, or null if not found.</returns>
         public async Task<User?> GetUserByUsername(string username)
         {
-            await this.databaseConnection.OpenConnection();
-            using var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "SELECT * FROM Users WHERE Username = @Username";
-            sqlCommand.Parameters.Add(new SqlParameter("@Username", username));
-
-            using var reader = await sqlCommand.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            var userId = reader.GetInt32(reader.GetOrdinal("UserID"));
-            var email = reader.GetString(reader.GetOrdinal("Email"));
-            var phoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber"));
-            var password = reader.GetString(reader.GetOrdinal("Password"));
-            var role = (UserRole)reader.GetInt32(reader.GetOrdinal("Role"));
-            var failedLoginsCount = reader.GetInt32(reader.GetOrdinal("FailedLogins"));
-
-            DateTime? bannedUntil = null;
-            if (!reader.IsDBNull(reader.GetOrdinal("BannedUntil")))
-            {
-                bannedUntil = reader.GetDateTime(reader.GetOrdinal("BannedUntil"));
-            }
-
-            var userIsBanned = reader.GetBoolean(reader.GetOrdinal("IsBanned"));
-            this.databaseConnection.CloseConnection();
-            return new User(userId, username, email, phoneNumber, password, role, failedLoginsCount, bannedUntil, userIsBanned);
+            return await this.dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
         /// <summary>
@@ -112,15 +57,18 @@ namespace SharedClassLibrary.IRepository
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         public async Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
+            // Find the user by their primary key (UserId)
+            var userToUpdate = await this.dbContext.Users.FindAsync(user.UserId);
 
-            sqlCommand.CommandText = "UPDATE Users SET FailedLogins = @FailedLogins WHERE UserID = @UserID";
-            user.FailedLogins = newValueOfFailedLogIns;
-            sqlCommand.Parameters.Add(new SqlParameter("@FailedLogins", user.FailedLogins));
-            sqlCommand.Parameters.Add(new SqlParameter("@UserID", user.UserId));
-            await sqlCommand.ExecuteNonQueryAsync();
-            this.databaseConnection.CloseConnection();
+            // Check if the user was found
+            if (userToUpdate != null)
+            {
+                // Update the property on the tracked entity
+                userToUpdate.FailedLogins = newValueOfFailedLogIns;
+
+                // EF Core automatically tracks the change, just save it
+                await this.dbContext.SaveChangesAsync();
+            }
         }
 
         /// <summary>
@@ -130,30 +78,8 @@ namespace SharedClassLibrary.IRepository
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         public async Task UpdateUser(User user)
         {
-            await this.databaseConnection.OpenConnection();
-            using var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "UPDATE Users SET Username = @Username, Email = @Email, PhoneNumber = @PhoneNumber, Password = @Password, Role = @Role, FailedLogins = @FailedLogins, BannedUntil = @BannedUntil, IsBanned = @IsBanned WHERE UserID = @UserID";
-            sqlCommand.Parameters.Add(new SqlParameter("@Username", user.Username));
-            sqlCommand.Parameters.Add(new SqlParameter("@Email", user.Email));
-            sqlCommand.Parameters.Add(new SqlParameter("@PhoneNumber", user.PhoneNumber));
-            sqlCommand.Parameters.Add(new SqlParameter("@Password", user.Password));
-            sqlCommand.Parameters.Add(new SqlParameter("@Role", user.Role));
-            sqlCommand.Parameters.Add(new SqlParameter("@FailedLogins", user.FailedLogins));
-
-            if (user.BannedUntil == null)
-            {
-                sqlCommand.Parameters.Add(new SqlParameter("@BannedUntil", DBNull.Value));
-            }
-            else
-            {
-                sqlCommand.Parameters.Add(new SqlParameter("@BannedUntil", user.BannedUntil));
-            }
-
-            sqlCommand.Parameters.Add(new SqlParameter("@IsBanned", user.IsBanned));
-            sqlCommand.Parameters.Add(new SqlParameter("@UserID", user.UserId));
-            sqlCommand.ExecuteNonQuery();
-            this.databaseConnection.CloseConnection();
+            this.dbContext.Users.Update(user);
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -163,36 +89,7 @@ namespace SharedClassLibrary.IRepository
         /// <returns>A <see cref="Task{User?}"/> representing the result of the asynchronous operation. The task result contains the user if found or null if no user is found with the specified email address.</returns>
         public async Task<User?> GetUserByEmail(string email)
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "SELECT * FROM Users WHERE Email = @Email";
-            sqlCommand.Parameters.Add(new SqlParameter("@Email", email));
-
-            var reader = await sqlCommand.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            var userId = reader.GetInt32(reader.GetOrdinal("UserID"));
-            var username = reader.GetString(reader.GetOrdinal("Username"));
-            var phoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber"));
-            var password = reader.GetString(reader.GetOrdinal("Password"));
-            var role = (UserRole)reader.GetInt32(reader.GetOrdinal("Role"));
-            var failedLoginsCount = reader.GetInt32(reader.GetOrdinal("FailedLogins"));
-
-            DateTime? bannedUntil = null;
-            if (!reader.IsDBNull(reader.GetOrdinal("BannedUntil")))
-            {
-                bannedUntil = reader.GetDateTime(reader.GetOrdinal("BannedUntil"));
-            }
-
-            var isBanned = reader.GetBoolean(reader.GetOrdinal("IsBanned"));
-
-            await reader.CloseAsync();
-            this.databaseConnection.CloseConnection();
-            return new User(userId, username, email, phoneNumber, password, role, failedLoginsCount, bannedUntil, isBanned);
+            return await this.dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         /// <summary>
@@ -205,14 +102,7 @@ namespace SharedClassLibrary.IRepository
         /// </returns>
         public async Task<bool> EmailExists(string email)
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "SELECT count(1) FROM Users WHERE Email = @Email";
-            sqlCommand.Parameters.Add(new SqlParameter("@Email", email));
-            var numberOfUsersWithThisEmail = (int)(await sqlCommand.ExecuteScalarAsync() ?? 0);
-            this.databaseConnection.CloseConnection();
-            return numberOfUsersWithThisEmail > 0;
+            return await this.dbContext.Users.AnyAsync(u => u.Email == email);
         }
 
         /// <summary>
@@ -225,21 +115,7 @@ namespace SharedClassLibrary.IRepository
         /// </returns>
         public async Task<bool> UsernameExists(string username)
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "SELECT COUNT(1) FROM Users WHERE Username = @Username";
-            sqlCommand.Parameters.Add(new SqlParameter("@Username", username));
-
-            int usernameExists = 0;
-            var numberOfUsersWithThisUsername = await sqlCommand.ExecuteScalarAsync();
-
-            if (numberOfUsersWithThisUsername != null)
-            {
-                usernameExists = (int)numberOfUsersWithThisUsername;
-            }
-
-            return usernameExists > 0;
+            return await this.dbContext.Users.AnyAsync(u => u.Username == username);
         }
 
         /// <summary>
@@ -252,24 +128,11 @@ namespace SharedClassLibrary.IRepository
         /// </returns>
         public async Task<int> GetFailedLoginsCountByUserId(int userId)
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "SELECT FailedLogins FROM Users WHERE UserID = @UserID";
-            sqlCommand.Parameters.Add(new SqlParameter("@UserID", userId));
-
-            int numberOfFailedLoginsToInt = 0;
-            var numberOfFailedLogins = await sqlCommand.ExecuteScalarAsync();
-            if (numberOfFailedLogins != null)
-            {
-                numberOfFailedLoginsToInt = (int)numberOfFailedLogins;
-            }
-
-            this.databaseConnection.CloseConnection();
-            return numberOfFailedLoginsToInt;
+            return await this.dbContext.Users
+                .Where(u => u.UserId == userId)
+                .Select(u => u.FailedLogins)
+                .FirstOrDefaultAsync();
         }
-
-        // region: For Buyer
 
         /// <summary>
         /// Updates the contact information (phone number) of an existing user in the database.
@@ -280,14 +143,12 @@ namespace SharedClassLibrary.IRepository
         /// </returns>
         public async Task UpdateUserPhoneNumber(User user)
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlConnection = this.databaseConnection.GetConnection();
-            var sqlCommand = sqlConnection.CreateCommand();
-            sqlCommand.CommandText = "UPDATE Users SET PhoneNumber = @PhoneNumber WHERE UserID = @UserID";
-
-            sqlCommand.Parameters.Add(new SqlParameter("@PhoneNumber", user.PhoneNumber));
-            sqlCommand.Parameters.Add(new SqlParameter("@UserID", user.UserId));
-            await sqlCommand.ExecuteNonQueryAsync();
+            User? foundUser = await this.dbContext.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId);
+            if (foundUser != null)
+            {
+                foundUser.PhoneNumber = user.PhoneNumber;
+                await this.dbContext.SaveChangesAsync();
+            }
         }
 
         /// <summary>
@@ -299,20 +160,12 @@ namespace SharedClassLibrary.IRepository
         /// </returns>
         public async Task LoadUserPhoneNumberAndEmailById(User user)
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlConnection = this.databaseConnection.GetConnection();
-            var sqlCommand = sqlConnection.CreateCommand();
-            sqlCommand.CommandText = "SELECT PhoneNumber, Email FROM Users WHERE UserID = @UserID";
-            sqlCommand.Parameters.Add(new SqlParameter("@UserID", user.UserId));
-            var reader = await sqlCommand.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
+            User? foundUser = await this.dbContext.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId);
+            if (foundUser != null)
             {
-                return;
+                user.PhoneNumber = foundUser.PhoneNumber;
+                user.Email = foundUser.Email;
             }
-
-            user.PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber"));
-            user.Email = reader.GetString(reader.GetOrdinal("Email"));
-            await reader.CloseAsync();
         }
 
         /// <summary>
@@ -324,39 +177,7 @@ namespace SharedClassLibrary.IRepository
         /// </returns>
         public async Task<List<User>> GetAllUsers()
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "SELECT * FROM Users";
-
-            var reader = sqlCommand.ExecuteReader();
-
-            var listOfUsers = new List<User>();
-
-            while (await reader.ReadAsync())
-            {
-                var userId = reader.GetInt32(reader.GetOrdinal("UserID"));
-                var username = reader.GetString(reader.GetOrdinal("Username"));
-                var email = reader.GetString(reader.GetOrdinal("Email"));
-                var phoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber"));
-                var password = reader.GetString(reader.GetOrdinal("Password"));
-                var role = (UserRole)reader.GetInt32(reader.GetOrdinal("Role"));
-                var failedLoginsCount = reader.GetInt32(reader.GetOrdinal("FailedLogins"));
-
-                DateTime? bannedUntil = null;
-                if (!reader.IsDBNull(reader.GetOrdinal("BannedUntil")))
-                {
-                    bannedUntil = reader.GetDateTime(reader.GetOrdinal("BannedUntil"));
-                }
-
-                var isBanned = reader.GetBoolean(reader.GetOrdinal("IsBanned"));
-
-                listOfUsers.Add(new User(userId, username, email, phoneNumber, password, role, failedLoginsCount, bannedUntil, isBanned));
-            }
-
-            await reader.CloseAsync();
-            this.databaseConnection.CloseConnection();
-            return listOfUsers;
+            return await this.dbContext.Users.ToListAsync();
         }
 
         /// <summary>
@@ -368,17 +189,7 @@ namespace SharedClassLibrary.IRepository
         /// </returns>
         public async Task<int> GetTotalNumberOfUsers()
         {
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = "SELECT Count(*) FROM Users";
-
-            var numberOfUsers = (int)sqlCommand.ExecuteScalar();
-
-            this.databaseConnection.CloseConnection();
-            return numberOfUsers;
+            return await this.dbContext.Users.CountAsync();
         }
-
-        // endregion
     }
 }
