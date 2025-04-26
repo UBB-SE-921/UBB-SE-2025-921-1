@@ -52,7 +52,7 @@ namespace MarketPlace924.ViewModel
         /// <param name="orderSummaryId">The unique identifier of the order summary.</param>
         /// <param name="orderDate">The date when the order was placed.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
+        public async Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
         {
             await orderService.AddOrderAsync(productId, buyerId, productType, paymentMethod, orderSummaryId, orderDate);
         }
@@ -65,7 +65,7 @@ namespace MarketPlace924.ViewModel
         /// <param name="paymentMethod">The new payment method.</param>
         /// <param name="orderDate">The new order date.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate)
+        public async Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate)
         {
             await orderService.UpdateOrderAsync(orderId, productType, paymentMethod, orderDate);
         }

@@ -1,87 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+﻿// <copyright file="ContractRenewalRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
+
+    /// <summary>
+    /// Represents a repository for contract renewal operations.
+    /// </summary>
     public class ContractRenewalRepository : IContractRenewalRepository
     {
-        private readonly string connectionString;
-        private readonly IDatabaseProvider databaseProvider;
+        private readonly MarketPlaceDbContext dbContext;
 
         /// <summary>
-        /// Initializes a new instance of the ContractRenewalModel class with default database provider.
+        /// Initializes a new instance of the ContractRenewalRepository class.
         /// </summary>
-        /// <param name="connectionString">The connection string to the database.</param>
-        public ContractRenewalRepository(string connectionString) : this(connectionString, new SqlDatabaseProvider())
+        /// <param name="dbContext">The database context instance.</param>
+        public ContractRenewalRepository(MarketPlaceDbContext dbContext)
         {
+            this.dbContext = dbContext;
         }
 
         /// <summary>
-        /// Initializes a new instance of the ContractRenewalModel class.
-        /// </summary>
-        /// <param name="connectionString">The connection string to the database.</param>
-        /// <param name="databaseProvider">The database provider.</param>
-        public ContractRenewalRepository(string connectionString, IDatabaseProvider databaseProvider)
-        {
-            if (connectionString == null)
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
-            this.connectionString = connectionString;
-            this.databaseProvider = databaseProvider;
-        }
-
-        /// <summary>
-        /// Asynchronously adds a renewed contract to the database using the AddRenewedContract stored procedure.
+        /// Asynchronously adds a renewed contract to the database.
+        /// The PDF was aleady added in the database and the PDFID was set in the ViewModel.
         /// </summary>
         /// <param name="contract">The renewed contract to add to the database.</param>
-        /// <param name="pdfFile">The PDF file of the renewed contract.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task AddRenewedContractAsync(IContract contract, byte[] pdfFile)
+        public async Task AddRenewedContractAsync(IContract contract)
         {
-            using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "AddRenewedContract";
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    AddContractParameters(command, contract, pdfFile);
-
-                    await connection.OpenAsync();
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
-        }
-
-        private static void AddContractParameters(IDbCommand command, IContract contract, byte[] pdfFile)
-        {
-            command.Parameters.AddWithValue("@OrderID", contract.OrderID);
-            command.Parameters.AddWithValue("@ContractStatus", contract.ContractStatus);
-            command.Parameters.AddWithValue("@ContractContent", contract.ContractContent);
-            command.Parameters.AddWithValue("@RenewalCount", contract.RenewalCount);
-            command.Parameters.AddWithValue("@PDFID", contract.PDFID);
-
-            if (pdfFile != null)
-            {
-                command.Parameters.AddWithValue("@PDFFile", pdfFile);
-            }
-
-            command.Parameters.AddWithValue("@PredefinedContractID",
-                contract.PredefinedContractID.HasValue ? (object)contract.PredefinedContractID.Value : DBNull.Value);
-
-            command.Parameters.AddWithValue("@RenewedFromContractID",
-                contract.RenewedFromContractID.HasValue ? (object)contract.RenewedFromContractID.Value : DBNull.Value);
+            await this.dbContext.Contracts.AddAsync(contract.ToContract());
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -93,20 +51,7 @@ namespace MarketPlace924.Repository
         /// <returns>A task representing the asynchronous operation. The task result is true if the contract has been renewed; otherwise, false.</returns>
         public async Task<bool> HasContractBeenRenewedAsync(long contractId)
         {
-            using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
-            {
-                const string query = "SELECT COUNT(*) FROM Contract WHERE RenewedFromContractID = @ContractID";
-                using (IDbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = query;
-                    command.Parameters.AddWithValue("@ContractID", contractId);
-
-                    await connection.OpenAsync();
-                    object result = await command.ExecuteScalarAsync();
-
-                    return result != null && Convert.ToInt32(result) > 0;
-                }
-            }
+            return await this.dbContext.Contracts.AnyAsync(c => c.RenewedFromContractID == contractId);
         }
 
         /// <summary>
@@ -115,46 +60,8 @@ namespace MarketPlace924.Repository
         /// <returns>A task representing the asynchronous operation. The task result is a list of all renewed contracts.</returns>
         public async Task<List<IContract>> GetRenewedContractsAsync()
         {
-            var contracts = new List<IContract>();
-
-            using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "GetRenewedContracts";
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    await connection.OpenAsync();
-                    using (IDataReader reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            contracts.Add(MapContract(reader));
-                        }
-                    }
-                }
-            }
-
-            return contracts;
-        }
-
-        private static Contract MapContract(IDataReader reader)
-        {
-            return new Contract
-            {
-                ContractID = reader.GetInt64(reader.GetOrdinal("ID")),
-                OrderID = reader.GetInt32(reader.GetOrdinal("orderID")),
-                ContractStatus = reader.GetString(reader.GetOrdinal("contractStatus")),
-                ContractContent = (string)reader["contractContent"],
-                RenewalCount = reader.GetInt32(reader.GetOrdinal("renewalCount")),
-                PredefinedContractID = reader.IsDBNull(reader.GetOrdinal("predefinedContractID"))
-                    ? null
-                    : (int?)reader.GetInt32(reader.GetOrdinal("predefinedContractID")),
-                PDFID = reader.GetInt32(reader.GetOrdinal("pdfID")),
-                RenewedFromContractID = reader.IsDBNull(reader.GetOrdinal("renewedFromContractID"))
-                    ? null
-                    : (long?)reader.GetInt64(reader.GetOrdinal("renewedFromContractID"))
-            };
+            var contracts = await this.dbContext.Contracts.Where(c => c.ContractStatus == "RENEWED").ToListAsync();
+            return contracts.Cast<IContract>().ToList();
         }
     }
 }

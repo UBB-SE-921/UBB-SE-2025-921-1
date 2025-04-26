@@ -9,7 +9,7 @@ namespace MarketPlace924.Service
 {
     public interface IContractRenewalService
     {
-        Task AddRenewedContractAsync(IContract contract, byte[] pdfFile);
+        Task AddRenewedContractAsync(IContract contract);
         Task<List<IContract>> GetRenewedContractsAsync();
         Task<bool> HasContractBeenRenewedAsync(long contractId);
     }

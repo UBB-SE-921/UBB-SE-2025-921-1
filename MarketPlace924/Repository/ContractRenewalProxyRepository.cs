@@ -10,7 +10,7 @@ namespace MarketPlace924.Repository
 {
     public class ContractRenewalProxyRepository : IContractRenewalRepository
     {
-        public Task AddRenewedContractAsync(IContract contract, byte[] pdfFile)
+        public Task AddRenewedContractAsync(IContract contract)
         {
             throw new NotImplementedException();
         }

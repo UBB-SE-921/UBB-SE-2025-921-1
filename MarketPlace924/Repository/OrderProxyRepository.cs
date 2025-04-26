@@ -10,7 +10,7 @@ namespace MarketPlace924.Repository
 {
     public class OrderProxyRepository : IOrderRepository
     {
-        public Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
+        public Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
         {
             throw new NotImplementedException();
         }
@@ -75,7 +75,7 @@ namespace MarketPlace924.Repository
             throw new NotImplementedException();
         }
 
-        public Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate)
+        public Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate)
         {
             throw new NotImplementedException();
         }
