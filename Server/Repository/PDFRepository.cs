@@ -1,63 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+﻿// <copyright file="PDFRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
+    /// <summary>
+    /// Represents a repository for PDF operations.
+    /// </summary>
     public class PDFRepository : IPDFRepository
     {
-        private readonly string connectionString;
-        private readonly IDatabaseProvider databaseProvider;
+        private readonly MarketPlaceDbContext dbContext;
 
-        [ExcludeFromCodeCoverage]
-        public PDFRepository(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
+        /// <summary>
+        /// Initializes a new instance of the PDFRepository class.
+        /// </summary>
+        /// <param name="dbContext">The database context instance.</param>
+        public PDFRepository(MarketPlaceDbContext dbContext)
         {
+            this.dbContext = dbContext;
         }
 
         /// <summary>
-        /// Initializes a new instance of the TrackedOrderRepository class
+        /// Asynchronously inserts a PDF into the database.
         /// </summary>
-        /// <param name="connectionString">Database connection string</param>
-        /// <param name="databaseProvider">Database provider for creating connections</param>
-        /// <exception cref="ArgumentNullException">Thrown when connection string or provider is null</exception>
-        public PDFRepository(string connectionString, IDatabaseProvider databaseProvider)
-        {
-            if (connectionString == null)
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
-            this.connectionString = connectionString;
-            this.databaseProvider = databaseProvider;
-        }
-
+        /// <param name="fileBytes">The byte array representing the PDF file.</param>
+        /// <returns>The ID of the inserted PDF.</returns>
         public async Task<int> InsertPdfAsync(byte[] fileBytes)
         {
-            using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
-            using (IDbCommand command = connection.CreateCommand())
+            var pdfToInsert = new PDF
             {
-                command.CommandText = "INSERT INTO PDF ([file]) OUTPUT INSERTED.ID VALUES (@file)";
-                var parameter = command.CreateParameter();
-                parameter.ParameterName = "@file";
-                parameter.Value = fileBytes;
-                command.Parameters.Add(parameter);
+                ContractID = 0, // initialize with 0, anyway we don't use this in the database (ignored this field in the table creation, but kept it in order to prevent errors)
+                PdfID = 0, // initialize with 0, will be set by the database
+                File = fileBytes,
+            };
 
-                await connection.OpenAsync();
-                var result = await command.ExecuteScalarAsync();
-                return Convert.ToInt32(result);
-            }
+            await this.dbContext.PDFs.AddAsync(pdfToInsert);
+            await this.dbContext.SaveChangesAsync();
+
+            return pdfToInsert.PdfID; // return the PDF ID that was set by the database
         }
     }
 }
