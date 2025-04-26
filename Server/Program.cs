@@ -1,9 +1,13 @@
 using Server.DBConnection;
 using SharedClassLibrary.IRepository;
+using Microsoft.EntityFrameworkCore;
+using Server.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connectionString = AppConfig.GetConnectionString("MyLocalDb");
+builder.Services.AddDbContext<MarketPlaceDbContext>(options => options.UseSqlServer(connectionString));
 
 // Register your IUserRepository implementation
 // Assuming your implementation class is named UserRepository
