@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.DBConnection;
 
@@ -11,9 +12,11 @@ using Server.DBConnection;
 namespace Server.Migrations
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    partial class MarketPlaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426074319_BuyerRepositoryMigration")]
+    partial class BuyerRepositoryMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,10 +40,7 @@ namespace Server.Migrations
 
                     b.HasIndex("ReceivingBuyerId");
 
-                    b.ToTable("BuyerLinkages", t =>
-                        {
-                            t.HasCheckConstraint("CK_BuyerLinkage_DifferentBuyers", "[RequestingBuyerId] <> [ReceivingBuyerId]");
-                        });
+                    b.ToTable("BuyerLinkages");
                 });
 
             modelBuilder.Entity("Server.DataModels.BuyerWishlistItemsEntity", b =>
@@ -56,21 +56,6 @@ namespace Server.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("BuyerWishlistItems");
-                });
-
-            modelBuilder.Entity("Server.DataModels.FollowingEntity", b =>
-                {
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SellerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BuyerId", "SellerId");
-
-                    b.HasIndex("SellerId");
-
-                    b.ToTable("Followings");
                 });
 
             modelBuilder.Entity("SharedClassLibrary.Domain.Address", b =>
@@ -102,51 +87,6 @@ namespace Server.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("SharedClassLibrary.Domain.Buyer", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Badge")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BillingAddressId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Discount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfPurchases")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ShippingAddressId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalSpending")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("UseSameAddress")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BillingAddressId");
-
-                    b.HasIndex("ShippingAddressId");
-
-                    b.ToTable("Buyers");
-                });
-
             modelBuilder.Entity("SharedClassLibrary.Domain.Product", b =>
                 {
                     b.Property<int>("ProductId")
@@ -159,9 +99,6 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset?>("EndDate")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -169,21 +106,13 @@ namespace Server.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<string>("ProductType")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("SellerId")
                         .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("StartDate")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
                     b.HasKey("ProductId");
-
-                    b.HasIndex("SellerId");
 
                     b.ToTable("Products");
                 });
@@ -193,8 +122,16 @@ namespace Server.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("FollowersCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StoreAddress")
                         .IsRequired()
@@ -231,6 +168,11 @@ namespace Server.Migrations
                     b.Property<DateTime?>("BannedUntil")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -259,6 +201,61 @@ namespace Server.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+
+                    b.HasDiscriminator().HasValue("User");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("SharedClassLibrary.Domain.Buyer", b =>
+                {
+                    b.HasBaseType("SharedClassLibrary.Domain.User");
+
+                    b.Property<int>("Badge")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BillingAddressId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BuyerUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Discount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.PrimitiveCollection<string>("FollowingUsersIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfPurchases")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShippingAddressId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalSpending")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("UseSameAddress")
+                        .HasColumnType("bit");
+
+                    b.HasIndex("BillingAddressId");
+
+                    b.HasIndex("BuyerUserId");
+
+                    b.HasIndex("ShippingAddressId");
+
+                    b.HasDiscriminator().HasValue("Buyer");
                 });
 
             modelBuilder.Entity("Server.DataModels.BuyerLinkageEntity", b =>
@@ -291,19 +288,15 @@ namespace Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Server.DataModels.FollowingEntity", b =>
+            modelBuilder.Entity("SharedClassLibrary.Domain.Seller", b =>
                 {
-                    b.HasOne("SharedClassLibrary.Domain.Buyer", null)
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("SharedClassLibrary.Domain.User", "User")
+                        .WithOne()
+                        .HasForeignKey("SharedClassLibrary.Domain.Seller", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SharedClassLibrary.Domain.Seller", null)
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SharedClassLibrary.Domain.Buyer", b =>
@@ -314,16 +307,20 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SharedClassLibrary.Domain.User", "User")
-                        .WithOne()
-                        .HasForeignKey("SharedClassLibrary.Domain.Buyer", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("SharedClassLibrary.Domain.Buyer", null)
+                        .WithMany("SyncedBuyerIds")
+                        .HasForeignKey("BuyerUserId");
 
                     b.HasOne("SharedClassLibrary.Domain.Address", "ShippingAddress")
                         .WithMany()
                         .HasForeignKey("ShippingAddressId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SharedClassLibrary.Domain.User", "User")
+                        .WithOne()
+                        .HasForeignKey("SharedClassLibrary.Domain.Buyer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BillingAddress");
@@ -333,24 +330,9 @@ namespace Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SharedClassLibrary.Domain.Product", b =>
+            modelBuilder.Entity("SharedClassLibrary.Domain.Buyer", b =>
                 {
-                    b.HasOne("SharedClassLibrary.Domain.Seller", null)
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SharedClassLibrary.Domain.Seller", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.User", "User")
-                        .WithOne()
-                        .HasForeignKey("SharedClassLibrary.Domain.Seller", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.Navigation("SyncedBuyerIds");
                 });
 #pragma warning restore 612, 618
         }

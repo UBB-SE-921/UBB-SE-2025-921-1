@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharedClassLibrary.Domain;
+using Server.DataModels;
 
 namespace Server.DBConnection
 {
@@ -11,5 +12,143 @@ namespace Server.DBConnection
         }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Buyer> Buyers { get; set; }
+
+        public DbSet<BuyerWishlistItemsEntity> BuyersWishlistItems { get; set; }
+
+        // We use BuyerLinkageEntity in orde to have the corresponding table created in the database
+        // We do not change the BuyerLinkage class in order to avoid breaking changes
+        public DbSet<BuyerLinkageEntity> BuyerLinkages { get; set; }
+
+        public DbSet<Address> Addresses { get; set; } // buyer's address
+
+        public DbSet<Seller> Sellers { get; set; }
+
+        public DbSet<Product> Products { get; set; }
+
+        public DbSet<FollowingEntity> Followings { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // --- Buyer Configuration ---
+            modelBuilder.Entity<Buyer>(entity =>
+            {
+                entity.HasKey(b => b.Id);
+
+                entity.HasOne(b => b.User)
+                .WithOne()
+                .HasForeignKey<Buyer>(b => b.Id);
+
+                entity.Property(b => b.Discount)
+                    .HasPrecision(18, 2);
+
+                entity.Property(b => b.TotalSpending)
+                    .HasPrecision(18, 2);
+
+                entity.HasOne(b => b.BillingAddress)
+                    .WithMany()
+                    .HasForeignKey("BillingAddressId")
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(b => b.ShippingAddress)
+                    .WithMany()
+                    .HasForeignKey("ShippingAddressId")
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Ignore(b => b.SyncedBuyerIds) // it creates a foreign key from Buyer to Buyer in the database (not needed)
+                    .Ignore(b => b.FollowingUsersIds) // this should be a table of its own (see the FollowingEntity class)
+                    .Ignore(b => b.Email) // not needed, it is in User
+                    .Ignore(b => b.PhoneNumber); // not needed, it is in User
+            });
+
+            // --- Buyer Wishlist Configuration ---
+            // We ignore the BuyerWishlist and BuyerWishlistItem classes in order to avoid having them created in the database because
+            // we use the BuyerWishlistItemsEntity instead for the sake of simplicity and to avoid having to change logic
+            // anywhere else apart from the repository layer
+            modelBuilder.Ignore<BuyerWishlist>();
+            modelBuilder.Ignore<BuyerWishlistItem>();
+
+            modelBuilder.Entity<BuyerWishlistItemsEntity>(entity =>
+            {
+                entity.HasKey(bwi => new { bwi.BuyerId, bwi.ProductId });
+
+                entity.HasOne<Buyer>()
+                    .WithMany()
+                    .HasForeignKey(bwi => bwi.BuyerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey(bwi => bwi.ProductId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // --- Buyer Linkage Configuration ---
+            // We ignore the BuyerLinkage class in order to avoid having it created in the database because
+            // we use the BuyerLinkageEntity instead to avoid having to change logic anywhere else apart from the repository layer
+            modelBuilder.Ignore<BuyerLinkage>();
+
+            // Buyer Linkage Entity
+            modelBuilder.Entity<BuyerLinkageEntity>(entity =>
+            {
+                entity.HasKey(bl => new { bl.RequestingBuyerId, bl.ReceivingBuyerId });
+
+                entity.HasOne<Buyer>()
+                    .WithMany()
+                    .HasForeignKey(bl => bl.RequestingBuyerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Buyer>()
+                    .WithMany()
+                    .HasForeignKey(bl => bl.ReceivingBuyerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint("CK_BuyerLinkage_DifferentBuyers", "[RequestingBuyerId] <> [ReceivingBuyerId]"));
+            });
+
+            // --- Seller Configuration ---
+            modelBuilder.Entity<Seller>(entity =>
+            {
+                entity.HasKey(s => s.Id);
+
+                entity.HasOne(s => s.User)
+                    .WithOne()
+                    .HasForeignKey<Seller>(s => s.Id);
+
+                entity.Ignore(s => s.Email) // not needed, it is in User
+                    .Ignore(s => s.PhoneNumber); // not needed, it is in User
+            });
+
+            // --- Product Configuration ---
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.HasKey(p => p.ProductId);
+
+                // Define the relationship using type parameters and FK only
+                entity.HasOne<Seller>()
+                      .WithMany()
+                      .HasForeignKey(p => p.SellerId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // --- Following Entity Configuration ---
+            modelBuilder.Entity<FollowingEntity>(entity =>
+            {
+                entity.HasKey(f => new { f.BuyerId, f.SellerId });
+
+                entity.HasOne<Buyer>()
+                .WithMany()
+                .HasForeignKey(f => f.BuyerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Seller>()
+                .WithMany()
+                .HasForeignKey(f => f.SellerId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+        }
     }
 }

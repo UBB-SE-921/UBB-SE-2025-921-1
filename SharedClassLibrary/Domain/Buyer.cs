@@ -39,7 +39,7 @@ namespace SharedClassLibrary.Domain
             this.LastName = string.Empty;
             this.ShippingAddress = new Address();
             this.BillingAddress = new Address();
-            this.SyncedBuyerIds = new List<Buyer>();
+            this.SyncedBuyerIds = new List<Buyer>(); // in the application this is not used, so i will not fetch data about it in the server repo - Alex
         }
 
         /// <summary>
@@ -133,6 +133,7 @@ namespace SharedClassLibrary.Domain
 
         /// <summary>
         /// Gets or sets the list of user IDs that this buyer is following.
+        /// BUYER FOLLOWS SELLER => this list represents the seller's ID that the buyer is following - Alex
         /// </summary>
         public List<int> FollowingUsersIds { get; set; }
     }

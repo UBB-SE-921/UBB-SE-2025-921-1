@@ -68,4 +68,11 @@ public class Product
     /// Gets or sets the available stock quantity.
     /// </summary>
     public int Stock { get; set; }
+
+    // from Art-Attack - added by Alex, not merged by who needed to do it
+    public string? ProductType { get; set; }
+
+    public DateTimeOffset? StartDate { get; set; }
+
+    public DateTimeOffset? EndDate { get; set; }
 }
