@@ -13,25 +13,32 @@ namespace MarketPlace924.Repository
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+
     /// <summary>
-    /// Provides methods for interacting with the Users table in the database.
+    /// A repository implementation that acts as a proxy for user-related operations.
     /// </summary>
     public class UserProxyRepository : IUserRepository
     {
         private readonly HttpClient httpClient;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base url of the API.</param>
         public UserProxyRepository(string baseApiUrl)
         {
             this.httpClient = new HttpClient();
             this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
+        /// <inheritdoc />
         public async Task AddUser(User user)
         {
-            var response = await this.httpClient.PostAsJsonAsync($"/users", user);
+            var response = await this.httpClient.PostAsJsonAsync($"users", user);
             response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
+        /// <inheritdoc />
         public async Task<bool> EmailExists(string email)
         {
             var response = await this.httpClient.GetAsync($"users/email-exists?email={email}");
@@ -41,6 +48,7 @@ namespace MarketPlace924.Repository
             return found;
         }
 
+        /// <inheritdoc />
         public async Task<List<User>> GetAllUsers()
         {
             var response = await this.httpClient.GetAsync($"users");
@@ -55,6 +63,7 @@ namespace MarketPlace924.Repository
             return users;
         }
 
+        /// <inheritdoc />
         public async Task<int> GetFailedLoginsCountByUserId(int userId)
         {
             var response = await this.httpClient.GetAsync($"users/failed-logins-count/{userId}");
@@ -64,6 +73,7 @@ namespace MarketPlace924.Repository
             return failedLoginsCount;
         }
 
+        /// <inheritdoc />
         public async Task<int> GetTotalNumberOfUsers()
         {
             var response = await this.httpClient.GetAsync($"users/count");
@@ -73,6 +83,7 @@ namespace MarketPlace924.Repository
             return userCount;
         }
 
+        /// <inheritdoc />
         public async Task<User?> GetUserByEmail(string email)
         {
             var response = await this.httpClient.GetAsync($"users/email/{email}");
@@ -82,6 +93,7 @@ namespace MarketPlace924.Repository
             return user;
         }
 
+        /// <inheritdoc />
         public async Task<User?> GetUserByUsername(string username)
         {
             var response = await this.httpClient.GetAsync($"users/username/{username}");
@@ -91,6 +103,7 @@ namespace MarketPlace924.Repository
             return user;
         }
 
+        /// <inheritdoc />
         public async Task LoadUserPhoneNumberAndEmailById(User user)
         {
             int userId = user.UserId;
@@ -98,28 +111,37 @@ namespace MarketPlace924.Repository
             response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
 
             var newUser = await response.Content.ReadFromJsonAsync<User>();
+            if (newUser == null)
+            {
+                throw new InvalidOperationException($"Failed to load user data for UserId: {userId}. The API returned no data.");
+            }
+
             user.PhoneNumber = newUser.PhoneNumber;
             user.Email = newUser.Email;
         }
 
+        /// <inheritdoc />
         public async Task UpdateUser(User user)
         {
             var response = await this.httpClient.PutAsJsonAsync($"/users", user);
             response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
+        /// <inheritdoc />
         public async Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
         {
             var response = await this.httpClient.PutAsJsonAsync($"/users/update-failed-logins/{newValueOfFailedLogIns}", user);
             response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
+        /// <inheritdoc />
         public async Task UpdateUserPhoneNumber(User user)
         {
             var response = await this.httpClient.PutAsJsonAsync($"/users/update-phone-number", user);
             response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
+        /// <inheritdoc />
         public async Task<bool> UsernameExists(string username)
         {
             var response = await this.httpClient.GetAsync($"users/username-exists?username={username}");
