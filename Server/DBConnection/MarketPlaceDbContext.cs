@@ -509,6 +509,8 @@ namespace Server.DBConnection
             {
                 entity.HasKey(dc => dc.ID);
 
+                entity.HasIndex(dc => dc.CardNumber); // because Golubiro Spioniro is stealing out cards
+
                 entity.Property(dc => dc.CardholderName)
                     .IsRequired(); // to respect Maria's DB design
 
