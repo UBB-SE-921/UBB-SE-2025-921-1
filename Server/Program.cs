@@ -35,6 +35,10 @@ builder.Services.AddScoped<IOrderHistoryRepository>(provider =>
 {
     return new OrderHistoryRepository(connectionString!);
 });
+builder.Services.AddScoped<IOrderRepository>(provider =>
+{
+    return new OrderRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 

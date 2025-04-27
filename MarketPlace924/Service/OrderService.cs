@@ -5,6 +5,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -19,7 +20,7 @@ namespace MarketPlace924.Service
 
         public OrderService(string connectionString, IDatabaseProvider databaseProvider)
         {
-            this.orderRepository = new OrderProxyRepository();
+            this.orderRepository = new OrderProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         public async Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
