@@ -23,6 +23,10 @@ builder.Services.AddScoped<IPDFRepository>(provider =>
 {
     return new PDFRepository(connectionString!);
 });
+builder.Services.AddScoped<INotificationRepository>(provider =>
+{
+    return new NotificationRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 

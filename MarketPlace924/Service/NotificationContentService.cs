@@ -5,6 +5,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -14,7 +15,7 @@ namespace MarketPlace924.Service
 
         public NotificationContentService()
         {
-            this.notificationRepository = new NotificationProxyRepository();
+            this.notificationRepository = new NotificationProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         public string GetUnreadNotificationsCountText(int unreadCount)

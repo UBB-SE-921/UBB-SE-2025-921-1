@@ -6,6 +6,7 @@ using MarketPlace924.Repository;
 using Microsoft.Data.SqlClient;
 using MarketPlace924.Repository;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 [ExcludeFromCodeCoverage]
 public class WaitListNotifier
@@ -22,7 +23,7 @@ public class WaitListNotifier
     public WaitListNotifier(string connectionString)
     {
         waitListModel = new WaitListProxyRepository();
-        notificationAdapter = new NotificationProxyRepository();
+        notificationAdapter = new NotificationProxyRepository(AppConfig.GetBaseApiUrl());
         this.connectionString = connectionString;
     }
 
