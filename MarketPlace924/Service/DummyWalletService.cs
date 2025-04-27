@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -39,7 +40,7 @@ namespace MarketPlace924.Service
                 throw new ArgumentNullException(nameof(databaseProvider));
             }
 
-            this.dummyWalletRepository = new DummyWalletProxyRepository();
+            this.dummyWalletRepository = new DummyWalletProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         /// <inheritdoc/>

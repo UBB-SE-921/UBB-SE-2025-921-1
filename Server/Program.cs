@@ -47,6 +47,10 @@ builder.Services.AddScoped<ITrackedOrderRepository>(provider =>
 {
     return new TrackedOrderRepository(connectionString!);
 });
+builder.Services.AddScoped<IDummyWalletRepository>(provider =>
+{
+    return new DummyWalletRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 

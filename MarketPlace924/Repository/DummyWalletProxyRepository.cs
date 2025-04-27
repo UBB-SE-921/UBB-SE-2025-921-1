@@ -1,24 +1,48 @@
-using System;
-using System.Data;
-using System.Threading.Tasks;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+// <copyright file="DummyWalletProxyRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.IRepository;
+
     /// <summary>
-    /// Provides database operations for wallet management.
+    /// Proxy repository class for managing dummy wallet operations via REST API.
     /// </summary>
     public class DummyWalletProxyRepository : IDummyWalletRepository
     {
-        public Task<float> GetWalletBalanceAsync(int userId)
+        private const string ApiBaseRoute = "api/wallets";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DummyWalletProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base URL of the API server (e.g., "http://localhost:5000").</param>
+        public DummyWalletProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task UpdateWalletBalance(int userId, float newBalance)
+        /// <inheritdoc />
+        public async Task<float> GetWalletBalanceAsync(int userId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{userId}/balance");
+            response.EnsureSuccessStatusCode();
+
+            var balance = await response.Content.ReadFromJsonAsync<float>();
+            return balance;
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateWalletBalance(int userId, float newBalance)
+        {
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{userId}/balance", newBalance);
+            response.EnsureSuccessStatusCode();
         }
     }
-} 
+}
