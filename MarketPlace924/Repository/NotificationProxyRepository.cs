@@ -18,16 +18,15 @@ namespace MarketPlace924.Repository
             throw new NotImplementedException();
         }
 
-        public Notification CreateFromDataReader(IDataReader reader)
-        {
-            throw new NotImplementedException();
-        }
+        // public Notification CreateFromDataReader(IDataReader reader)
+        // {
+        //    throw new NotImplementedException();
+        // }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
+        // public void Dispose()
+        // {
+        //    throw new NotImplementedException();
+        // }
         public List<Notification> GetNotificationsForUser(int recipientId)
         {
             throw new NotImplementedException();

@@ -37,9 +37,9 @@ namespace MarketPlace924.Service
             notificationRepository.AddNotification(notification);
         }
 
-        public void Dispose()
-        {
-            notificationRepository.Dispose();
-        }
+        // public void Dispose()
+        // {
+        //    notificationRepository.Dispose();
+        // }
     }
 }
