@@ -65,7 +65,7 @@ namespace MarketPlace924.Repository
             throw new NotImplementedException();
         }
 
-        public Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string searchText = null, string timePeriod = null)
+        public Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string? searchText = null, string? timePeriod = null)
         {
             throw new NotImplementedException();
         }

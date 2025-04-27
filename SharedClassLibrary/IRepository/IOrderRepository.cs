@@ -18,7 +18,7 @@ namespace SharedClassLibrary.IRepository
         Task<List<Order>> GetOrdersFromLastSixMonthsAsync(int buyerId);
         Task<List<Order>> GetOrdersFromLastThreeMonthsAsync(int buyerId);
         Task<List<Order>> GetOrdersFromOrderHistoryAsync(int orderHistoryId);
-        Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string searchText = null, string timePeriod = null);
+        Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string? searchText = null, string? timePeriod = null);
         Task<Dictionary<int, string>> GetProductCategoryTypesAsync(int userId);
         Task<OrderSummary> GetOrderSummaryAsync(int orderSummaryId);
     }
