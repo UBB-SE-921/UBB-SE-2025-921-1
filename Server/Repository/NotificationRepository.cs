@@ -40,10 +40,10 @@ namespace Server.Repository
             List<Notification> notifications = new List<Notification>();
 
             // Get all OrderNotifications for the recipient
-            var notificationsDb = this.dbContext.OrderNotifications.Where(n => n.RecipientID == recipientId).ToList();
+            List<OrderNotificationEntity> notificationsDb = this.dbContext.OrderNotifications.Where(n => n.RecipientID == recipientId).ToList();
 
             // Convert each OrderNotification to a Notification
-            foreach (var notification in notificationsDb)
+            foreach (OrderNotificationEntity notification in notificationsDb)
             {
                 notifications.Add(CreateFromOrderNotificationEntity(notification));
             }
@@ -56,9 +56,11 @@ namespace Server.Repository
         /// Marks a notification as read in the database using the notification ID.
         /// </summary>
         /// <param name="notificationId">Notification ID of the notification to be marked as read.</param>
+        /// <exception cref="ArgumentException">Thrown when the notification is not found.</exception>
         public void MarkAsRead(int notificationId)
         {
-            OrderNotificationEntity notification = this.dbContext.OrderNotifications.Find(notificationId) ?? throw new ArgumentException("Notification not found");
+            OrderNotificationEntity notification = this.dbContext.OrderNotifications.Find(notificationId)
+                                                        ?? throw new ArgumentException("MarkAsRead: Notification not found");
             notification.IsRead = true;
             this.dbContext.SaveChanges();
         }

@@ -36,15 +36,11 @@ namespace Server.Repository
         /// </summary>
         /// <param name="user">The user whose seller information is to be retrieved.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the seller information.</returns>
+        /// <exception cref="Exception">Thrown when the seller is not found.</exception>
         public async Task<Seller> GetSellerInfo(User user)
         {
-            Seller? sellerDb = await this.dbContext.Sellers.FindAsync(user.UserId);
-
-            if (sellerDb == null)
-            {
-                throw new Exception("GetSellerInfo: Seller not found");
-            }
-
+            Seller sellerDb = await this.dbContext.Sellers.FindAsync(user.UserId)
+                                    ?? throw new Exception("GetSellerInfo: Seller not found");
             return sellerDb;
         }
 
@@ -116,16 +112,10 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when the seller is not found.</exception>
         public async Task UpdateTrustScore(int sellerId, double trustScore)
         {
-            var seller = await this.dbContext.Sellers.FindAsync(sellerId);
-            if (seller != null)
-            {
-                seller.TrustScore = trustScore;
-                await this.dbContext.SaveChangesAsync();
-            }
-            else
-            {
-                throw new Exception("UpdateTrustScore: Seller not found");
-            }
+            Seller seller = await this.dbContext.Sellers.FindAsync(sellerId)
+                                    ?? throw new Exception("UpdateTrustScore: Seller not found");
+            seller.TrustScore = trustScore;
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -152,7 +142,7 @@ namespace Server.Repository
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task AddNewFollowerNotification(int sellerId, int currentFollowerCount, string message)
         {
-            var sellerNotification = new SellerNotificationEntity(sellerId, message, currentFollowerCount);
+            SellerNotificationEntity sellerNotification = new SellerNotificationEntity(sellerId, message, currentFollowerCount);
             this.dbContext.SellerNotifications.Add(sellerNotification);
             await this.dbContext.SaveChangesAsync();
         }

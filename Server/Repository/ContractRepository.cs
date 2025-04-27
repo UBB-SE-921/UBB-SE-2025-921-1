@@ -221,7 +221,7 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when the contract, order or order summary is not found.</exception>
         public async Task<Dictionary<string, object>> GetOrderSummaryInformationAsync(long contractId)
         {
-            var orderSummary = new Dictionary<string, object>();
+            Dictionary<string, object> orderSummary = new Dictionary<string, object>();
 
             // Get the contract for the given contract ID
             Contract? contract = await this.dbContext.Contracts
