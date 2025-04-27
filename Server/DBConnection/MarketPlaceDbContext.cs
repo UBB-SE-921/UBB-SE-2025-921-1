@@ -509,7 +509,13 @@ namespace Server.DBConnection
             {
                 entity.HasKey(dc => dc.ID);
 
-                entity.HasIndex(dc => dc.CardNumber); // because Golubiro Spioniro is stealing out cards
+                entity.HasOne<Buyer>() // not in Maria's DB design, I added it to have code maintainability
+                    .WithMany()
+                    .HasForeignKey(dc => dc.BuyerId)
+                    .OnDelete(DeleteBehavior.Restrict) // not specified in Maria's DB design, but I left restrict to avoid breaking changes (can be changed later)
+                    .IsRequired();
+
+                entity.HasIndex(dc => dc.CardNumber); // because Golubiro Spioniro is stealing our cards :))
 
                 entity.Property(dc => dc.CardholderName)
                     .IsRequired(); // to respect Maria's DB design
@@ -536,7 +542,8 @@ namespace Server.DBConnection
             {
                 entity.HasOne<Buyer>()
                     .WithOne()
-                    .HasForeignKey<DummyWalletEntity>(dw => dw.BuyerId);
+                    .HasForeignKey<DummyWalletEntity>(dw => dw.BuyerId)
+                    .OnDelete(DeleteBehavior.Restrict); // not specified in Maria's DB design, but I left restrict to avoid breaking changes (can be changed later)
 
                 entity.HasKey(dw => dw.ID);
             });
