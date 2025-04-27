@@ -24,7 +24,7 @@ builder.Services.AddScoped<ITrackedOrderRepository, TrackedOrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWaitListRepository, WaitListRepository>();
 builder.Services.AddScoped<IDummyCardRepository, DummyCardRepository>();
-/// builder.Services.AddScoped<IDummyWalletRepository, DummyWalletRepository>(); // NOT IMPLEMENTED YET, will implement -Alex
+builder.Services.AddScoped<IDummyWalletRepository, DummyWalletRepository>();
 /// builder.Services.AddScoped<IDummyProductRepository, DummyProductRepository>(); // NOT IMPLEMENTED YET, still has DummyProduct but I think it is manageable, only minor modifications need to be made -Alex
 
 builder.Services.AddControllers();

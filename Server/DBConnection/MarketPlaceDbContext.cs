@@ -158,8 +158,8 @@ namespace Server.DBConnection
                 entity.HasKey(b => b.Id);
 
                 entity.HasOne(b => b.User)
-                .WithOne()
-                .HasForeignKey<Buyer>(b => b.Id);
+                    .WithOne()
+                    .HasForeignKey<Buyer>(b => b.Id);
 
                 entity.Property(b => b.Discount)
                     .HasPrecision(18, 2);
@@ -534,6 +534,10 @@ namespace Server.DBConnection
             // Please do check the DummyWalletEntity class for more information about this abomination of a table :))
             modelBuilder.Entity<DummyWalletEntity>(entity =>
             {
+                entity.HasOne<Buyer>()
+                    .WithOne()
+                    .HasForeignKey<DummyWalletEntity>(dw => dw.BuyerId);
+
                 entity.HasKey(dw => dw.ID);
             });
 
