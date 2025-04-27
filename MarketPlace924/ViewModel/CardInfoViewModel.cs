@@ -8,6 +8,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.ViewModel
 {
@@ -75,7 +76,7 @@ namespace MarketPlace924.ViewModel
         /// <param name="orderHistoryID">The unique identifier of the order history.</param>
         public CardInfoViewModel(int orderHistoryID)
         {
-            orderHistoryModel = new OrderHistoryProxyRepository();
+            orderHistoryModel = new OrderHistoryProxyRepository(AppConfig.GetBaseApiUrl());
             orderModel = new OrderProxyRepository();
             orderSummaryModel = new OrderSummaryProxyRepository();
             dummyCardModel = new DummyCardProxyRepository();

@@ -31,6 +31,10 @@ builder.Services.AddScoped<IWaitListRepository>(provider =>
 {
     return new WaitListRepository(connectionString!);
 });
+builder.Services.AddScoped<IOrderHistoryRepository>(provider =>
+{
+    return new OrderHistoryRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 
