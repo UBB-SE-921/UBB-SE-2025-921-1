@@ -1,39 +1,102 @@
-using System;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using MarketPlace924.Repository;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+// <copyright file="DummyProductProxyRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.DataTransferObjects;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
+    /// <summary>
+    /// Proxy repository class for managing dummy product operations via REST API.
+    /// </summary>
     public class DummyProductProxyRepository : IDummyProductRepository
     {
-        public Task AddDummyProductAsync(string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        private const string ApiBaseRoute = "api/dummyproducts";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DummyProductProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base url of the API.</param>
+        public DummyProductProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task DeleteDummyProduct(int id)
+        /// <inheritdoc />
+        public async Task AddDummyProductAsync(string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
         {
-            throw new NotImplementedException();
+            var requestDto = new DummyProductRequest
+            {
+                Name = name,
+                Price = price,
+                SellerID = sellerId,
+                ProductType = productType,
+                StartDate = startDate,
+                EndDate = endDate,
+            };
+
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", requestDto);
+            response.EnsureSuccessStatusCode();
         }
 
-        public Task<DummyProduct> GetDummyProductByIdAsync(int productId)
+        /// <inheritdoc />
+        public async Task DeleteDummyProduct(int id)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{id}");
+            response.EnsureSuccessStatusCode();
         }
 
-        public Task<string> GetSellerNameAsync(int? sellerId)
+        /// <inheritdoc />
+        public async Task<DummyProduct> GetDummyProductByIdAsync(int productId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{productId}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            response.EnsureSuccessStatusCode();
+            var product = await response.Content.ReadFromJsonAsync<DummyProduct>();
+            return product;
         }
 
-        public Task UpdateDummyProductAsync(int id, string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        /// <inheritdoc />
+        public async Task<string> GetSellerNameAsync(int? sellerId)
         {
-            throw new NotImplementedException();
+            if (!sellerId.HasValue)
+            {
+                return null;
+            }
+
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/seller/{sellerId.Value}/name");
+            response.EnsureSuccessStatusCode();
+            var sellerName = await response.Content.ReadAsStringAsync();
+            return sellerName;
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateDummyProductAsync(int id, string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        {
+            var requestDto = new DummyProductRequest
+            {
+                Name = name,
+                Price = price,
+                SellerID = sellerId,
+                ProductType = productType,
+                StartDate = startDate,
+                EndDate = endDate,
+            };
+
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{id}", requestDto);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

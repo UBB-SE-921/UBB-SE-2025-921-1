@@ -5,6 +5,7 @@ using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 using MarketPlace924.Repository;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -41,7 +42,7 @@ namespace MarketPlace924.Service
                 throw new ArgumentNullException(nameof(databaseProvider));
             }
 
-            this.dummyProductRepository = new DummyProductProxyRepository();
+            this.dummyProductRepository = new DummyProductProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         /// <inheritdoc/>

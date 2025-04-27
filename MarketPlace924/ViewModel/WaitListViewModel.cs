@@ -25,7 +25,7 @@ namespace MarketPlace924.Services
         public WaitListViewModel(string connectionString)
         {
             waitListModel = new WaitListProxyRepository(AppConfig.GetBaseApiUrl());
-            dummyProductModel = new DummyProductProxyRepository();
+            dummyProductModel = new DummyProductProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         /// <summary>

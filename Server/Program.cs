@@ -55,6 +55,10 @@ builder.Services.AddScoped<IDummyCardRepository>(provider =>
 {
     return new DummyCardRepository(connectionString!);
 });
+builder.Services.AddScoped<IDummyProductRepository>(provider =>
+{
+    return new DummyProductRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 
