@@ -14,42 +14,42 @@ namespace MarketPlace924.Repository
 {
     public class WaitListProxyRepository : IWaitListRepository
     {
-        public void AddUserToWaitlist(int userId, int productWaitListId)
+        public Task AddUserToWaitlist(int userId, int productId)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserWaitList> GetUsersInWaitlist(int waitListProductId)
+        public async Task<List<UserWaitList>> GetUsersInWaitlist(int productId)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserWaitList> GetUsersInWaitlistOrdered(int productId)
+        public async Task<List<UserWaitList>> GetUsersInWaitlistOrdered(int productId)
         {
             throw new NotImplementedException();
         }
 
-        public int GetUserWaitlistPosition(int userId, int productId)
+        public async Task<int> GetUserWaitlistPosition(int userId, int productId)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserWaitList> GetUserWaitlists(int userId)
+        public async Task<List<UserWaitList>> GetUserWaitlists(int userId)
         {
             throw new NotImplementedException();
         }
 
-        public int GetWaitlistSize(int productWaitListId)
+        public async Task<int> GetWaitlistSize(int productId)
         {
             throw new NotImplementedException();
         }
 
-        public bool IsUserInWaitlist(int userId, int productId)
+        public async Task<bool> IsUserInWaitlist(int userId, int productId)
         {
             throw new NotImplementedException();
         }
 
-        public void RemoveUserFromWaitlist(int userId, int productWaitListId)
+        public async Task RemoveUserFromWaitlist(int userId, int productId)
         {
             throw new NotImplementedException();
         }

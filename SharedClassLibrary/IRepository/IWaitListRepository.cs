@@ -5,13 +5,13 @@ namespace SharedClassLibrary.IRepository
 {
     public interface IWaitListRepository
     {
-        void AddUserToWaitlist(int userId, int productWaitListId);
-        List<UserWaitList> GetUsersInWaitlist(int waitListProductId);
-        List<UserWaitList> GetUsersInWaitlistOrdered(int productId);
-        int GetUserWaitlistPosition(int userId, int productId);
-        List<UserWaitList> GetUserWaitlists(int userId);
-        int GetWaitlistSize(int productWaitListId);
-        bool IsUserInWaitlist(int userId, int productId);
-        void RemoveUserFromWaitlist(int userId, int productWaitListId);
+        Task AddUserToWaitlist(int userId, int productId);
+        Task<List<UserWaitList>> GetUsersInWaitlist(int productId);
+        Task<List<UserWaitList>> GetUsersInWaitlistOrdered(int productId);
+        Task<int> GetUserWaitlistPosition(int userId, int productId);
+        Task<List<UserWaitList>> GetUserWaitlists(int userId);
+        Task<int> GetWaitlistSize(int productId);
+        Task<bool> IsUserInWaitlist(int userId, int productId);
+        Task RemoveUserFromWaitlist(int userId, int productId);
     }
 }
