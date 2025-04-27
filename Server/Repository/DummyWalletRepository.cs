@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
     /// <summary>
     /// Provides database operations for wallet management.

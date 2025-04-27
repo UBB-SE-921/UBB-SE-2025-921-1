@@ -2,12 +2,11 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace SharedClassLibrary.IRepository
+namespace Server.Repository
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
     using Server.DataModels;
     using Server.DBConnection;

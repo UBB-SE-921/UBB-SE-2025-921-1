@@ -4,7 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SharedClassLibrary.IRepository
+namespace Server.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -13,6 +13,7 @@ namespace SharedClassLibrary.IRepository
     using Server.DataModels;
     using Server.DBConnection;
     using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository for managing seller-related data operations.

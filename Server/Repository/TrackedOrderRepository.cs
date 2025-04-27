@@ -7,7 +7,7 @@ using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
     /// <summary>
     /// Provides data access functionality for tracking orders and their checkpoints.

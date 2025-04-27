@@ -6,7 +6,7 @@ using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
     public class DummyCardRepository : IDummyCardRepository
     {

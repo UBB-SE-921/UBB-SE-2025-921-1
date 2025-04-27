@@ -2,10 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
     using Server.DBConnection;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
@@ -18,9 +17,9 @@ namespace MarketPlace924.Repository
         private readonly MarketPlaceDbContext dbContext;
 
         /// <summary>
-        /// Initializes a new instance of the PDFRepository class.
+        /// Initializes a new instance of the <see cref="PDFRepository"/> class.
         /// </summary>
-        /// <param name="dbContext">The database context instance.</param>
+        /// <param name="dbContext">The database context.</param>
         public PDFRepository(MarketPlaceDbContext dbContext)
         {
             this.dbContext = dbContext;

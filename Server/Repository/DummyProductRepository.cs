@@ -4,11 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
-using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 
 // WILL NOT IMPLEMENT DUMMY PRODUCT REPOSITORY - SHOULD BE REPLACED WITH ACTUAL PRODUCT REPOSITORY -Alex
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
     public class DummyProductRepository : IDummyProductRepository
     {
