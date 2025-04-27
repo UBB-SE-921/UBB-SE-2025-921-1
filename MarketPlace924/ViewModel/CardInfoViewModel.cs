@@ -79,7 +79,7 @@ namespace MarketPlace924.ViewModel
             orderHistoryModel = new OrderHistoryProxyRepository(AppConfig.GetBaseApiUrl());
             orderModel = new OrderProxyRepository(AppConfig.GetBaseApiUrl());
             orderSummaryModel = new OrderSummaryProxyRepository(AppConfig.GetBaseApiUrl());
-            dummyCardModel = new DummyCardProxyRepository();
+            dummyCardModel = new DummyCardProxyRepository(AppConfig.GetBaseApiUrl());
 
             this.orderHistoryID = orderHistoryID;
 

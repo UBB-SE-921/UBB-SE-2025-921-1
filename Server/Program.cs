@@ -51,6 +51,10 @@ builder.Services.AddScoped<IDummyWalletRepository>(provider =>
 {
     return new DummyWalletRepository(connectionString!);
 });
+builder.Services.AddScoped<IDummyCardRepository>(provider =>
+{
+    return new DummyCardRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 
