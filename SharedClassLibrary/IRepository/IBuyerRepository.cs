@@ -21,6 +21,7 @@ namespace SharedClassLibrary.IRepository
         /// </summary>
         /// <param name="buyerEntity">The buyer object to load information into.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="Exception">Thrown when the buyer or user or shipping/billingaddress is not found.</exception>
         Task LoadBuyerInfo(Buyer buyerEntity);
 
         /// <summary>
@@ -28,6 +29,7 @@ namespace SharedClassLibrary.IRepository
         /// </summary>
         /// <param name="buyerEntity">The buyer object containing information to save.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="Exception">Thrown when the buyer is not found.</exception>
         Task SaveInfo(Buyer buyerEntity);
 
         /// <summary>

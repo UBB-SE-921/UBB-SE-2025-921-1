@@ -32,7 +32,7 @@ namespace Server.Repository
         /// <returns>The ID of the inserted PDF.</returns>
         public async Task<int> InsertPdfAsync(byte[] fileBytes)
         {
-            var pdfToInsert = new PDF
+            PDF pdfToInsert = new PDF
             {
                 ContractID = 0, // initialize with 0, anyway we don't use this in the database (ignored this field in the table creation, but kept it in order to prevent errors)
                 PdfID = 0, // initialize with 0, will be set by the database

@@ -47,7 +47,7 @@ namespace Server.Repository
         public async Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
         {
             // First, add a new OrderHistory record because we need the ID for the Order record
-            var orderHistory = new OrderHistory
+            OrderHistory orderHistory = new OrderHistory
             {
                 OrderID = 0, // will be populated by the database
             };
@@ -55,7 +55,7 @@ namespace Server.Repository
             await this.dbContext.SaveChangesAsync(); // Here the OrderHistory record is created and the orderHistory.OrderID is populated
 
             // Now, add the new Order
-            var order = new Order
+            Order order = new Order
             {
                 OrderID = 0, // Will be populated by the database
                 ProductID = productId,
@@ -81,7 +81,8 @@ namespace Server.Repository
         /// <exception cref="KeyNotFoundException">Thrown when the order with the specified ID is not found.</exception>
         public async Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate)
         {
-            Order? order = await this.dbContext.Orders.FindAsync(orderId) ?? throw new KeyNotFoundException($"UpdateOrderAsync: Order with ID {orderId} not found");
+            Order? order = await this.dbContext.Orders.FindAsync(orderId)
+                                ?? throw new KeyNotFoundException($"UpdateOrderAsync: Order with ID {orderId} not found");
 
             order.ProductType = productType;
             order.PaymentMethod = paymentMethod;
@@ -98,7 +99,8 @@ namespace Server.Repository
         /// <exception cref="KeyNotFoundException">Thrown when the order with the specified ID is not found.</exception>
         public async Task DeleteOrderAsync(int orderId)
         {
-            Order? order = await this.dbContext.Orders.FindAsync(orderId) ?? throw new KeyNotFoundException($"DeleteOrderAsync: Order with ID {orderId} not found");
+            Order? order = await this.dbContext.Orders.FindAsync(orderId)
+                                ?? throw new KeyNotFoundException($"DeleteOrderAsync: Order with ID {orderId} not found");
 
             this.dbContext.Orders.Remove(order);
             await this.dbContext.SaveChangesAsync();
@@ -153,7 +155,8 @@ namespace Server.Repository
             // Then, take the product from each order in the buyerOrders and filter them by name like in the stored procedure get_orders_by_name
             foreach (Order order in buyerOrders)
             {
-                Product product = await this.dbContext.Products.FindAsync(order.ProductID) ?? throw new KeyNotFoundException($"GetOrdersByNameAsync: Product with ID {order.ProductID} not found");
+                Product product = await this.dbContext.Products.FindAsync(order.ProductID)
+                                        ?? throw new KeyNotFoundException($"GetOrdersByNameAsync: Product with ID {order.ProductID} not found");
                 if (product.Name.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0) // This is exactly like the sql server <LIKE '%@'+@text+'%'> (case insensitive)
                 {
                     ordersFilteredByName.Add(order);
@@ -261,7 +264,8 @@ namespace Server.Repository
 
             foreach (Order order in ordersDb)
             {
-                Product product = await this.dbContext.Products.FindAsync(order.ProductID) ?? throw new KeyNotFoundException($"GetOrdersWithProductInfoAsync: Product with ID {order.ProductID} not found");
+                Product product = await this.dbContext.Products.FindAsync(order.ProductID)
+                                        ?? throw new KeyNotFoundException($"GetOrdersWithProductInfoAsync: Product with ID {order.ProductID} not found");
 
                 // This boolean is used to check if the product name corresponds to the search text, if the search text is present.
                 bool shouldIncludeProductBySearchText = searchText == null || (searchText != null && product.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0);

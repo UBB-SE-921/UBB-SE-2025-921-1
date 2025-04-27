@@ -197,6 +197,7 @@ namespace Server.Repository
         /// </summary>
         /// <param name="productId">The ID of the product. Must be a positive integer.</param>
         /// <returns>A list of UserWaitList objects representing the users in the waitlist, ordered by their position in the queue.</returns>
+        /// <exception cref="Exception">Thrown when there is no ProductWaitList entry with the given productId.</exception>
         public async Task<List<UserWaitList>> GetUsersInWaitlistOrdered(int productId)
         {
             try

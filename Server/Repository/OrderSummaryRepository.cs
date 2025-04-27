@@ -28,7 +28,8 @@ namespace Server.Repository
         /// <inheritdoc/>
         public async Task UpdateOrderSummaryAsync(int id, float subtotal, float warrantyTax, float deliveryFee, float finalTotal, string fullName, string email, string phoneNumber, string address, string postalCode, string additionalInfo, string contractDetails)
         {
-            OrderSummary? orderSummary = await this.dbContext.OrderSummary.FindAsync(id) ?? throw new KeyNotFoundException($"UpdateOrderSummaryAsync: OrderSummary with ID {id} not found");
+            OrderSummary? orderSummary = await this.dbContext.OrderSummary.FindAsync(id)
+                                                ?? throw new KeyNotFoundException($"UpdateOrderSummaryAsync: OrderSummary with ID {id} not found");
 
             // Update the order summary
             orderSummary.Subtotal = subtotal;
@@ -49,7 +50,8 @@ namespace Server.Repository
         /// <inheritdoc/>
         public async Task<OrderSummary> GetOrderSummaryByIdAsync(int orderSummaryId)
         {
-            OrderSummary? orderSummary = await this.dbContext.OrderSummary.FindAsync(orderSummaryId) ?? throw new KeyNotFoundException($"GetOrderSummaryByIdAsync: OrderSummary with ID {orderSummaryId} not found");
+            OrderSummary? orderSummary = await this.dbContext.OrderSummary.FindAsync(orderSummaryId)
+                                                ?? throw new KeyNotFoundException($"GetOrderSummaryByIdAsync: OrderSummary with ID {orderSummaryId} not found");
 
             return orderSummary;
         }

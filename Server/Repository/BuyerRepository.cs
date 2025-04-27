@@ -34,17 +34,11 @@ namespace Server.Repository
         public async Task LoadBuyerInfo(Buyer buyerEntity)
         {
             int buyerId = buyerEntity.Id;
-            Buyer? buyer = await this.dbContext.Buyers.FindAsync(buyerId);
-            if (buyer == null)
-            {
-                throw new Exception("Loading buyer info failed: Buyer not found");
-            }
+            Buyer buyer = await this.dbContext.Buyers.FindAsync(buyerId)
+                                ?? throw new Exception("LoadBuyerInfo: Buyer not found");
 
-            User? user = await this.dbContext.Users.FindAsync(buyerId);
-            if (user == null)
-            {
-                throw new Exception("Loading buyer info failed: User not found");
-            }
+            User user = await this.dbContext.Users.FindAsync(buyerId)
+                                ?? throw new Exception("LoadBuyerInfo: User not found");
 
             buyerEntity.Badge = buyer.Badge;
             buyerEntity.Wishlist = await this.GetWishlist(buyerId);
@@ -57,14 +51,16 @@ namespace Server.Repository
             buyerEntity.User = user;
             buyerEntity.FirstName = buyer.FirstName;
             buyerEntity.LastName = buyer.LastName;
-            buyerEntity.ShippingAddress = await this.LoadAddress(buyer.ShippingAddress.Id);
+            buyerEntity.ShippingAddress = await this.LoadAddress(buyer.ShippingAddress.Id)
+                                ?? throw new Exception("LoadBuyerInfo: Shipping address not found");
             if (buyer.UseSameAddress)
             {
                 buyerEntity.BillingAddress = buyer.ShippingAddress;
             }
             else
             {
-                buyerEntity.BillingAddress = await this.LoadAddress(buyer.BillingAddress.Id);
+                buyerEntity.BillingAddress = await this.LoadAddress(buyer.BillingAddress.Id)
+                                ?? throw new Exception("LoadBuyerInfo: Billing address not found");
             }
 
             // SyncedBuyerIds is not used in the application, so it is not loaded
@@ -74,7 +70,7 @@ namespace Server.Repository
         public async Task SaveInfo(Buyer buyerEntity)
         {
             if (!await this.CheckIfBuyerExists(buyerEntity.Id)) {
-                throw new Exception("Saving buyer info failed: Buyer not found");
+                throw new Exception("SaveInfo: Buyer not found");
             }
 
             // Make sure the addresses are persisted

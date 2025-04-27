@@ -56,20 +56,18 @@ namespace Server.Repository
         /// <param name="user">The user whose failed login count is to be updated.</param>
         /// <param name="newValueOfFailedLogIns">The new value for the failed login count.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        /// <exception cref="Exception">Thrown when the user is not found.</exception>
         public async Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
         {
             // Find the user by their primary key (UserId)
-            var userToUpdate = await this.dbContext.Users.FindAsync(user.UserId);
+            User userToUpdate = await this.dbContext.Users.FindAsync(user.UserId)
+                                    ?? throw new Exception("UpdateUserFailedLoginsCount: User not found");
 
-            // Check if the user was found
-            if (userToUpdate != null)
-            {
-                // Update the property on the tracked entity
-                userToUpdate.FailedLogins = newValueOfFailedLogIns;
+            // Update the property on the tracked entity
+            userToUpdate.FailedLogins = newValueOfFailedLogIns;
 
-                // EF Core automatically tracks the change, just save it
-                await this.dbContext.SaveChangesAsync();
-            }
+            // EF Core automatically tracks the change, just save it
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
