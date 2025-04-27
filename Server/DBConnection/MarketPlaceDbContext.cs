@@ -110,6 +110,41 @@ namespace Server.DBConnection
         public DbSet<Contract> Contracts { get; set; }
 
         /// <summary>
+        /// Gets or sets the tracked orders table.
+        /// </summary>
+        public DbSet<TrackedOrder> TrackedOrders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order checkpoints table.
+        /// </summary>
+        public DbSet<OrderCheckpoint> OrderCheckpoints { get; set; }
+
+        /// <summary>
+        /// Gets or sets the waitlist products table.
+        /// </summary>
+        public DbSet<WaitlistProductEntity> WaitlistProducts { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user waitlist table.
+        /// </summary>
+        public DbSet<UserWaitList> UserWaitList { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dummy cards table.
+        /// </summary>
+        public DbSet<DummyCardEntity> DummyCards { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dummy wallets table.
+        /// </summary>
+        public DbSet<DummyWalletEntity> DummyWallets { get; set; }
+
+        /// <summary>
+        /// Gets or sets the buyer cart items table.
+        /// </summary>
+        public DbSet<BuyerCartItemEntity> BuyerCartItems { get; set; }
+
+        /// <summary>
         /// On model creating.
         /// </summary>
         /// <param name="modelBuilder">The model builder.</param>
@@ -261,10 +296,35 @@ namespace Server.DBConnection
             {
                 entity.HasKey(on => on.NotificationID);
 
+                entity.Property(on => on.Category)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(on => on.Timestamp)
+                    .IsRequired(); // to respect Maria's DB design
+
                 entity.HasOne<Buyer>()
                     .WithMany()
                     .HasForeignKey(on => on.RecipientID)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.HasOne<Order>()
+                    .WithMany()
+                    .HasForeignKey(on => on.OrderID)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false); // to respect Maria's DB design
+
+                entity.HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey(on => on.ProductID)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false); // to respect Maria's DB design
+
+                entity.HasOne<Contract>()
+                    .WithMany()
+                    .HasForeignKey(on => on.ContractID)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false); // to respect Maria's DB design
 
                 entity.ToTable(t => t.HasCheckConstraint("NotificationCategoryConstraint", "[Category] IN ('CONTRACT_EXPIRATION', 'OUTBIDDED', 'ORDER_SHIPPING_PROGRESS', 'PRODUCT_AVAILABLE', 'PAYMENT_CONFIRMATION', 'PRODUCT_REMOVED', 'CONTRACT_RENEWAL_REQ', 'CONTRACT_RENEWAL_ANS', 'CONTRACT_RENEWAL_WAITLIST')"));
             });
@@ -356,6 +416,144 @@ namespace Server.DBConnection
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.ToTable(t => t.HasCheckConstraint("ContractStatusConstraint", "[ContractStatus] IN ('ACTIVE', 'RENEWED', 'EXPIRED')"));
+            });
+
+            // --- Tracked Order Configuration ---
+            modelBuilder.Entity<TrackedOrder>(entity =>
+            {
+                entity.HasKey(to => to.TrackedOrderID);
+
+                entity.HasIndex(to => to.OrderID)
+                    .IsUnique(); // to respect Maria's DB design
+
+                entity.HasOne<Order>()
+                    .WithMany()
+                    .HasForeignKey(to => to.OrderID)
+                    .OnDelete(DeleteBehavior.Restrict) // set to on delete cascade by Maria, I put restrict to avoid breaking changes (can be changed later)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(to => to.EstimatedDeliveryDate)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(to => to.DeliveryAddress)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(to => to.CurrentStatus)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.ToTable(t => t.HasCheckConstraint("TrackedOrderConstraint", "[CurrentStatus] IN ('PROCESSING', 'SHIPPED', 'IN_WAREHOUSE', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED')")); // to respect Maria's DB design
+            });
+
+            // --- Order Checkpoint Configuration ---
+            modelBuilder.Entity<OrderCheckpoint>(entity =>
+            {
+                entity.HasKey(oc => oc.CheckpointID);
+
+                entity.HasOne<TrackedOrder>()
+                    .WithMany()
+                    .HasForeignKey(oc => oc.TrackedOrderID)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(oc => oc.Timestamp)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(oc => oc.Description)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(oc => oc.Status)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.ToTable(oc => oc.HasCheckConstraint("OrderChekpointConstraint", "[Status] IN ('PROCESSING', 'SHIPPED', 'IN_WAREHOUSE', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'DELIVERED')")); // to respect Maria's DB design
+            });
+
+            // --- Waitlist Product Configuration ---
+            modelBuilder.Entity<WaitlistProductEntity>(entity =>
+            {
+                entity.HasKey(wp => wp.WaitlistProductID);
+
+                entity.HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey(wp => wp.ProductID)
+                    .OnDelete(DeleteBehavior.Restrict) // set to on delete cascade by Maria, I put restrict to avoid breaking changes (can be changed later)
+                    .IsRequired(); // to respect Maria's DB design
+            });
+
+            // --- User Waitlist Configuration ---
+            modelBuilder.Entity<UserWaitList>(entity =>
+            {
+                entity.HasKey(uw => uw.UserWaitListID);
+
+                entity.HasOne<WaitlistProductEntity>()
+                    .WithMany()
+                    .HasForeignKey(uw => uw.ProductWaitListID)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.HasOne<Buyer>()
+                    .WithMany()
+                    .HasForeignKey(uw => uw.UserID)
+                    .OnDelete(DeleteBehavior.Restrict) // set to on delete cascade by Maria, I put restrict to avoid breaking changes (can be changed later)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(uw => uw.JoinedTime)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(uw => uw.PositionInQueue)
+                    .IsRequired(); // to respect Maria's DB design
+            });
+
+            // --- Dummy Card Configuration ---
+            // Please do check the DummyCardEntity class for more information about this abomination of a table :))
+            modelBuilder.Entity<DummyCardEntity>(entity =>
+            {
+                entity.HasKey(dc => dc.ID);
+
+                entity.Property(dc => dc.CardholderName)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(dc => dc.CardNumber)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(dc => dc.CVC)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(dc => dc.Month)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(dc => dc.Year)
+                    .IsRequired(); // to respect Maria's DB design
+
+                entity.Property(dc => dc.Country)
+                    .IsRequired(); // to respect Maria's DB design
+            });
+
+            // --- Dummy Wallet Configuration ---
+            // Please do check the DummyWalletEntity class for more information about this abomination of a table :))
+            modelBuilder.Entity<DummyWalletEntity>(entity =>
+            {
+                entity.HasKey(dw => dw.ID);
+            });
+
+            // --- Buyer Cart Item Configuration ---
+            modelBuilder.Entity<BuyerCartItemEntity>(entity =>
+            {
+                entity.HasKey(bci => new { bci.BuyerId, bci.ProductId });
+
+                entity.Property(bci => bci.Quantity)
+                    .HasDefaultValue(1); // to respect Maria's DB design
+
+                entity.HasOne<Buyer>()
+                    .WithMany()
+                    .HasForeignKey(bci => bci.BuyerId)
+                    .OnDelete(DeleteBehavior.Restrict) // not specified in Maria's DB design, but I left restrict to avoid breaking changes (can be changed later)
+                    .IsRequired();
+
+                entity.HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey(bci => bci.ProductId)
+                    .OnDelete(DeleteBehavior.Restrict) // not specified in Maria's DB design, but I left restrict to avoid breaking changes (can be changed later)
+                    .IsRequired();
             });
         }
     }

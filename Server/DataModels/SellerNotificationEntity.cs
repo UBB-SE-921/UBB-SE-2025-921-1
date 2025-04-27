@@ -14,6 +14,15 @@ namespace Server.DataModels
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SellerNotificationEntity"/> class.
+        /// Required by EF Core for the migrations.
+        /// </summary>
+        public SellerNotificationEntity()
+        {
+            this.NotificationMessage = string.Empty;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SellerNotificationEntity"/> class.
         /// </summary>
         /// <param name="sellerId">The ID of the seller.</param>
         /// <param name="message">The notification message.</param>
