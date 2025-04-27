@@ -20,7 +20,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 builder.Services.AddScoped<IPDFRepository, PDFRepository>();
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();
-/// builder.Services.AddScoped<ITrackedOrderRepository, TrackedOrderRepository>(); // NOT IMPLEMENTED YET, will implement -Alex
+builder.Services.AddScoped<ITrackedOrderRepository, TrackedOrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 /// builder.Services.AddScoped<IWaitListRepository, WaitListRepository>(); // NOT IMPLEMENTED YET, will implement -Alex
 /// builder.Services.AddScoped<IDummyCardRepository, DummyCardRepository>(); // NOT IMPLEMENTED YET, will implement -Alex
