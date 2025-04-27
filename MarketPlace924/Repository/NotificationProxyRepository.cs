@@ -44,11 +44,6 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public void Dispose()
-        {
-        }
-
-        /// <inheritdoc />
         public List<Notification> GetNotificationsForUser(int recipientId)
         {
             return Task.Run(() => this.GetNotificationsForUserAsync(recipientId)).GetAwaiter().GetResult();

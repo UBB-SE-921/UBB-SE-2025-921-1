@@ -19,7 +19,7 @@ namespace SharedClassLibrary.Domain
     /// <seealso cref="BuyerWishlist"/>
     /// <seealso cref="BuyerLinkage"/>
     /// <seealso cref="Address"/>
-    public class Buyer : User
+    public class Buyer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Buyer"/> class.
@@ -39,7 +39,7 @@ namespace SharedClassLibrary.Domain
             this.LastName = string.Empty;
             this.ShippingAddress = new Address();
             this.BillingAddress = new Address();
-            this.SyncedBuyerIds = new List<Buyer>();
+            this.SyncedBuyerIds = new List<Buyer>(); // in the application this is not used, so i will not fetch data about it in the server repo - Alex
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace SharedClassLibrary.Domain
         /// <summary>
         /// Gets or sets the buyer's phone number, hiding the base User.PhoneNumber property.
         /// </summary>
-        public new string PhoneNumber
+        public string PhoneNumber
         {
             get => this.User.PhoneNumber;
             set => this.User.PhoneNumber = value;
@@ -59,7 +59,7 @@ namespace SharedClassLibrary.Domain
         /// <summary>
         /// Gets or sets the buyer's email address, hiding the base User.Email property.
         /// </summary>
-        public new string Email
+        public string Email
         {
             get => this.User.Email;
             set => this.User.Email = value;
@@ -69,7 +69,7 @@ namespace SharedClassLibrary.Domain
         /// Gets the unique identifier of the buyer.
         /// This property is derived from the associated User's ID.
         /// </summary>
-        public int Id => this.User.UserId;
+        public int Id { get => this.User.UserId; set => this.User.UserId = value; }
 
         /// <summary>
         /// Gets or sets the buyer's first name.
@@ -133,6 +133,7 @@ namespace SharedClassLibrary.Domain
 
         /// <summary>
         /// Gets or sets the list of user IDs that this buyer is following.
+        /// BUYER FOLLOWS SELLER => this list represents the seller's ID that the buyer is following - Alex
         /// </summary>
         public List<int> FollowingUsersIds { get; set; }
     }

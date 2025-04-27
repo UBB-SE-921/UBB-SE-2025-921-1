@@ -4,7 +4,7 @@ using SharedClassLibrary.Domain;
 
 namespace MarketPlace924.Service
 {
-    public interface INotificationContentService : IDisposable
+    public interface INotificationContentService
     {
         string GetUnreadNotificationsCountText(int unreadCount);
         List<Notification> GetNotificationsForUser(int recipientId);

@@ -28,7 +28,7 @@
         }
 
         /// <inheritdoc />
-        public async Task AddRenewedContractAsync(IContract contract, byte[] pdfFile)
+        public async Task AddRenewedContractAsync(IContract contract)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/add-renewed", (Contract)contract);
             response.EnsureSuccessStatusCode();

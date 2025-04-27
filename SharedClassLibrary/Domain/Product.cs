@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 /// </summary>
 public class Product
 {
+    // Add this private parameterless constructor for Entity Framework Core
+    private Product() { }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
     /// </summary>
@@ -65,4 +68,11 @@ public class Product
     /// Gets or sets the available stock quantity.
     /// </summary>
     public int Stock { get; set; }
+
+    // from Art-Attack - added by Alex, not merged by who needed to do it
+    public string ProductType { get; set; }
+
+    public DateTimeOffset? StartDate { get; set; }
+
+    public DateTimeOffset? EndDate { get; set; }
 }

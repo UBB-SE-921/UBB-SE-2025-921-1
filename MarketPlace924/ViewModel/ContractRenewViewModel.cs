@@ -122,16 +122,6 @@ namespace MarketPlace924.ViewModel
         }
 
         /// <summary>
-        /// Inserts a PDF file into the database and returns the newly generated PDF ID.
-        /// </summary>
-        /// <param name="fileBytes">The byte array representing the PDF file.</param>
-        /// <returns>The ID of the newly inserted PDF.</returns>
-        public async Task<int> InsertPdfAsync(byte[] fileBytes)
-        {
-            return await this.pdfService.InsertPdfAsync(fileBytes); // Changed from pdfModel
-        }
-
-        /// <summary>
         /// Checks whether the currently selected contract has already been renewed.
         /// </summary>
         /// <returns>True if the contract has been renewed; false otherwise.</returns>
@@ -232,7 +222,7 @@ namespace MarketPlace924.ViewModel
                 byte[] pdfBytes = GenerateContractPdf(SelectedContract, contractContent);
 
                 // Insert the new PDF into the database and get its ID
-                int newPdfId = await InsertPdfAsync(pdfBytes); // This method uses databaseProvider directly, could be moved to a service if needed
+                int newPdfId = await this.pdfService.InsertPdfAsync(pdfBytes);
 
                 // Save PDF locally in Downloads folder
                 string downloadsPath = fileSystem.GetDownloadsPath();
@@ -252,7 +242,7 @@ namespace MarketPlace924.ViewModel
                     RenewedFromContractID = SelectedContract.ContractID
                 };
 
-                await renewalService.AddRenewedContractAsync(updatedContract, pdfBytes); // Changed from renewalModel
+                await renewalService.AddRenewedContractAsync(updatedContract); // Changed from renewalModel
 
                 // Send notifications to seller, buyer, and waitlist
                 var now = dateTimeProvider.Now;

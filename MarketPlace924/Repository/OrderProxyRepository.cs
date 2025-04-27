@@ -32,7 +32,7 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
+        public async Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
         {
             var orderData = new AddOrderRequestDto // Assuming a DTO exists
             {
@@ -144,7 +144,7 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string searchText = null, string timePeriod = null)
+        public async Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string? searchText = null, string? timePeriod = null)
         {
             var queryParams = new List<string>();
             if (!string.IsNullOrEmpty(searchText))
@@ -175,7 +175,7 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate)
+        public async Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate)
         {
             var orderData = new UpdateOrderRequestDto
             {

@@ -1,64 +1,32 @@
-using MarketPlace924.Repository;
 using Server.DBConnection;
+using Microsoft.EntityFrameworkCore;
 using Server.Helper;
+using Server.Repository;
 using SharedClassLibrary.IRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = AppConfig.GetConnectionString("MyLocalDb");
 
 // Add services to the container.
+builder.Services.AddDbContext<MarketPlaceDbContext>(options => options.UseSqlServer(connectionString));
+
+// Register all repositories
 builder.Services.AddScoped<DatabaseConnection>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
+builder.Services.AddScoped<IContractRenewalRepository, ContractRenewalRepository>();
+builder.Services.AddScoped<IContractRepository, ContractRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+/// builder.Services.AddScoped<IOrderHistoryRepository, OrderHistoryRepository>(); // NOT IMPLEMENTED YET, will not implement because DummyProduct needs refactoring (not my job), request my help after this was done please -Alex
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
+builder.Services.AddScoped<IPDFRepository, PDFRepository>();
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();
-builder.Services.AddScoped<IContractRenewalRepository>(provider =>
-{
-    return new ContractRenewalRepository(connectionString!);
-});
-builder.Services.AddScoped<IContractRepository>(provider =>
-{
-    return new ContractRepository(connectionString!);
-});
-builder.Services.AddScoped<IPDFRepository>(provider =>
-{
-    return new PDFRepository(connectionString!);
-});
-builder.Services.AddScoped<INotificationRepository>(provider =>
-{
-    return new NotificationRepository(connectionString!);
-});
-builder.Services.AddScoped<IWaitListRepository>(provider =>
-{
-    return new WaitListRepository(connectionString!);
-});
-builder.Services.AddScoped<IOrderHistoryRepository>(provider =>
-{
-    return new OrderHistoryRepository(connectionString!);
-});
-builder.Services.AddScoped<IOrderRepository>(provider =>
-{
-    return new OrderRepository(connectionString!);
-});
-builder.Services.AddScoped<IOrderSummaryRepository>(provider =>
-{
-    return new OrderSummaryRepository(connectionString!);
-});
-builder.Services.AddScoped<ITrackedOrderRepository>(provider =>
-{
-    return new TrackedOrderRepository(connectionString!);
-});
-builder.Services.AddScoped<IDummyWalletRepository>(provider =>
-{
-    return new DummyWalletRepository(connectionString!);
-});
-builder.Services.AddScoped<IDummyCardRepository>(provider =>
-{
-    return new DummyCardRepository(connectionString!);
-});
-builder.Services.AddScoped<IDummyProductRepository>(provider =>
-{
-    return new DummyProductRepository(connectionString!);
-});
+builder.Services.AddScoped<ITrackedOrderRepository, TrackedOrderRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+/// builder.Services.AddScoped<IWaitListRepository, WaitListRepository>(); // NOT IMPLEMENTED YET, will implement -Alex
+/// builder.Services.AddScoped<IDummyCardRepository, DummyCardRepository>(); // NOT IMPLEMENTED YET, will implement -Alex
+/// builder.Services.AddScoped<IDummyWalletRepository, DummyWalletRepository>(); // NOT IMPLEMENTED YET, will implement -Alex
+/// builder.Services.AddScoped<IDummyProductRepository, DummyProductRepository>(); // NOT IMPLEMENTED YET, still has DummyProduct but I think it is manageable, only minor modifications need to be made -Alex
 
 builder.Services.AddControllers();
 
