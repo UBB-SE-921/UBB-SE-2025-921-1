@@ -38,6 +38,23 @@ namespace Server.Repository
         {
             this.dbContext.Users.Add(user);
             await this.dbContext.SaveChangesAsync();
+
+            switch (user.Role)
+            {
+                case UserRole.Buyer:
+                    Buyer buyer = new Buyer
+                    {
+                        User = user,
+                    };
+                    this.dbContext.Buyers.Add(buyer);
+                    break;
+                case UserRole.Seller:
+                    Seller seller = new Seller(user);
+                    this.dbContext.Sellers.Add(seller);
+                    break;
+            }
+
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>

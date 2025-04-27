@@ -37,7 +37,7 @@ namespace MarketPlace924.Service
         /// <returns>A task that represents the asynchronous operation. The task result contains the seller information.</returns>
         public async Task<Seller> GetSellerByUser(User user)
         {
-            var seller = await this.sellerRepository.GetSellerInfo(user);
+            Seller seller = await this.sellerRepository.GetSellerInfo(user);
             return seller;
         }
 

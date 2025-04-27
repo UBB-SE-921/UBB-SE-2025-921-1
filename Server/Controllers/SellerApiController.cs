@@ -204,7 +204,8 @@ namespace Server.Controllers
         {
             try
             {
-                var user = new User { UserId = userId };
+                var user = new User();
+                user.UserId = userId;
                 var seller = await this.sellerRepository.GetSellerInfo(user);
                 return this.Ok(seller);
             }
