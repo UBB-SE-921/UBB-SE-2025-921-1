@@ -1,25 +1,71 @@
-using System;
-using System.Data;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+// <copyright file="OrderSummaryProxyRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.DataTransferObjects;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
     /// <summary>
-    /// Provides database operations for order summary management.
+    /// Proxy repository class for managing order summary operations via REST API.
     /// </summary>
     public class OrderSummaryProxyRepository : IOrderSummaryRepository
     {
-        public Task<OrderSummary> GetOrderSummaryByIdAsync(int orderSummaryId)
+        private const string ApiBaseRoute = "api/ordersummaries";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderSummaryProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base url of the API.</param>
+        public OrderSummaryProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task UpdateOrderSummaryAsync(int id, float subtotal, float warrantyTax, float deliveryFee, float finalTotal, string fullName, string email, string phoneNumber, string address, string postalCode, string additionalInfo, string contractDetails)
+        /// <inheritdoc />
+        public async Task<OrderSummary> GetOrderSummaryByIdAsync(int orderSummaryId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{orderSummaryId}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            response.EnsureSuccessStatusCode();
+            var orderSummary = await response.Content.ReadFromJsonAsync<OrderSummary>();
+            return orderSummary;
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateOrderSummaryAsync(int id, float subtotal, float warrantyTax, float deliveryFee, float finalTotal, string fullName, string email, string phoneNumber, string address, string postalCode, string additionalInfo, string contractDetails)
+        {
+            // Create a DTO to send the update parameters
+            var requestDto = new UpdateOrderSummaryRequest
+            {
+                Id = id,
+                Subtotal = subtotal,
+                WarrantyTax = warrantyTax,
+                DeliveryFee = deliveryFee,
+                FinalTotal = finalTotal,
+                FullName = fullName,
+                Email = email,
+                PhoneNumber = phoneNumber,
+                Address = address,
+                PostalCode = postalCode,
+                AdditionalInfo = additionalInfo,
+                ContractDetails = contractDetails,
+            };
+
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}", requestDto);
+            response.EnsureSuccessStatusCode();
         }
     }
-} 
+}

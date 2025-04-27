@@ -4,6 +4,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -40,7 +41,7 @@ namespace MarketPlace924.Service
                 throw new ArgumentNullException(nameof(databaseProvider));
             }
 
-            this.orderSummaryRepository = new OrderSummaryProxyRepository();
+            this.orderSummaryRepository = new OrderSummaryProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         /// <inheritdoc/>
