@@ -107,6 +107,7 @@
                                     <TextBlock Text="{Binding Price}" FontSize="16" Foreground="Green"/>
 
                                     <!-- Add to Cart Button -->
+                                    <!--
                                     <Button Width="35" Height="35"
                         ToolTipService.ToolTip="Add To Cart" Padding="0"
                         Command="{Binding AddToCartCommand}"
@@ -117,7 +118,7 @@
                                                 <SvgImageSource UriSource="ms-appx:///Assets/BuyerIcons/cart-add.svg" />
                                             </Image.Source>
                                         </Image>
-                                    </Button>
+                                    </Button>-->
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

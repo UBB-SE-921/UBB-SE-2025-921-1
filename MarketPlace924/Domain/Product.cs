@@ -65,4 +65,15 @@ public class Product
     /// Gets or sets the available stock quantity.
     /// </summary>
     public int Stock { get; set; }
+
+    /// <summary>
+    /// Gets or sets the start date for the product (eg, for rental period).
+    /// </summary>
+    public DateTimeOffset? StartDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the end date for the product (eg for rental period).
+    /// </summary>
+    public DateTimeOffset? EndDate { get; set; }
+    public string ProductType { get; set; }
 }
