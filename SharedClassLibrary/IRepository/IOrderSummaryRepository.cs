@@ -24,6 +24,7 @@ namespace SharedClassLibrary.IRepository
         /// <param name="additionalInfo">Additional information about the order.</param>
         /// <param name="contractDetails">Contract details for borrowed items.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the order summary with the specified ID is not found.</exception>
         Task UpdateOrderSummaryAsync(int id, float subtotal, float warrantyTax, float deliveryFee, float finalTotal,
                                      string fullName, string email, string phoneNumber, string address,
                                      string postalCode, string additionalInfo, string contractDetails);
@@ -33,6 +34,7 @@ namespace SharedClassLibrary.IRepository
         /// </summary>
         /// <param name="orderSummaryId">The ID of the order summary to retrieve.</param>
         /// <returns>A task representing the asynchronous operation that returns the order summary.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the order summary with the specified ID is not found.</exception>
         Task<OrderSummary> GetOrderSummaryByIdAsync(int orderSummaryId);
     }
 } 
