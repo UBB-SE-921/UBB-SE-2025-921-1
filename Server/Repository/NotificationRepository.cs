@@ -228,7 +228,7 @@ namespace MarketPlace924.Repository
         /// <param name="reader">The reader to create a notification from</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public Notification CreateFromDataReader(IDataReader reader)
+        private Notification CreateFromDataReader(IDataReader reader)
         {
             int notificationId = reader.GetInt32(reader.GetOrdinal("notificationID"));
             int recipientId = reader.GetInt32(reader.GetOrdinal("recipientID"));
