@@ -1,17 +1,17 @@
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using MarketPlace924.Domain;
-using MarketPlace924.Repository;
-using System;
-using MarketPlace924.Service;
-using MarketPlace924.ViewModel;
-using System.Windows.Input; 
-using CommunityToolkit.Mvvm.Input; 
-using MarketPlace924.DBConnection;
-using System.Linq;
-
 namespace MarketPlace924.ViewModel
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows.Input;
+    using CommunityToolkit.Mvvm.Input;
+    using MarketPlace924.DBConnection;
+    using MarketPlace924.Domain;
+    using MarketPlace924.Repository;
+    using MarketPlace924.Service;
+    using MarketPlace924.ViewModel;
+
     public class ShoppingCartViewModel : IShoppingCartViewModel
     {
         private readonly IShoppingCartRepository shoppingCartRepository;
@@ -67,6 +67,7 @@ namespace MarketPlace924.ViewModel
             await this.shoppingCartRepository.UpdateProductQuantityAsync(this.buyerId, product.ProductId, quantity);
             await this.LoadCartItemsAsync();
         }
+
         private async Task DecreaseQuantityAsync(Product product)
         {
             if (product == null)
