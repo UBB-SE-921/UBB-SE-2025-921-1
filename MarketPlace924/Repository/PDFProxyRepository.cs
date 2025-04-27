@@ -1,20 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+﻿// <copyright file="PDFProxyRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.IRepository;
+
+    /// <summary>
+    /// Proxy repository class for managing PDF operations via REST API.
+    /// </summary>
     public class PDFProxyRepository : IPDFRepository
     {
-        public Task<int> InsertPdfAsync(byte[] fileBytes)
+        private const string ApiBaseRoute = "api/pdfs";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PDFProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base url of the API.</param>
+        public PDFProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+        }
+
+        /// <inheritdoc />
+        public async Task<int> InsertPdfAsync(byte[] fileBytes)
+        {
+            if (fileBytes == null || fileBytes.Length == 0)
+            {
+                throw new ArgumentException("PDF file bytes cannot be null or empty.", nameof(fileBytes));
+            }
+
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", fileBytes);
+            response.EnsureSuccessStatusCode();
+
+            var pdfId = await response.Content.ReadFromJsonAsync<int>();
+            return pdfId;
         }
     }
 }
