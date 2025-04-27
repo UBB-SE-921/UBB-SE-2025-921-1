@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Net.Http.Json;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using SharedClassLibrary.DataTransferObjects;
     using SharedClassLibrary.Domain;
@@ -102,8 +103,15 @@
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/delivery-date");
             response.EnsureSuccessStatusCode();
-            var deliveryDate = await response.Content.ReadFromJsonAsync<DateTime?>();
-            return deliveryDate;
+            try
+            {
+                var deliveryDate = await response.Content.ReadFromJsonAsync<DateTime?>();
+                return deliveryDate;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
 
         /// <inheritdoc />
@@ -147,8 +155,15 @@
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/product-details");
             response.EnsureSuccessStatusCode();
-            var productDetails = await response.Content.ReadFromJsonAsync<(DateTime?, DateTime?, double, string)?>();
-            return productDetails;
+            try
+            {
+                var productDetails = await response.Content.ReadFromJsonAsync<(DateTime?, DateTime?, double, string)?>();
+                return productDetails;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
     }
 }

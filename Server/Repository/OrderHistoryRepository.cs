@@ -46,7 +46,7 @@ namespace MarketPlace924.Repository
                 await connection.OpenAsync();
                 using (IDbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = "GetDummyProductsFromOrderHistory";
+                    command.CommandText = "GetProductsFromOrderHistory";
                     command.CommandType = CommandType.StoredProcedure;
 
                     IDbDataParameter orderHistoryParameter = command.CreateParameter();
