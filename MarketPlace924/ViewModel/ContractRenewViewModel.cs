@@ -32,7 +32,7 @@ namespace MarketPlace924.ViewModel
         public ContractRenewViewModel(string connectionString)
         {
             // Assign injected services to fields
-            this.contractService = new ContractService(new ContractProxyRepository());
+            this.contractService = new ContractService(new ContractProxyRepository(AppConfig.GetBaseApiUrl()));
             this.pdfService = new PDFService();
             this.renewalService = new ContractRenewalService(new ContractRenewalProxyRepository(AppConfig.GetBaseApiUrl()));
             this.notificationContentService = new NotificationContentService();

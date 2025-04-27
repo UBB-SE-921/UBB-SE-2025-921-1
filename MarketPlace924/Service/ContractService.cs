@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using MarketPlace924.Repository; // Add this using directive
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -17,7 +18,7 @@ namespace MarketPlace924.Service
         // Add constructor injection for the repository
         public ContractService(string connectionString)
         {
-            contractRpository = new ContractProxyRepository() ?? throw new ArgumentNullException(nameof(connectionString));
+            contractRpository = new ContractProxyRepository(AppConfig.GetBaseApiUrl()) ?? throw new ArgumentNullException(nameof(connectionString));
         }
         public ContractService(IContractRepository contractRepository)
         {

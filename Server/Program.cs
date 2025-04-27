@@ -15,6 +15,10 @@ builder.Services.AddScoped<IContractRenewalRepository>(provider =>
 {
     return new ContractRenewalRepository(connectionString!);
 });
+builder.Services.AddScoped<IContractRepository>(provider =>
+{
+    return new ContractRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 
