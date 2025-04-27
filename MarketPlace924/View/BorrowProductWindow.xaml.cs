@@ -58,7 +58,7 @@ namespace MarketPlace924
                     this.DisplayProduct(product, sellerName);
 
                     int currentUserId = this.GetCurrentUserId();
-                    bool isOnWaitlist = this.waitListViewModel.IsUserInWaitlist(currentUserId, this.currentProductId);
+                    bool isOnWaitlist = await this.waitListViewModel.IsUserInWaitlist(currentUserId, this.currentProductId);
 
                     this.UpdateWaitlistUI(isOnWaitlist);
                 }
@@ -190,7 +190,7 @@ namespace MarketPlace924
             {
                 int currentUserId = this.GetCurrentUserId();
 
-                this.waitListViewModel.RemoveUserFromWaitlist(currentUserId, this.currentProductId);
+                await this.waitListViewModel.RemoveUserFromWaitlist(currentUserId, this.currentProductId);
 
                 this.UpdateWaitlistUI(false);
 
@@ -212,7 +212,7 @@ namespace MarketPlace924
             try
             {
                 int currentUserId = this.GetCurrentUserId();
-                int position = this.waitListViewModel.GetUserWaitlistPosition(currentUserId, this.currentProductId);
+                int position = await this.waitListViewModel.GetUserWaitlistPosition(currentUserId, this.currentProductId);
 
                 if (position > 0)
                 {

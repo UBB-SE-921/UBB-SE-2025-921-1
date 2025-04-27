@@ -15,14 +15,14 @@ namespace MarketPlace924.Services
         /// </summary>
         /// <param name="userId">The unique identifier of the user to add.</param>
         /// <param name="productId">The unique identifier of the product.</param>
-        void AddUserToWaitlist(int userId, int productId);
+        Task AddUserToWaitlist(int userId, int productId);
 
         /// <summary>
         /// Removes a user from the waitlist for a specified product.
         /// </summary>
         /// <param name="userId">The unique identifier of the user to remove.</param>
-        /// <param name="productWaitListId">The unique identifier of the product waitlist.</param>
-        void RemoveUserFromWaitlist(int userId, int productWaitListId);
+        /// <param name="productId">The unique identifier of the product.</param>
+        Task RemoveUserFromWaitlist(int userId, int productId);
 
         /// <summary>
         /// Retrieves all users in the waitlist for the specified product.
@@ -31,7 +31,7 @@ namespace MarketPlace924.Services
         /// <returns>
         /// A list of <see cref="UserWaitList"/> objects representing the users in the waitlist.
         /// </returns>
-        List<UserWaitList> GetUsersInWaitlist(int waitListProductId);
+        Task<List<UserWaitList>> GetUsersInWaitlist(int productId);
 
         /// <summary>
         /// Retrieves all waitlists that a specific user is part of.
@@ -40,22 +40,22 @@ namespace MarketPlace924.Services
         /// <returns>
         /// A list of <see cref="UserWaitList"/> objects representing the waitlists the user is participating in.
         /// </returns>
-        List<UserWaitList> GetUserWaitlists(int userId);
+        Task<List<UserWaitList>> GetUserWaitlists(int userId);
 
         /// <summary>
         /// Retrieves the size of the waitlist for the specified product.
         /// </summary>
-        /// <param name="productWaitListId">The unique identifier of the product waitlist.</param>
+        /// <param name="productId">The unique identifier of the product.</param>
         /// <returns>The size of the waitlist.</returns>
-        int GetWaitlistSize(int productWaitListId);
+        Task<int> GetWaitlistSize(int productId);
 
         /// <summary>
         /// Determines whether a user is already present in the waitlist for a specified product.
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
-        /// <param name="productWaitListId">The unique identifier of the product waitlist.</param>
+        /// <param name="productId">The unique identifier of the product.</param>
         /// <returns><c>true</c> if the user is in the waitlist; otherwise, <c>false</c>.</returns>
-        bool IsUserInWaitlist(int userId, int productWaitListId);
+        Task<bool> IsUserInWaitlist(int userId, int productId);
 
         /// <summary>
         /// Asynchronously retrieves the seller's name based on an optional seller identifier.
@@ -77,6 +77,6 @@ namespace MarketPlace924.Services
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="productId">The unique identifier of the product.</param>
         /// <returns>The user's position in the waitlist.</returns>
-        int GetUserWaitlistPosition(int userId, int productId);
+        Task<int> GetUserWaitlistPosition(int userId, int productId);
     }
 }

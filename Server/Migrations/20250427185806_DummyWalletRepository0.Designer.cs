@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.DBConnection;
 
@@ -11,9 +12,11 @@ using Server.DBConnection;
 namespace Server.Migrations
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    partial class MarketPlaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250427185806_DummyWalletRepository0")]
+    partial class DummyWalletRepository0
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,9 +92,6 @@ namespace Server.Migrations
                     b.Property<float>("Balance")
                         .HasColumnType("real");
 
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CVC")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -115,8 +115,6 @@ namespace Server.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("BuyerId");
 
                     b.HasIndex("CardNumber");
 
@@ -803,21 +801,12 @@ namespace Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Server.DataModels.DummyCardEntity", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.Buyer", null)
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Server.DataModels.DummyWalletEntity", b =>
                 {
                     b.HasOne("SharedClassLibrary.Domain.Buyer", null)
                         .WithOne()
                         .HasForeignKey("Server.DataModels.DummyWalletEntity", "BuyerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

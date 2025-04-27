@@ -158,8 +158,8 @@ namespace Server.DBConnection
                 entity.HasKey(b => b.Id);
 
                 entity.HasOne(b => b.User)
-                .WithOne()
-                .HasForeignKey<Buyer>(b => b.Id);
+                    .WithOne()
+                    .HasForeignKey<Buyer>(b => b.Id);
 
                 entity.Property(b => b.Discount)
                     .HasPrecision(18, 2);
@@ -509,6 +509,14 @@ namespace Server.DBConnection
             {
                 entity.HasKey(dc => dc.ID);
 
+                entity.HasOne<Buyer>() // not in Maria's DB design, I added it to have code maintainability
+                    .WithMany()
+                    .HasForeignKey(dc => dc.BuyerId)
+                    .OnDelete(DeleteBehavior.Restrict) // not specified in Maria's DB design, but I left restrict to avoid breaking changes (can be changed later)
+                    .IsRequired();
+
+                entity.HasIndex(dc => dc.CardNumber); // because Golubiro Spioniro is stealing our cards :))
+
                 entity.Property(dc => dc.CardholderName)
                     .IsRequired(); // to respect Maria's DB design
 
@@ -532,6 +540,11 @@ namespace Server.DBConnection
             // Please do check the DummyWalletEntity class for more information about this abomination of a table :))
             modelBuilder.Entity<DummyWalletEntity>(entity =>
             {
+                entity.HasOne<Buyer>()
+                    .WithOne()
+                    .HasForeignKey<DummyWalletEntity>(dw => dw.BuyerId)
+                    .OnDelete(DeleteBehavior.Restrict); // not specified in Maria's DB design, but I left restrict to avoid breaking changes (can be changed later)
+
                 entity.HasKey(dw => dw.ID);
             });
 

@@ -1,127 +1,74 @@
-﻿using System;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+﻿// <copyright file="DummyCardRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Server.Repository
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Server.DataModels;
+    using Server.DBConnection;
+    using SharedClassLibrary.IRepository;
+
+    /// <summary>
+    /// A repository for the DummyCardEntity class.
+    /// </summary>
     public class DummyCardRepository : IDummyCardRepository
     {
-        private readonly string connectionString;
-        private readonly IDatabaseProvider databaseProvider;
+        // private readonly string connectionString;
+        // private readonly IDatabaseProvider databaseProvider;
+        private readonly MarketPlaceDbContext dbContext;
 
-        [ExcludeFromCodeCoverage]
-        public DummyCardRepository(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DummyCardRepository"/> class.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
+        public DummyCardRepository(MarketPlaceDbContext dbContext)
         {
-        }
-
-        public DummyCardRepository(string connectionString, IDatabaseProvider databaseProvider)
-        {
-            if (connectionString == null)
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
-            this.connectionString = connectionString;
-            this.databaseProvider = databaseProvider;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
-        /// Deletes a card from the database using the DeleteCard stored procedure
+        /// Deletes a card from the database.
         /// </summary>
-        /// <param name="cardNumber">The card number of the card to be deleted</param>
-        /// <returns></returns>
+        /// <param name="cardNumber">The card number of the card to be deleted.</param>
+        /// <returns> A task representing the asynchronous operation.</returns>
+        /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
         public async Task DeleteCardAsync(string cardNumber)
         {
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "DeleteCard";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-
-                    var parameter = databaseCommand.CreateParameter();
-                    parameter.ParameterName = "@cardnumber";
-                    parameter.Value = cardNumber;
-                    databaseCommand.Parameters.Add(parameter);
-
-                    await databaseConnection.OpenAsync();
-                    await databaseCommand.ExecuteNonQueryAsync();
-                }
-            }
+            DummyCardEntity cardToDelete = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
+                                                ?? throw new Exception($"DeleteCardAsync: No card with number: {cardNumber}");
+            this.dbContext.DummyCards.Remove(cardToDelete);
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
-        /// Updates the balance of a card in the database using the UpdateCardBalance stored procedure
+        /// Updates the balance of a card in the database.
         /// </summary>
-        /// <param name="cardNumber">The number of the card to be updated</param>
-        /// <param name="balance">The balance amount the card to be updated to</param>
-        /// <returns></returns>
+        /// <param name="cardNumber">The number of the card to be updated.</param>
+        /// <param name="balance">The balance amount the card to be updated to.</param>
+        /// <returns> A task representing the asynchronous operation.</returns>
+        /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
         public async Task UpdateCardBalanceAsync(string cardNumber, float balance)
         {
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "UpdateCardBalance";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-
-                    var paramCardNumber = databaseCommand.CreateParameter();
-                    paramCardNumber.ParameterName = "@cnumber";
-                    paramCardNumber.Value = cardNumber;
-                    databaseCommand.Parameters.Add(paramCardNumber);
-
-                    var paramBalance = databaseCommand.CreateParameter();
-                    paramBalance.ParameterName = "@balance";
-                    paramBalance.Value = balance;
-                    databaseCommand.Parameters.Add(paramBalance);
-
-                    await databaseConnection.OpenAsync();
-                    await databaseCommand.ExecuteNonQueryAsync();
-                }
-            }
+            DummyCardEntity cardToUpdate = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
+                                                ?? throw new Exception($"UpdateCardBalanceAsync: No card with number: {cardNumber}");
+            cardToUpdate.Balance = balance;
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
-        /// Retrieves the balance of a card from the database using the GetBalance stored procedure
+        /// Retrieves the balance of a card from the database.
         /// </summary>
-        /// <param name="cardNumber">The number of the card of which to get the balance from</param>
-        /// <returns></returns>
+        /// <param name="cardNumber">The number of the card of which to get the balance from.</param>
+        /// <returns> The balance of the card.</returns>
+        /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
         public async Task<float> GetCardBalanceAsync(string cardNumber)
         {
-            float cardBalance = -1;
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetBalance";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-
-                    var parameter = databaseCommand.CreateParameter();
-                    parameter.ParameterName = "@cnumber";
-                    parameter.Value = cardNumber;
-                    databaseCommand.Parameters.Add(parameter);
-
-                    await databaseConnection.OpenAsync();
-
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            cardBalance = (float)reader.GetDouble(reader.GetOrdinal("balance"));
-                        }
-                    }
-                }
-            }
-            return cardBalance;
+            DummyCardEntity cardToGet = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
+                                                ?? throw new Exception($"GetCardBalanceAsync: No card with number: {cardNumber}");
+            return cardToGet.Balance;
         }
     }
 }

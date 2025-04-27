@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
 using Microsoft.Data.SqlClient;
-using MarketPlace924.Repository;
+using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
 using MarketPlace924.Helper;
 
@@ -35,17 +35,10 @@ public class WaitListNotifier
     /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
     /// <precondition>productId must be a valid product ID. restockDate must be a future date.</precondition>
     /// <postcondition>Notifications are scheduled for users on the waitlist.</postcondition>
-    public void ScheduleRestockAlerts(int productId, DateTime restockDate)
+    public async void ScheduleRestockAlerts(int productId, DateTime restockDate)
     {
-        int waitlistProductId = GetWaitlistProductId(productId);
-        if (waitlistProductId <= 0)
-        {
-            return;
-        }
-
-        var waitlistUsers = waitListModel.GetUsersInWaitlist(waitlistProductId)
-                     .OrderBy(u => u.PositionInQueue)
-                     .ToList();
+        List<UserWaitList> waitlistUsers = await waitListModel.GetUsersInWaitlist(productId);
+        waitlistUsers = waitlistUsers.OrderBy(u => u.PositionInQueue).ToList();
 
         for (int userIndex = 0; userIndex < waitlistUsers.Count; userIndex++)
         {
@@ -56,35 +49,6 @@ public class WaitListNotifier
                 isRead: false)
             { };
             notificationAdapter.AddNotification(notification);
-        }
-    }
-
-    /// <summary>
-    /// Retrieves the waitlist product ID for a specific product.
-    /// </summary>
-    /// <param name="productId">The ID of the product. Must be a positive integer.</param>
-    /// <returns>The waitlist product ID, or -1 if the product is not found.</returns>
-    /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-    /// <precondition>productId must be a valid product ID.</precondition>
-    /// <postcondition>The waitlist product ID is returned, or -1 if not found.</postcondition>
-    private int GetWaitlistProductId(int productId)
-    {
-        using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-        using (SqlCommand sqlCommand = new SqlCommand(
-            "SELECT WaitListProductID FROM WaitListProduct WHERE ProductID = @ProductId",
-            sqlConnection))
-        {
-            sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-            sqlConnection.Open();
-            object queryResult = sqlCommand.ExecuteScalar();
-            if (queryResult != null)
-            {
-                return Convert.ToInt32(queryResult);
-            }
-            else
-            {
-                return -1;
-            }
         }
     }
 

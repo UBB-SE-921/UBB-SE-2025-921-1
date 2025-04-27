@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Server.DBConnection;
 
@@ -11,9 +12,11 @@ using Server.DBConnection;
 namespace Server.Migrations
 {
     [DbContext(typeof(MarketPlaceDbContext))]
-    partial class MarketPlaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250427182326_DummyCardRepository0")]
+    partial class DummyCardRepository0
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,9 +92,6 @@ namespace Server.Migrations
                     b.Property<float>("Balance")
                         .HasColumnType("real");
 
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CVC")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -116,8 +116,6 @@ namespace Server.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("BuyerId");
-
                     b.HasIndex("CardNumber");
 
                     b.ToTable("DummyCards");
@@ -134,13 +132,7 @@ namespace Server.Migrations
                     b.Property<float>("Balance")
                         .HasColumnType("real");
 
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
-
-                    b.HasIndex("BuyerId")
-                        .IsUnique();
 
                     b.ToTable("DummyWallets");
                 });
@@ -799,24 +791,6 @@ namespace Server.Migrations
                     b.HasOne("SharedClassLibrary.Domain.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Server.DataModels.DummyCardEntity", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.Buyer", null)
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Server.DataModels.DummyWalletEntity", b =>
-                {
-                    b.HasOne("SharedClassLibrary.Domain.Buyer", null)
-                        .WithOne()
-                        .HasForeignKey("Server.DataModels.DummyWalletEntity", "BuyerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

@@ -34,9 +34,9 @@ namespace MarketPlace924.Services
         /// <param name="userId">The ID of the user to be added to the waitlist. Must be a positive integer.</param>
         /// <param name="productId">The ID of the product. Must be a positive integer.</param>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public void AddUserToWaitlist(int userId, int productId)
+        public async Task AddUserToWaitlist(int userId, int productId)
         {
-            waitListModel.AddUserToWaitlist(userId, productId);
+            await waitListModel.AddUserToWaitlist(userId, productId);
         }
 
         /// <summary>
@@ -45,9 +45,9 @@ namespace MarketPlace924.Services
         /// <param name="userId">The ID of the user to be removed from the waitlist. Must be a positive integer.</param>
         /// <param name="productId">The ID of the product. Must be a positive integer.</param>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public void RemoveUserFromWaitlist(int userId, int productId)
+        public async Task RemoveUserFromWaitlist(int userId, int productId)
         {
-            waitListModel.RemoveUserFromWaitlist(userId, productId);
+            await waitListModel.RemoveUserFromWaitlist(userId, productId);
         }
 
         /// <summary>
@@ -56,9 +56,9 @@ namespace MarketPlace924.Services
         /// <param name="waitListProductId">The ID of the product waitlist. Must be a positive integer.</param>
         /// <returns>A list of UserWaitList objects representing the users in the waitlist.</returns>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public List<UserWaitList> GetUsersInWaitlist(int waitListProductId)
+        public async Task<List<UserWaitList>> GetUsersInWaitlist(int productId)
         {
-            return waitListModel.GetUsersInWaitlist(waitListProductId);
+            return await waitListModel.GetUsersInWaitlist(productId);
         }
 
         /// <summary>
@@ -67,20 +67,20 @@ namespace MarketPlace924.Services
         /// <param name="userId">The ID of the user. Must be a positive integer.</param>
         /// <returns>A list of UserWaitList objects representing the waitlists the user is part of.</returns>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public List<UserWaitList> GetUserWaitlists(int userId)
+        public async Task<List<UserWaitList>> GetUserWaitlists(int userId)
         {
-            return waitListModel.GetUserWaitlists(userId);
+            return await waitListModel.GetUserWaitlists(userId);
         }
 
         /// <summary>
         /// Gets the number of users in a product's waitlist.
         /// </summary>
-        /// <param name="productWaitListId">The ID of the product waitlist. Must be a positive integer.</param>
+        /// <param name="productId">The ID of the product. Must be a positive integer.</param>
         /// <returns>The number of users in the waitlist.</returns>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public int GetWaitlistSize(int productWaitListId)
+        public async Task<int> GetWaitlistSize(int productId)
         {
-            return waitListModel.GetWaitlistSize(productWaitListId);
+            return await waitListModel.GetWaitlistSize(productId);
         }
 
         /// <summary>
@@ -90,21 +90,21 @@ namespace MarketPlace924.Services
         /// <param name="productId">The ID of the product. Must be a positive integer.</param>
         /// <returns>The position of the user in the waitlist, or -1 if the user is not in the waitlist.</returns>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public int GetUserWaitlistPosition(int userId, int productId)
+        public async Task<int> GetUserWaitlistPosition(int userId, int productId)
         {
-            return waitListModel.GetUserWaitlistPosition(userId, productId);
+            return await waitListModel.GetUserWaitlistPosition(userId, productId);
         }
 
         /// <summary>
         /// Checks if a user is in a product's waitlist.
         /// </summary>
         /// <param name="userId">The ID of the user. Must be a positive integer.</param>
-        /// <param name="productWaitListId">The ID of the product waitlist. Must be a positive integer.</param>
+        /// <param name="productId">The ID of the product. Must be a positive integer.</param>
         /// <returns>True if the user is in the waitlist, otherwise false.</returns>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public bool IsUserInWaitlist(int userId, int productWaitListId)
+        public async Task<bool> IsUserInWaitlist(int userId, int productId)
         {
-            return waitListModel.IsUserInWaitlist(userId, productWaitListId);
+            return await waitListModel.IsUserInWaitlist(userId, productId);
         }
 
         /// <summary>
