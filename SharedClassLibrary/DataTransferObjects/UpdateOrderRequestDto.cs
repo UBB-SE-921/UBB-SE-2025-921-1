@@ -1,6 +1,9 @@
-﻿public class UpdateOrderRequestDto
+﻿namespace SharedClassLibrary.DataTransferObjects
 {
-    public int ProductType { get; set; }
-    public required string PaymentMethod { get; set; }
-    public DateTime OrderDate { get; set; }
+    public class UpdateOrderRequestDto
+    {
+        public int ProductType { get; set; }
+        public required string PaymentMethod { get; set; }
+        public DateTime OrderDate { get; set; }
+    }
 }
