@@ -44,7 +44,7 @@ namespace Server.Controllers
 
             try
             {
-                await this.contractRenewalRepository.AddRenewedContractAsync(contract, Array.Empty<byte>());
+                await this.contractRenewalRepository.AddRenewedContractAsync(contract);
                 return this.Created();
             }
             catch (Exception ex)
