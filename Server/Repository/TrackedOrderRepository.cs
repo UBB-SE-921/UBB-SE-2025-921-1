@@ -44,9 +44,9 @@ namespace Server.Repository
         /// <summary>
         /// Adds a new tracked order to the database.
         /// </summary>
-        /// <param name="order">The tracked order data to add</param>
-        /// <returns>The ID of the newly created tracked order</returns>
-        /// <exception cref="Exception">Thrown when the tracked order cannot be added</exception>
+        /// <param name="order">The tracked order data to add.</param>
+        /// <returns>The ID of the newly created tracked order.</returns>
+        /// <exception cref="Exception">Thrown when the tracked order cannot be added.</exception>
         public async Task<int> AddTrackedOrderAsync(TrackedOrder order)
         {
             await this.dbContext.TrackedOrders.AddAsync(order);
@@ -73,7 +73,7 @@ namespace Server.Repository
         /// </summary>
         /// <param name="trackOrderID">ID of the tracked order to delete.</param>
         /// <returns>True if deletion was successful, false otherwise.</returns>
-        /// <exception cref="Exception">Thrown when the tracked order cannot be deleted</exception>
+        /// <exception cref="Exception">Thrown when the tracked order cannot be deleted.</exception>
         public async Task<bool> DeleteTrackedOrderAsync(int trackOrderID)
         {
             TrackedOrder order = await this.dbContext.TrackedOrders.FindAsync(trackOrderID) ?? throw new Exception($"DeleteTrackedOrderAsync: No TrackedOrder with id: {trackOrderID}");
