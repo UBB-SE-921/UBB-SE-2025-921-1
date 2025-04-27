@@ -43,6 +43,10 @@ builder.Services.AddScoped<IOrderSummaryRepository>(provider =>
 {
     return new OrderSummaryRepository(connectionString!);
 });
+builder.Services.AddScoped<ITrackedOrderRepository>(provider =>
+{
+    return new TrackedOrderRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 

@@ -8,6 +8,7 @@ using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using Microsoft.Data.SqlClient; // Assuming Configuration and SqlDatabaseProvider are here
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -18,7 +19,7 @@ namespace MarketPlace924.Service
         // Constructor for dependency injection
         public TrackedOrderService()
         {
-            this.trackedOrderRepository = new TrackedOrderProxyRepository();
+            this.trackedOrderRepository = new TrackedOrderProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         public async Task<int> AddOrderCheckpointAsync(OrderCheckpoint checkpoint)
@@ -56,7 +57,7 @@ namespace MarketPlace924.Service
         {
             try
             {
-                 return await trackedOrderRepository.GetOrderCheckpointByIdAsync(checkpointID);
+                return await trackedOrderRepository.GetOrderCheckpointByIdAsync(checkpointID);
             }
             catch (Exception) // Repository throws if not found
             {
@@ -66,9 +67,9 @@ namespace MarketPlace924.Service
 
         public async Task<TrackedOrder?> GetTrackedOrderByIDAsync(int trackedOrderID)
         {
-             try
+            try
             {
-                 return await trackedOrderRepository.GetTrackedOrderByIdAsync(trackedOrderID);
+                return await trackedOrderRepository.GetTrackedOrderByIdAsync(trackedOrderID);
             }
             catch (Exception) // Repository throws if not found
             {
@@ -78,7 +79,7 @@ namespace MarketPlace924.Service
 
         public async Task UpdateOrderCheckpointAsync(int checkpointID, DateTime timestamp, string? location, string description, OrderStatus status)
         {
-             await trackedOrderRepository.UpdateOrderCheckpointAsync(checkpointID, timestamp, location, description, status);
+            await trackedOrderRepository.UpdateOrderCheckpointAsync(checkpointID, timestamp, location, description, status);
         }
 
         public async Task UpdateTrackedOrderAsync(int trackedOrderID, DateOnly estimatedDeliveryDate, OrderStatus currentStatus)
@@ -99,7 +100,7 @@ namespace MarketPlace924.Service
 
         public async Task<int> GetNumberOfCheckpointsAsync(TrackedOrder order)
         {
-             if (order == null)
+            if (order == null)
             {
                 return 0;
             }
