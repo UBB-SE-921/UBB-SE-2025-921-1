@@ -22,7 +22,7 @@ public class WaitListNotifier
     /// <exception cref="ArgumentNullException">Thrown when the connection string is null or empty.</exception>
     public WaitListNotifier(string connectionString)
     {
-        waitListModel = new WaitListProxyRepository();
+        waitListModel = new WaitListProxyRepository(AppConfig.GetBaseApiUrl());
         notificationAdapter = new NotificationProxyRepository(AppConfig.GetBaseApiUrl());
         this.connectionString = connectionString;
     }

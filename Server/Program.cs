@@ -27,6 +27,10 @@ builder.Services.AddScoped<INotificationRepository>(provider =>
 {
     return new NotificationRepository(connectionString!);
 });
+builder.Services.AddScoped<IWaitListRepository>(provider =>
+{
+    return new WaitListRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 

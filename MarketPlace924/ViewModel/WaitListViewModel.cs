@@ -4,6 +4,7 @@ using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
 using Microsoft.Data.SqlClient;
 using MarketPlace924.Repository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Services
 {
@@ -23,7 +24,7 @@ namespace MarketPlace924.Services
         /// </remarks>
         public WaitListViewModel(string connectionString)
         {
-            waitListModel = new WaitListProxyRepository();
+            waitListModel = new WaitListProxyRepository(AppConfig.GetBaseApiUrl());
             dummyProductModel = new DummyProductProxyRepository();
         }
 
