@@ -19,6 +19,10 @@ builder.Services.AddScoped<IContractRepository>(provider =>
 {
     return new ContractRepository(connectionString!);
 });
+builder.Services.AddScoped<IPDFRepository>(provider =>
+{
+    return new PDFRepository(connectionString!);
+});
 
 builder.Services.AddControllers();
 
