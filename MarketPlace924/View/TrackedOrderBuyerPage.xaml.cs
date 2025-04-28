@@ -6,7 +6,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 
-namespace MarketPlace924.Views
+namespace MarketPlace924.View
 {
     [ExcludeFromCodeCoverage]
     public sealed partial class TrackedOrderBuyerPage : Page

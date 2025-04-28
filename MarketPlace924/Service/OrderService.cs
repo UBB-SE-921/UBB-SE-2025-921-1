@@ -13,12 +13,8 @@ namespace MarketPlace924.Service
     {
         private readonly IOrderRepository orderRepository;
 
-        public OrderService(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
-        {
-        }
 
-        public OrderService(string connectionString, IDatabaseProvider databaseProvider)
+        public OrderService()
         {
             this.orderRepository = new OrderProxyRepository(AppConfig.GetBaseApiUrl());
         }

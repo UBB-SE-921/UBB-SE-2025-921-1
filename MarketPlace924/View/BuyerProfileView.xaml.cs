@@ -3,7 +3,6 @@
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.Shared;
     using MarketPlace924.ViewModel;
-    using MarketPlace924.Views;
     using MarketPlace924;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;

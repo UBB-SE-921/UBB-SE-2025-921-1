@@ -5,34 +5,37 @@
 namespace MarketPlace924.ViewModel
 {
     using System;
-
+    using System.ComponentModel;
+    using System.Windows.Input;
+    using MarketPlace924.Service;
+    using CommunityToolkit.Mvvm.Input;
+    using SharedClassLibrary.Domain;
+    using MarketPlace924.Repository;  
     /// <summary>
     /// View model class for managing buyer wishlist item data and operations.
     /// </summary>
     public class BuyerWishlistItemViewModel : IBuyerWishlistItemViewModel
     {
-        /// <inheritdoc/>
         public int ProductId { get; set; }
-
-        /// <inheritdoc/>
         public string Title { get; set; } = string.Empty;
-
-        /// <inheritdoc/>
         public decimal Price { get; set; }
-
-        /// <inheritdoc/>
         public string Description { get; set; } = string.Empty;
-
-        /// <inheritdoc/>
         public string ImageSource { get; set; } = string.Empty;
-
-        /// <inheritdoc/>
         public bool OwnItem { get; set; } = true;
-
-        /// <inheritdoc/>
         public IOnBuyerWishlistItemRemoveCallback RemoveCallback { get; set; } = null!;
+        public ICommand AddToCartCommand { get; }
 
-        /// <inheritdoc/>
+        public Product Product { get; set; }
+
+        public BuyerWishlistItemViewModel()
+        {
+            this.AddToCartCommand = new RelayCommand<Product>(async (product) =>
+            {
+                var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: 2);
+                await shoppingCartViewModel.AddToCartAsync(product, 1);
+            });
+        }
+
         public async void Remove()
         {
             await this.RemoveCallback.OnBuyerWishlistItemRemove(this.ProductId);

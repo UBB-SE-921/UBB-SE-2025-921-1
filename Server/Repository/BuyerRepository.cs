@@ -37,13 +37,6 @@ namespace Server.Repository
             Buyer buyer = await this.dbContext.Buyers.FindAsync(buyerId)
                                 ?? throw new Exception("LoadBuyerInfo: Buyer not found");
 
-            int billingAddressId = await this.dbContext.Buyers.Where(b => b.Id == buyerId)
-                                .Select(b => EF.Property<int>(b, "BillingAddressId"))
-                                .FirstOrDefaultAsync();
-            int shippingAddressId = await this.dbContext.Buyers.Where(b => b.Id == buyerId)
-                                .Select(b => EF.Property<int>(b, "ShippingAddressId"))
-                                .FirstOrDefaultAsync();
-
             User user = await this.dbContext.Users.FindAsync(buyerId)
                                 ?? throw new Exception("LoadBuyerInfo: User not found");
 
@@ -131,6 +124,7 @@ namespace Server.Repository
             this.dbContext.Buyers.Update(buyerEntity);
 
             // --- Save ---
+
             await this.dbContext.SaveChangesAsync();
         }
 

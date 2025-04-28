@@ -155,6 +155,14 @@ namespace MarketPlace924.ViewModel
                 ProductId = wishlistItem.ProductId,
                 OwnItem = canDelete,
                 RemoveCallback = this,
+                Product = new Product(
+                    wishlistItem.ProductId,
+                    "Sample Product Name", // Replace with actual product name
+                    "Sample Product Description", // Replace with actual product description
+                    10.0, // Replace with actual product price
+                    100, // Replace with actual stock
+                    1 // Replace with actual seller ID
+                )
             });
             return item;
         }

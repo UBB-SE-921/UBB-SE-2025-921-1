@@ -24,6 +24,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Button Grid.Column="0" Content="Home"
                                 Click="{x:Bind NavigateToHome}"
@@ -33,6 +34,9 @@
                                 Style="{StaticResource MainMenuButton}"/>
                         <Button Grid.Column="2" Content="My Market" x:Name="MyMarketButton"
                                 Click="{x:Bind NavigateToMyMarket}"
+                                Style="{StaticResource MainMenuButton}" />
+                        <Button Grid.Column="3" Content="My Cart"
+                                Click="{x:Bind NavigateToMyCart}"
                                 Style="{StaticResource MainMenuButton}" />
                     </Grid>
                 </StackPanel>

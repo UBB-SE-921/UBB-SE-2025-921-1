@@ -1,0 +1,126 @@
+# .editorconfig
+# Root setting
+root = true
+
+# C# files
+[*.cs]
+
+# StyleCop rules from SE.ruleset
+
+# Readability
+dotnet_diagnostic.SA1138.severity = error
+dotnet_diagnostic.SA1140.severity = error
+
+# Spacing
+dotnet_diagnostic.SA1029.severity = error
+dotnet_diagnostic.SA1000.severity = error
+dotnet_diagnostic.SA1001.severity = error
+dotnet_diagnostic.SA1002.severity = error
+dotnet_diagnostic.SA1003.severity = error
+dotnet_diagnostic.SA1004.severity = error
+dotnet_diagnostic.SA1005.severity = error
+dotnet_diagnostic.SA1008.severity = error
+dotnet_diagnostic.SA1009.severity = error
+dotnet_diagnostic.SA1010.severity = error
+dotnet_diagnostic.SA1011.severity = error
+dotnet_diagnostic.SA1012.severity = error
+dotnet_diagnostic.SA1013.severity = error
+dotnet_diagnostic.SA1014.severity = error
+dotnet_diagnostic.SA1015.severity = error
+dotnet_diagnostic.SA1016.severity = error
+dotnet_diagnostic.SA1017.severity = error
+dotnet_diagnostic.SA1018.severity = error
+dotnet_diagnostic.SA1019.severity = error
+dotnet_diagnostic.SA1020.severity = error
+dotnet_diagnostic.SA1021.severity = error
+dotnet_diagnostic.SA1022.severity = error
+dotnet_diagnostic.SA1024.severity = error
+dotnet_diagnostic.SA1025.severity = error
+dotnet_diagnostic.SA1026.severity = error
+dotnet_diagnostic.SA1028.severity = error
+
+# Ordering
+dotnet_diagnostic.SA1218.severity = error
+dotnet_diagnostic.SA1220.severity = error
+dotnet_diagnostic.SA1215.severity = error
+dotnet_diagnostic.SA1219.severity = error
+dotnet_diagnostic.SA1208.severity = error
+dotnet_diagnostic.SA1212.severity = error
+
+# Naming
+dotnet_diagnostic.SA1315.severity = error
+dotnet_diagnostic.SA1300.severity = error
+dotnet_diagnostic.SA1302.severity = error
+dotnet_diagnostic.SA1303.severity = error
+dotnet_diagnostic.SA1304.severity = error
+dotnet_diagnostic.SA1306.severity = error
+dotnet_diagnostic.SA1307.severity = error
+dotnet_diagnostic.SA1308.severity = error
+dotnet_diagnostic.SA1309.severity = error
+dotnet_diagnostic.SA1311.severity = error
+dotnet_diagnostic.SA1312.severity = error
+dotnet_diagnostic.SA1313.severity = error
+
+# Maintainability
+dotnet_diagnostic.SA1414.severity = error
+dotnet_diagnostic.SA1415.severity = error
+dotnet_diagnostic.SA1430.severity = error
+dotnet_diagnostic.SA1401.severity = error
+dotnet_diagnostic.SA1400.severity = error
+dotnet_diagnostic.SA1407.severity = error
+dotnet_diagnostic.SA1408.severity = error
+
+# Layout
+dotnet_diagnostic.SA1521.severity = error
+dotnet_diagnostic.SA1416.severity = error
+dotnet_diagnostic.SA150A.severity = error
+dotnet_diagnostic.SA1509.severity = error
+dotnet_diagnostic.SA1513.severity = error
+dotnet_diagnostic.SA1515.severity = error
+dotnet_diagnostic.SA1500.severity = error
+dotnet_diagnostic.SA1501.severity = error
+dotnet_diagnostic.SA1502.severity = error
+dotnet_diagnostic.SA1503.severity = error
+dotnet_diagnostic.SA1504.severity = error
+dotnet_diagnostic.SA1505.severity = error
+dotnet_diagnostic.SA1506.severity = error
+dotnet_diagnostic.SA1507.severity = error
+dotnet_diagnostic.SA1508.severity = error
+dotnet_diagnostic.SA1510.severity = error
+dotnet_diagnostic.SA1511.severity = error
+dotnet_diagnostic.SA1512.severity = error
+dotnet_diagnostic.SA1514.severity = error
+dotnet_diagnostic.SA1517.severity = error
+dotnet_diagnostic.SA1520.severity = error
+
+# Documentation
+dotnet_diagnostic.SA1649.severity = error
+dotnet_diagnostic.SA1651.severity = error
+dotnet_diagnostic.SA1652.severity = error
+dotnet_diagnostic.SA1629.severity = error
+dotnet_diagnostic.SA1628.severity = error
+
+# Special Rules
+dotnet_diagnostic.SA0003.severity = warning
+dotnet_diagnostic.SA0001.severity = warning
+dotnet_diagnostic.SA0002.severity = warning
+
+# Readability additional
+dotnet_diagnostic.SA1100.severity = error
+dotnet_diagnostic.SA1102.severity = error
+dotnet_diagnostic.SA1106.severity = error
+dotnet_diagnostic.SA1107.severity = error
+dotnet_diagnostic.SA1108.severity = error
+dotnet_diagnostic.SA1110.severity = error
+dotnet_diagnostic.SA1111.severity = error
+dotnet_diagnostic.SA1112.severity = error
+dotnet_diagnostic.SA1113.severity = error
+dotnet_diagnostic.SA1114.severity = error
+dotnet_diagnostic.SA1115.severity = error
+dotnet_diagnostic.SA1120.severity = error
+dotnet_diagnostic.SA1121.severity = error
+dotnet_diagnostic.SA1122.severity = error
+dotnet_diagnostic.SA1125.severity = error
+dotnet_diagnostic.SA1127.severity = error
+dotnet_diagnostic.SA1132.severity = error
+dotnet_diagnostic.SA1136.severity = error

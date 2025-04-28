@@ -14,32 +14,12 @@ namespace MarketPlace924.Service
     {
         private readonly IDummyWalletRepository dummyWalletRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DummyWalletService"/> class.
-        /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        public DummyWalletService(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
-        {
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DummyWalletService"/> class with a specified database provider.
         /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        /// <param name="databaseProvider">The database provider to use.</param>
-        public DummyWalletService(string connectionString, IDatabaseProvider databaseProvider)
+        public DummyWalletService()
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
             this.dummyWalletRepository = new DummyWalletProxyRepository(AppConfig.GetBaseApiUrl());
         }
 

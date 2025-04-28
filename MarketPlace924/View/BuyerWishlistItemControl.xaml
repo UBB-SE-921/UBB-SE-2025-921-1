@@ -8,6 +8,7 @@
     xmlns:converters="using:MarketPlace924.Converters"
     mc:Ignorable="d"
     Width="Auto" Height="Auto">
+
     <UserControl.Resources>
         <converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter" />
     </UserControl.Resources>
@@ -23,7 +24,8 @@
             <!-- Item Name -->
             <TextBlock Text="{x:Bind ViewModel.Title}" FontSize="16" FontWeight="Bold"
                        Foreground="#0D47A1" TextAlignment="Center" />
-            <!-- Item Name -->
+
+            <!-- Item Description -->
             <TextBlock Text="{x:Bind ViewModel.Description}" FontSize="14" Foreground="Gray" TextWrapping="Wrap"
                        Margin="0,5,0,0" />
 
@@ -33,6 +35,7 @@
 
             <!-- Action Buttons -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                <!-- Remove Button -->
                 <Button Width="35" Height="35"
                         ToolTipService.ToolTip="Remove" Padding="0"
                         Click="{x:Bind ViewModel.Remove}"
@@ -43,16 +46,20 @@
                         </Image.Source>
                     </Image>
                 </Button>
+
+                <!-- Add to Cart Button -->
                 <Button Width="35" Height="35"
-                        ToolTipService.ToolTip="Add To Cart" Padding="0">
-                    <Image Width="17" Height="17">
-                        <Image.Source>
-                            <SvgImageSource UriSource="ms-appx:///Assets/BuyerIcons/cart-add.svg" />
-                        </Image.Source>
-                    </Image>
-                </Button>
+                        ToolTipService.ToolTip="Add To Cart" Padding="0"
+                        Command="{x:Bind ViewModel.AddToCartCommand}"
+                        CommandParameter="{x:Bind ViewModel.Product}"
+                        Visibility="{x:Bind ViewModel.OwnItem, Mode=OneWay, Converter={StaticResource BoolVisibilityConverter}}">
+                                    <Image Width="17" Height="17">
+                                        <Image.Source>
+                                            <SvgImageSource UriSource="ms-appx:///Assets/BuyerIcons/cart-add.svg" />
+                                        </Image.Source>
+                                    </Image>
+                                </Button>
             </StackPanel>
         </StackPanel>
     </Border>
-
 </UserControl>
