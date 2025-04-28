@@ -10,13 +10,6 @@
 		<!-- Comments should not contain nested comments -->
 	</Rules>
 
-	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
-		<Rule Id="SA1513" Action="Error" />
-		<!-- Closing brace should be followed by blank line -->
-		<Rule Id="SA1515" Action="Error" />
-		<!-- Single-line comment should be preceded by blank line -->
-	</Rules>
-
 	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.OrderingRules">
 		<Rule Id="SA1218" Action="Error" />
 		<!-- Using directives should be inside namespace -->
@@ -25,13 +18,6 @@
 	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.NamingRules">
 		<Rule Id="SA1315" Action="Error" />
 		<!-- Field names should not contain type name -->
-	</Rules>
-
-	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.DocumentationRules">
-		<Rule Id="SA1652" Action="Error" />
-		<!-- Constructor summary documentation should match class name -->
-		<Rule Id="SA1629" Action="Error" />
-		<!-- Documentation text should end with a period -->
 	</Rules>
 
 	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.SpecialRules">
@@ -54,16 +40,6 @@
 		<!-- Using directives should be grouped correctly -->
 	</Rules>
 
-	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.DocumentationRules">
-		<Rule Id="SA1628" Action="Error" />
-		<!-- Documentation text should not be empty -->
-	</Rules>
-
-	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.MaintainabilityRules">
-		<Rule Id="SA1401" Action="Error" />
-		<!-- Fields should be private -->
-	</Rules>
-
 	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.OrderingRules">
 		<Rule Id="SA1215" Action="Error" />
 		<!-- Constant fields should appear before fields -->
@@ -71,10 +47,69 @@
 		<!-- Using directives should be placed correctly within namespace -->
 	</Rules>
 
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.MaintainabilityRules">
+		<Rule Id="SA1415" Action="Error" />
+		<!-- Single-line anonymous methods should not use unnecessary parentheses -->
+	</Rules>
 
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.MaintainabilityRules">
+		<Rule Id="SA1430" Action="Error" />
+		<!-- User-defined conversion operators should be explicit -->
+	</Rules>
 
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
+		<Rule Id="SA1416" Action="Error" />
+		<!-- Single-line comments should not be followed by blank line -->
+	</Rules>
 
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.ReadabilityRules">
+		<Rule Id="SA1140" Action="Error" />
+		<!-- Code should not use magic numbers -->
+	</Rules>
 
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
+		<Rule Id="SA150A" Action="Error" />
+		<!-- Method declarations should be separated by blank lines -->
+	</Rules>
+
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
+		<Rule Id="SA1509" Action="Error" />
+		<!-- Opening braces should not be preceded by blank line -->
+	</Rules>
+
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.DocumentationRules">
+		<Rule Id="SA1649" Action="Error" />
+		<!-- File name should match first type name -->
+	</Rules>
+
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.DocumentationRules">
+		<Rule Id="SA1651" Action="Error" />
+		<!-- Do not use placeholder elements -->
+	</Rules>
+
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.DocumentationRules">
+		<Rule Id="SA1652" Action="Error" />
+		<!-- Constructor summary documentation should match class name -->
+		<Rule Id="SA1629" Action="Error" />
+		<!-- Documentation text should end with a period -->
+	</Rules>
+
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
+		<Rule Id="SA1513" Action="Error" />
+		<!-- Closing brace should be followed by blank line -->
+		<Rule Id="SA1515" Action="Error" />
+		<!-- Single-line comment should be preceded by blank line -->
+	</Rules>
+	
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.DocumentationRules">
+		<Rule Id="SA1628" Action="Error" />
+		<!-- Documentation text should not be empty -->
+	</Rules>
+	
+	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.MaintainabilityRules">
+		<Rule Id="SA1401" Action="Error" />
+		<!-- Fields should be private -->
+	</Rules>
 
 
 
