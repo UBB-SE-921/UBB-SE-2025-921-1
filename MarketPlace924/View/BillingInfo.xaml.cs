@@ -61,9 +61,8 @@ namespace MarketPlace924.View
             }
         }
 
-
         /// <summary>
-        /// Handles the click event for the finalize button
+        /// Handles the click event for the finalize button.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -76,7 +75,7 @@ namespace MarketPlace924.View
         }
 
         /// <summary>
-        /// Handles the click event for the cancel button
+        /// Handles the click event for the cancel button.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -86,7 +85,7 @@ namespace MarketPlace924.View
         }
 
         /// <summary>
-        /// Handles the click event for the end date
+        /// Handles the click event for the end date.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -97,7 +96,7 @@ namespace MarketPlace924.View
         }
 
         /// <summary>
-        /// Handles the click event for the tax date
+        /// Handles the click event for the tax date.
         /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>

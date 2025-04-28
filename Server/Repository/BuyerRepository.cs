@@ -37,6 +37,13 @@ namespace Server.Repository
             Buyer buyer = await this.dbContext.Buyers.FindAsync(buyerId)
                                 ?? throw new Exception("LoadBuyerInfo: Buyer not found");
 
+            int billingAddressId = await this.dbContext.Buyers.Where(b => b.Id == buyerId)
+                                .Select(b => EF.Property<int>(b, "BillingAddressId"))
+                                .FirstOrDefaultAsync();
+            int shippingAddressId = await this.dbContext.Buyers.Where(b => b.Id == buyerId)
+                                .Select(b => EF.Property<int>(b, "ShippingAddressId"))
+                                .FirstOrDefaultAsync();
+
             User user = await this.dbContext.Users.FindAsync(buyerId)
                                 ?? throw new Exception("LoadBuyerInfo: User not found");
 
@@ -106,12 +113,12 @@ namespace Server.Repository
                 var trackedShippingAddress = this.dbContext.Set<Address>().Local.FirstOrDefault(a => a.Id == buyerEntity.ShippingAddress.Id && a.Id != 0);
                 if (trackedShippingAddress != null)
                 {
-                     this.dbContext.Entry(trackedShippingAddress).CurrentValues.SetValues(buyerEntity.ShippingAddress);
+                    this.dbContext.Entry(trackedShippingAddress).CurrentValues.SetValues(buyerEntity.ShippingAddress);
 
-                     // **Update buyerEntity to point to the tracked instance**
-                     buyerEntity.ShippingAddress = trackedShippingAddress;
+                    // **Update buyerEntity to point to the tracked instance**
+                    buyerEntity.ShippingAddress = trackedShippingAddress;
                 }
-                 else
+                else
                 {
                     // If not tracked locally, let EF Core handle this instance.
                     this.dbContext.Update(buyerEntity.ShippingAddress);
@@ -124,7 +131,6 @@ namespace Server.Repository
             this.dbContext.Buyers.Update(buyerEntity);
 
             // --- Save ---
-
             await this.dbContext.SaveChangesAsync();
         }
 

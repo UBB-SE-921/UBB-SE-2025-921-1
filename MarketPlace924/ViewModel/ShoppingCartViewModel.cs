@@ -1,17 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using System;
-using MarketPlace924.Service;
-using MarketPlace924.ViewModel;
-using System.Windows.Input; 
-using CommunityToolkit.Mvvm.Input; 
 using System.Linq;
 using System.Collections.Generic;
-
+using System;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
+using SharedClassLibrary.Domain;
+using MarketPlace924.Service;
+using MarketPlace924.ViewModel;
 namespace MarketPlace924.ViewModel
-{ 
-
+{
     public class ShoppingCartViewModel : IShoppingCartViewModel
     {
         private readonly IShoppingCartService shoppingCartService;
@@ -45,6 +43,7 @@ namespace MarketPlace924.ViewModel
             {
                 total += item.TotalPrice;
             }
+
             return total;
         }
 
@@ -59,6 +58,7 @@ namespace MarketPlace924.ViewModel
             {
                 products.Add(item.Product, item.Quantity);
             }
+
             return products;
         }
 
@@ -72,8 +72,7 @@ namespace MarketPlace924.ViewModel
                 this.CartItems.Add(new CartItemViewModel(
                     item.Key,
                     item.Value,
-                    RemoveFromCartCommand
-                ));
+                    RemoveFromCartCommand));
             }
         }
 

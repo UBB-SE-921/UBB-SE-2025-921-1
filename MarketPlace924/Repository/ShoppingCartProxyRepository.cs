@@ -12,7 +12,7 @@ namespace MarketPlace924.Repository
 {
     internal class ShoppingCartProxyRepository : IShoppingCartRepository
     {
-        private const string ApiBaseRoute = "api/buyers";
+        private const string ApiBaseRoute = "api/shoppingcart";
         private readonly HttpClient httpClient;
 
         public ShoppingCartProxyRepository(string baseApiUrl)
@@ -23,7 +23,7 @@ namespace MarketPlace924.Repository
 
         public Task AddProductToCartAsync(int buyerId, int productId, int quantity)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items?productId={productId}&quantity={quantity}";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/items";
             var response = this.httpClient.PostAsync(requestUri, null);
             if (response.Result.IsSuccessStatusCode)
             {
@@ -37,7 +37,7 @@ namespace MarketPlace924.Repository
 
         public Task ClearCartAsync(int buyerId)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/shoppingcart/items";
             var response = this.httpClient.DeleteAsync(requestUri);
             if (response.Result.IsSuccessStatusCode)
             {
@@ -51,7 +51,7 @@ namespace MarketPlace924.Repository
 
         public Task<int> GetCartItemCountAsync(int buyerId)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items/count";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/shoppingcart/items";
             var response = this.httpClient.GetAsync(requestUri);
             if (response.Result.IsSuccessStatusCode)
             {
@@ -65,7 +65,7 @@ namespace MarketPlace924.Repository
 
         public Task<Dictionary<Product, int>> GetCartItemsAsync(int buyerId)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/shoppingcart/items";
             var response = this.httpClient.GetAsync(requestUri);
             if (response.Result.IsSuccessStatusCode)
             {
@@ -79,7 +79,7 @@ namespace MarketPlace924.Repository
 
         public Task<int> GetProductQuantityAsync(int buyerId, int productId)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items/{productId}/quantity";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/shoppingcart/items/{productId}";
             var response = this.httpClient.GetAsync(requestUri);
             if (response.Result.IsSuccessStatusCode)
             {
@@ -93,7 +93,7 @@ namespace MarketPlace924.Repository
 
         public Task<bool> IsProductInCartAsync(int buyerId, int productId)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items/{productId}/exists";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/shoppingcart/items/{productId}";
             var response = this.httpClient.GetAsync(requestUri);
             if (response.Result.IsSuccessStatusCode)
             {
@@ -107,7 +107,7 @@ namespace MarketPlace924.Repository
 
         public Task RemoveProductFromCartAsync(int buyerId, int productId)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items/{productId}";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/shoppingcart/items/{productId}";
             var response = this.httpClient.DeleteAsync(requestUri);
             if (response.Result.IsSuccessStatusCode)
             {
@@ -121,7 +121,7 @@ namespace MarketPlace924.Repository
 
         public Task UpdateProductQuantityAsync(int buyerId, int productId, int quantity)
         {
-            var requestUri = $"{ApiBaseRoute}/{buyerId}/cart/items/{productId}?quantity={quantity}";
+            var requestUri = $"{ApiBaseRoute}/{buyerId}/shoppingcart/items/{productId}";
             var response = this.httpClient.PutAsync(requestUri, null);
             if (response.Result.IsSuccessStatusCode)
             {

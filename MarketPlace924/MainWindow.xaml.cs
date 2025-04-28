@@ -49,6 +49,7 @@ namespace MarketPlace924
             this.analyticsService = new AnalyticsService(userRepo, buyerRepo);
 
             this.sellerService = new SellerService(sellerRepo);
+            this.shoppingCartService = new ShoppingCartService();
 
             this.LoginFrame.Navigate(typeof(LoginView), new LoginViewModel(this.userService, this));
         }
@@ -169,6 +170,7 @@ namespace MarketPlace924
                     break;
             }
         }
+
         /// <summary>
         /// Navigates to the My Cart view.
         /// </summary>
