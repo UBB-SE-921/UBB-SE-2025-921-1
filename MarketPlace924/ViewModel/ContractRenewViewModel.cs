@@ -11,6 +11,7 @@ using SharedClassLibrary.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using MarketPlace924.Repository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.ViewModel
 {
@@ -31,9 +32,9 @@ namespace MarketPlace924.ViewModel
         public ContractRenewViewModel(string connectionString)
         {
             // Assign injected services to fields
-            this.contractService = new ContractService(new ContractProxyRepository());
+            this.contractService = new ContractService(new ContractProxyRepository(AppConfig.GetBaseApiUrl()));
             this.pdfService = new PDFService();
-            this.renewalService = new ContractRenewalService(new ContractRenewalProxyRepository());
+            this.renewalService = new ContractRenewalService(new ContractRenewalProxyRepository(AppConfig.GetBaseApiUrl()));
             this.notificationContentService = new NotificationContentService();
             this.fileSystem = new FileSystemWrapper();
             this.dateTimeProvider = new DateTimeProvider();
@@ -118,16 +119,6 @@ namespace MarketPlace924.ViewModel
         public virtual bool CanSellerApproveRenewal(int renewalCount)
         {
             return renewalCount < 1;
-        }
-
-        /// <summary>
-        /// Inserts a PDF file into the database and returns the newly generated PDF ID.
-        /// </summary>
-        /// <param name="fileBytes">The byte array representing the PDF file.</param>
-        /// <returns>The ID of the newly inserted PDF.</returns>
-        public async Task<int> InsertPdfAsync(byte[] fileBytes)
-        {
-            return await this.pdfService.InsertPdfAsync(fileBytes); // Changed from pdfModel
         }
 
         /// <summary>
@@ -231,7 +222,7 @@ namespace MarketPlace924.ViewModel
                 byte[] pdfBytes = GenerateContractPdf(SelectedContract, contractContent);
 
                 // Insert the new PDF into the database and get its ID
-                int newPdfId = await InsertPdfAsync(pdfBytes); // This method uses databaseProvider directly, could be moved to a service if needed
+                int newPdfId = await this.pdfService.InsertPdfAsync(pdfBytes);
 
                 // Save PDF locally in Downloads folder
                 string downloadsPath = fileSystem.GetDownloadsPath();
@@ -251,7 +242,7 @@ namespace MarketPlace924.ViewModel
                     RenewedFromContractID = SelectedContract.ContractID
                 };
 
-                await renewalService.AddRenewedContractAsync(updatedContract, pdfBytes); // Changed from renewalModel
+                await renewalService.AddRenewedContractAsync(updatedContract); // Changed from renewalModel
 
                 // Send notifications to seller, buyer, and waitlist
                 var now = dateTimeProvider.Now;

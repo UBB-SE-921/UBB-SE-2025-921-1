@@ -105,6 +105,20 @@
                                     <TextBlock Text="{Binding Name}" Style="{StaticResource PrimaryLabel}" />
                                     <TextBlock Text="{Binding Description}" FontSize="14"/>
                                     <TextBlock Text="{Binding Price}" FontSize="16" Foreground="Green"/>
+
+                                    <!-- Add to Cart Button -->
+                                    <!--
+                                    <Button Width="35" Height="35"
+                        ToolTipService.ToolTip="Add To Cart" Padding="0"
+                        Command="{Binding AddToCartCommand}"
+                        CommandParameter="{Binding}"
+                        Visibility="Visible">
+                                        <Image Width="17" Height="17">
+                                            <Image.Source>
+                                                <SvgImageSource UriSource="ms-appx:///Assets/BuyerIcons/cart-add.svg" />
+                                            </Image.Source>
+                                        </Image>
+                                    </Button>-->
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

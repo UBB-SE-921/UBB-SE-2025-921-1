@@ -14,7 +14,6 @@ namespace MarketPlace924.ViewModel
         byte[] GenerateContractPdf(IContract contract, string content);
         Task<(DateTime? StartDate, DateTime? EndDate, double price, string name)?> GetProductDetailsByContractIdAsync(long contractId);
         Task<bool> HasContractBeenRenewedAsync();
-        Task<int> InsertPdfAsync(byte[] fileBytes);
         bool IsProductAvailable(int productId);
         Task<bool> IsRenewalPeriodValidAsync();
         Task LoadContractsForBuyerAsync(int buyerID);

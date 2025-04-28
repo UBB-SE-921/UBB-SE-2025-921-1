@@ -44,9 +44,9 @@ namespace MarketPlace924.ViewModel
             string connectionString = Configuration.CONNECTION_STRING;
             IDatabaseProvider databaseProvider = new SqlDatabaseProvider();
             
-            orderHistoryService = new OrderHistoryService(connectionString, databaseProvider);
-            orderService = new OrderService(connectionString, databaseProvider);
-            orderSummaryService = new OrderSummaryService(connectionString, databaseProvider);
+            orderHistoryService = new OrderHistoryService();
+            orderService = new OrderService();
+            orderSummaryService = new OrderSummaryService();
             notificationViewModel = new NotificationViewModel(1);
             
             this.orderHistoryID = orderHistoryID;

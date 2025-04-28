@@ -1,80 +1,155 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="UserRepository.cs" company="PlaceholderCompany">
+// <copyright file="UserProxyRepository.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SharedClassLibrary.IRepository
+namespace MarketPlace924.Repository
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Json;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
 
     /// <summary>
-    /// Provides methods for interacting with the Users table in the database.
+    /// A repository implementation that acts as a proxy for user-related operations.
     /// </summary>
     public class UserProxyRepository : IUserRepository
     {
-        public Task AddUser(User user)
+        private const string ApiBaseRoute = "api/users";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base url of the API.</param>
+        public UserProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task<bool> EmailExists(string email)
+        /// <inheritdoc />
+        public async Task AddUser(User user)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
-        public Task<List<User>> GetAllUsers()
+        /// <inheritdoc />
+        public async Task<bool> EmailExists(string email)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/email-exists?email={email}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var found = await response.Content.ReadFromJsonAsync<bool>();
+            return found;
         }
 
-        public Task<int> GetFailedLoginsCountByUserId(int userId)
+        /// <inheritdoc />
+        public async Task<List<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var users = await response.Content.ReadFromJsonAsync<List<User>>();
+            if (users == null)
+            {
+                users = new List<User>();
+            }
+
+            return users;
         }
 
-        public Task<int> GetTotalNumberOfUsers()
+        /// <inheritdoc />
+        public async Task<int> GetFailedLoginsCountByUserId(int userId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/failed-logins-count/{userId}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var failedLoginsCount = await response.Content.ReadFromJsonAsync<int>();
+            return failedLoginsCount;
         }
 
-        public Task<User?> GetUserByEmail(string email)
+        /// <inheritdoc />
+        public async Task<int> GetTotalNumberOfUsers()
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/count");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var userCount = await response.Content.ReadFromJsonAsync<int>();
+            return userCount;
         }
 
-        public Task<User?> GetUserByUsername(string username)
+        /// <inheritdoc />
+        public async Task<User?> GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/email/{email}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var user = await response.Content.ReadFromJsonAsync<User>();
+            return user;
         }
 
-        public Task LoadUserPhoneNumberAndEmailById(User user)
+        /// <inheritdoc />
+        public async Task<User?> GetUserByUsername(string username)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/username/{username}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var user = await response.Content.ReadFromJsonAsync<User>();
+            return user;
         }
 
-        public Task UpdateUser(User user)
+        /// <inheritdoc />
+        public async Task LoadUserPhoneNumberAndEmailById(User user)
         {
-            throw new NotImplementedException();
+            int userId = user.UserId;
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/phone-email/{user.UserId}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var newUser = await response.Content.ReadFromJsonAsync<User>();
+            if (newUser == null)
+            {
+                throw new InvalidOperationException($"Failed to load user data for UserId: {userId}. The API returned no data.");
+            }
+
+            user.PhoneNumber = newUser.PhoneNumber;
+            user.Email = newUser.Email;
         }
 
-        public Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
+        /// <inheritdoc />
+        public async Task UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
-        public Task UpdateUserPhoneNumber(User user)
+        /// <inheritdoc />
+        public async Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update-failed-logins/{newValueOfFailedLogIns}", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
         }
 
-        public Task<bool> UsernameExists(string username)
+        /// <inheritdoc />
+        public async Task UpdateUserPhoneNumber(User user)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update-phone-number", user);
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+        }
+
+        /// <inheritdoc />
+        public async Task<bool> UsernameExists(string username)
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/username-exists?username={username}");
+            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+
+            var found = await response.Content.ReadFromJsonAsync<bool>();
+            return found;
         }
     }
 }

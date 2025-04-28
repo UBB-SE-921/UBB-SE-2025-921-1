@@ -20,7 +20,7 @@ namespace MarketPlace924.ViewModel
         /// <param name="orderSummaryId">The unique identifier of the order summary.</param>
         /// <param name="orderDate">The date when the order was placed.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate);
+        Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate);
 
         /// <summary>
         /// Asynchronously deletes the order specified by the order ID.
@@ -158,6 +158,6 @@ namespace MarketPlace924.ViewModel
         /// <param name="paymentMethod">The new payment method.</param>
         /// <param name="orderDate">The new order date.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate);
+        Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate);
     }
 }

@@ -21,7 +21,7 @@
         // Optional foreign key to the PredefinedContract table
         public int? PredefinedContractID { get; set; }
 
-        // Foreign key to the PDF table (holds the contract's PDF reference)
+        // Foreign key to the PDF table (holds the contract's PDF reference) -> required
         public int PDFID { get; set; }
 
         // Additional terms or conditions associated with the contract

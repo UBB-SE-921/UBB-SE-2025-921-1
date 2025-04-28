@@ -13,6 +13,9 @@ using System;
 /// </summary>
 public class User
 {
+    // Add this private parameterless constructor for Entity Framework Core
+    private User() { }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="User"/> class.
     /// </summary>

@@ -1,69 +1,135 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="SellerRepository.cs" company="PlaceholderCompany">
+// <copyright file="SellerProxyRepository.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace SharedClassLibrary.IRepository
+namespace MarketPlace924.Repository
 {
+    using System;
     using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using System.Web;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
 
     /// <summary>
-    /// Repository for managing seller-related data operations.
+    /// A repository implementation that acts as a proxy for seller-related operations
+    /// via a remote API.
     /// </summary>
     public class SellerProxyRepository : ISellerRepository
     {
-        public SellerProxyRepository(IUserRepository userRepository)
+        private const string ApiBaseRoute = "api/sellers";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SellerProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base URL of the API (e.g., "http://localhost:5000/").</param>
+        public SellerProxyRepository(string baseApiUrl)
         {
-            throw new System.NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task AddNewFollowerNotification(int sellerId, int currentFollowerCount, string message)
+        /// <inheritdoc />
+        public async Task AddNewFollowerNotification(int sellerId, int currentFollowerCount, string message)
         {
-            throw new System.NotImplementedException();
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["currentFollowerCount"] = currentFollowerCount.ToString();
+            query["message"] = message; // Encoding handled by ParseQueryString/ToString
+            string queryString = query.ToString() ?? string.Empty;
+
+            var response = await this.httpClient.PostAsync($"{ApiBaseRoute}/{sellerId}/notifications/add?{queryString}", null); // No body
+            response.EnsureSuccessStatusCode();
         }
 
-        public Task AddSeller(Seller seller)
+        /// <inheritdoc />
+        public async Task AddSeller(Seller seller)
         {
-            throw new System.NotImplementedException();
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/add", seller);
+            response.EnsureSuccessStatusCode();
         }
 
-        public Task<int> GetLastFollowerCount(int sellerId)
+        /// <inheritdoc />
+        public async Task<int> GetLastFollowerCount(int sellerId)
         {
-            throw new System.NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/last-follower-count");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<int>();
         }
 
-        public Task<List<string>> GetNotifications(int sellerID, int maxNotifications)
+        /// <inheritdoc />
+        public async Task<List<string>> GetNotifications(int sellerId, int maxNotifications)
         {
-            throw new System.NotImplementedException();
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["maxNotifications"] = maxNotifications.ToString();
+            string queryString = query.ToString() ?? string.Empty;
+
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/notifications?{queryString}");
+            response.EnsureSuccessStatusCode();
+            var notifications = await response.Content.ReadFromJsonAsync<List<string>>();
+            return notifications ?? new List<string>();
         }
 
-        public Task<List<Product>> GetProducts(int sellerID)
+        /// <inheritdoc />
+        public async Task<List<Product>> GetProducts(int sellerId)
         {
-            throw new System.NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/products");
+            response.EnsureSuccessStatusCode();
+            var products = await response.Content.ReadFromJsonAsync<List<Product>>();
+            return products ?? new List<Product>();
         }
 
-        public Task<List<Review>> GetReviews(int sellerId)
+        /// <inheritdoc />
+        public async Task<List<Review>> GetReviews(int sellerId)
         {
-            throw new System.NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/reviews");
+            response.EnsureSuccessStatusCode();
+            var reviews = await response.Content.ReadFromJsonAsync<List<Review>>();
+            return reviews ?? new List<Review>();
         }
 
-        public Task<Seller> GetSellerInfo(User user)
+        /// <inheritdoc />
+        public async Task<Seller> GetSellerInfo(User user)
         {
-            throw new System.NotImplementedException();
+            int userId = user.UserId;
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{userId}/info");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return new Seller(user);
+            }
+
+            response.EnsureSuccessStatusCode();
+            var seller = await response.Content.ReadFromJsonAsync<Seller>();
+
+            if (seller == null)
+            {
+                throw new InvalidOperationException($"API returned null Seller info for User ID: {userId}");
+            }
+
+            return seller;
         }
 
-        public Task UpdateSeller(Seller seller)
+        /// <inheritdoc />
+        public async Task UpdateSeller(Seller seller)
         {
-            throw new System.NotImplementedException();
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update", seller);
+            response.EnsureSuccessStatusCode();
         }
 
-        public Task UpdateTrustScore(int sellerId, double trustScore)
+        /// <inheritdoc />
+        public async Task UpdateTrustScore(int sellerId, double trustScore)
         {
-            throw new System.NotImplementedException();
+            var query = HttpUtility.ParseQueryString(string.Empty);
+            query["score"] = trustScore.ToString();
+            string queryString = query.ToString() ?? string.Empty;
+
+            var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/{sellerId}/trust-score?{queryString}", null); // No body
+            response.EnsureSuccessStatusCode();
         }
     }
 }

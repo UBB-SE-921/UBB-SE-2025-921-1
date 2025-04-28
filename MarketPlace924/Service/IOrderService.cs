@@ -7,8 +7,8 @@ namespace MarketPlace924.Service
 {
     public interface IOrderService
     {
-        Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate);
-        Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate);
+        Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate);
+        Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate);
         Task DeleteOrderAsync(int orderId);
         Task<List<Order>> GetBorrowedOrderHistoryAsync(int buyerId);
         Task<List<Order>> GetNewOrUsedOrderHistoryAsync(int buyerId);

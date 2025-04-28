@@ -1,67 +1,144 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+﻿// <copyright file="TrackedOrderProxyRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.DataTransferObjects;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
     /// <summary>
-    /// Provides data access functionality for tracking orders and their checkpoints.
+    /// Proxy repository for managing tracked order operations via a REST API.
     /// </summary>
     public class TrackedOrderProxyRepository : ITrackedOrderRepository
     {
-        public Task<int> AddOrderCheckpointAsync(OrderCheckpoint checkpoint)
+        private const string ApiBaseRoute = "api/trackedorders";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TrackedOrderProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base URL of the API (e.g., "http://localhost:5000/").</param>
+        public TrackedOrderProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task<int> AddTrackedOrderAsync(TrackedOrder order)
+        /// <inheritdoc />
+        public async Task<int> AddOrderCheckpointAsync(OrderCheckpoint checkpoint)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/checkpoints", checkpoint);
+            response.EnsureSuccessStatusCode();
+            int createdCheckpoint = await response.Content.ReadFromJsonAsync<int>();
+            return createdCheckpoint;
         }
 
-        public Task<bool> DeleteOrderCheckpointAsync(int checkpointID)
+        /// <inheritdoc />
+        public async Task<int> AddTrackedOrderAsync(TrackedOrder order)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.PostAsJsonAsync(ApiBaseRoute, order);
+            response.EnsureSuccessStatusCode();
+            int createdOrder = await response.Content.ReadFromJsonAsync<int>();
+            return createdOrder;
         }
 
-        public Task<bool> DeleteTrackedOrderAsync(int trackOrderID)
+        /// <inheritdoc />
+        public async Task<bool> DeleteOrderCheckpointAsync(int checkpointID)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/checkpoints/{checkpointID}");
+            return response.IsSuccessStatusCode;
         }
 
-        public Task<List<OrderCheckpoint>> GetAllOrderCheckpointsAsync(int trackedOrderID)
+        /// <inheritdoc />
+        public async Task<bool> DeleteTrackedOrderAsync(int trackOrderID)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{trackOrderID}");
+            return response.IsSuccessStatusCode;
         }
 
-        public Task<List<TrackedOrder>> GetAllTrackedOrdersAsync()
+        /// <inheritdoc />
+        public async Task<List<OrderCheckpoint>> GetAllOrderCheckpointsAsync(int trackedOrderID)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{trackedOrderID}/checkpoints");
+            response.EnsureSuccessStatusCode();
+            var checkpoints = await response.Content.ReadFromJsonAsync<List<OrderCheckpoint>>();
+            return checkpoints ?? new List<OrderCheckpoint>();
         }
 
-        public Task<OrderCheckpoint> GetOrderCheckpointByIdAsync(int checkpointID)
+        /// <inheritdoc />
+        public async Task<List<TrackedOrder>> GetAllTrackedOrdersAsync()
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync(ApiBaseRoute);
+            response.EnsureSuccessStatusCode();
+            var orders = await response.Content.ReadFromJsonAsync<List<TrackedOrder>>();
+            return orders ?? new List<TrackedOrder>();
         }
 
-        public Task<TrackedOrder> GetTrackedOrderByIdAsync(int trackOrderID)
+        /// <inheritdoc />
+        public async Task<OrderCheckpoint> GetOrderCheckpointByIdAsync(int checkpointID)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/checkpoints/{checkpointID}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Match the behavior of the original repository which throws on not found
+                throw new Exception($"No OrderCheckpoint with id: {checkpointID}");
+            }
+
+            response.EnsureSuccessStatusCode();
+            var checkpoint = await response.Content.ReadFromJsonAsync<OrderCheckpoint>();
+            return checkpoint ?? throw new Exception($"Failed to deserialize OrderCheckpoint with id: {checkpointID}");
         }
 
-        public Task UpdateOrderCheckpointAsync(int checkpointID, DateTime timestamp, string? location, string description, OrderStatus status)
+        /// <inheritdoc />
+        public async Task<TrackedOrder> GetTrackedOrderByIdAsync(int trackOrderID)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{trackOrderID}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Match the behavior of the original repository which throws on not found
+                throw new Exception($"No TrackedOrder with id: {trackOrderID}");
+            }
+
+            response.EnsureSuccessStatusCode(); // Handle other errors
+            var order = await response.Content.ReadFromJsonAsync<TrackedOrder>();
+            return order ?? throw new Exception($"Failed to deserialize TrackedOrder with id: {trackOrderID}");
         }
 
-        public Task UpdateTrackedOrderAsync(int trackedOrderID, DateOnly estimatedDeliveryDate, OrderStatus currentStatus)
+        /// <inheritdoc />
+        public async Task UpdateOrderCheckpointAsync(int checkpointID, DateTime timestamp, string? location, string description, OrderStatus status)
         {
-            throw new NotImplementedException();
+            // Create the update DTO expected by the API controller
+            var updateRequest = new OrderCheckpointUpdateRequest
+            {
+                Timestamp = timestamp,
+                Location = location,
+                Description = description,
+                Status = status,
+            };
+
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/checkpoints/{checkpointID}", updateRequest);
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateTrackedOrderAsync(int trackedOrderID, DateOnly estimatedDeliveryDate, OrderStatus currentStatus)
+        {
+            // Create the update DTO expected by the API controller
+            var updateRequest = new TrackedOrderUpdateRequest
+            {
+                EstimatedDeliveryDate = estimatedDeliveryDate,
+                CurrentStatus = currentStatus,
+            };
+
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{trackedOrderID}", updateRequest);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

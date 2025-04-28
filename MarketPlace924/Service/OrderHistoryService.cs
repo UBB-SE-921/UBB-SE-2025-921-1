@@ -5,6 +5,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -15,34 +16,18 @@ namespace MarketPlace924.Service
     {
         private readonly IOrderHistoryRepository orderHistoryRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OrderHistoryService"/> class.
-        /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        public OrderHistoryService(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
-        {
-        }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderHistoryService"/> class with a specified database provider.
         /// </summary>
         /// <param name="connectionString">The database connection string.</param>
         /// <param name="databaseProvider">The database provider to use.</param>
-        public OrderHistoryService(string connectionString, IDatabaseProvider databaseProvider)
+        public OrderHistoryService()
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
-            this.orderHistoryRepository = new OrderHistoryProxyRepository();
+            this.orderHistoryRepository = new OrderHistoryProxyRepository(AppConfig.GetBaseApiUrl());
         }
+
 
         /// <inheritdoc/>
         public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryId)
@@ -51,8 +36,8 @@ namespace MarketPlace924.Service
             {
                 throw new ArgumentException("Order history ID must be positive", nameof(orderHistoryId));
             }
-            
+
             return await orderHistoryRepository.GetDummyProductsFromOrderHistoryAsync(orderHistoryId);
         }
     }
-} 
+}

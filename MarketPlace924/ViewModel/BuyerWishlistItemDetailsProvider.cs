@@ -13,24 +13,24 @@ namespace MarketPlace924.ViewModel
     {
         // TODO: Reimplement this using ProductService when available
         private readonly Dictionary<int, IBuyerWishlistItemViewModel> mockProductDetails =
-            new ()
+            new()
             {
             {
                 1, new BuyerWishlistItemViewModel
                 {
-                    Title = "Stainless Steel Water Bottle",
-                    Description = "Durable and eco-friendly, keeps beverages hot or cold for hours.",
-                    ImageSource = "ms-appx:///Assets/Products/stainless-steel-bottle.png",
-                    Price = 150,
+                    Title = "Abstract Painting",
+                    Description = "Contemporary abstract art",
+                    ImageSource = "ms-appx:///Assets/Products/painting.png",
+                    Price = 350,
                 }
             },
             {
                 2, new BuyerWishlistItemViewModel
                 {
-                    Title = "Gaming Laptop",
-                    Description = "High-performance laptop with Intel i9, 32GB RAM, and RTX 4080 for smooth gameplay.",
-                    ImageSource = "ms-appx:///Assets/Products/gaming-laptop.png",
-                    Price = 120000,
+                    Title = "Wooden Sculpture",
+                    Description = "Modern wooden sculpture",
+                    ImageSource = "ms-appx:///Assets/Products/smart-tv.png",
+                    Price = 275,
                 }
             },
             {
@@ -45,10 +45,10 @@ namespace MarketPlace924.ViewModel
             {
                 4, new BuyerWishlistItemViewModel
                 {
-                    Title = "Smartwatch - Fitness Tracker",
-                    Description = "Monitors heart rate, tracks workouts, and syncs with your smartphone.",
-                    ImageSource = "ms-appx:///Assets/Products/smartwatch.png",
-                    Price = 15000,
+                    Title = "Wooden Sculpture",
+                    Description = "Modern wooden sculpture",
+                    ImageSource = "ms-appx:///Assets/Products/wood.png",
+                    Price = 275,
                 }
             },
             {

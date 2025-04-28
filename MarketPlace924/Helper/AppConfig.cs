@@ -37,6 +37,18 @@ namespace MarketPlace924.Helper
             return Configuration?[$"ConnectionStrings:{name}"];
         }
 
+        public static string GetBaseApiUrl()
+        {
+            string? baseUrl = Configuration?["BaseApiUrl"];
+
+            if (string.IsNullOrEmpty(baseUrl))
+            {
+                throw new InvalidOperationException("Configuration 'BaseApiUrl' is required but not found or is empty.");
+            }
+
+            return baseUrl;
+        }
+
         /// <summary>
         /// Load the configuration.
         /// </summary>

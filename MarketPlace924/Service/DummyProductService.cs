@@ -5,6 +5,7 @@ using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 using MarketPlace924.Repository;
 using SharedClassLibrary.IRepository;
+using MarketPlace924.Helper;
 
 namespace MarketPlace924.Service
 {
@@ -15,33 +16,13 @@ namespace MarketPlace924.Service
     {
         private readonly IDummyProductRepository dummyProductRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DummyProductService"/> class.
-        /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        public DummyProductService(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
-        {
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DummyProductService"/> class with a specified database provider.
         /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        /// <param name="databaseProvider">The database provider to use.</param>
-        public DummyProductService(string connectionString, IDatabaseProvider databaseProvider)
+        public DummyProductService()
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
-            this.dummyProductRepository = new DummyProductProxyRepository();
+            this.dummyProductRepository = new DummyProductProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         /// <inheritdoc/>

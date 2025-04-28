@@ -1,437 +1,293 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+// <copyright file="OrderRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Server.DataModels;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
+    using Windows.UI.Shell;
+
+    /// <summary>
+    /// Represents a repository for managing orders in the database.
+    /// </summary>
     public class OrderRepository : IOrderRepository
     {
-        private readonly string connectionString;
-        private readonly IDatabaseProvider databaseProvider;
+        // private readonly string connectionString;
+        // private readonly IDatabaseProvider databaseProvider;
+        private readonly MarketPlaceDbContext dbContext;
 
-        public OrderRepository(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderRepository"/> class.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
+        public OrderRepository(MarketPlaceDbContext dbContext)
         {
+            this.dbContext = dbContext;
         }
 
-        public OrderRepository(string connectionString, IDatabaseProvider databaseProvider)
+        /// <summary>
+        /// Adds a new order to the database.
+        /// </summary>
+        /// <param name="productId">The ID of the product being ordered.</param>
+        /// <param name="buyerId">The ID of the buyer placing the order.</param>
+        /// <param name="productType">The type of product being ordered.</param>
+        /// <param name="paymentMethod">The method of payment for the order.</param>
+        /// <param name="orderSummaryId">The ID of the order summary for the order.</param>
+        /// <param name="orderDate">The date and time of the order.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task AddOrderAsync(int productId, int buyerId, string productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
         {
-            this.connectionString = connectionString;
-            this.databaseProvider = databaseProvider;
-        }
-
-        public async Task AddOrderAsync(int productId, int buyerId, int productType, string paymentMethod, int orderSummaryId, DateTime orderDate)
-        {
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
+            // First, add a new OrderHistory record because we need the ID for the Order record
+            OrderHistory orderHistory = new OrderHistory
             {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "AddOrder";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ProductID", productId);
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    databaseCommand.Parameters.AddWithValue("@ProductType", productType);
-                    databaseCommand.Parameters.AddWithValue("@PaymentMethod", paymentMethod);
-                    databaseCommand.Parameters.AddWithValue("@OrderSummaryID", orderSummaryId);
-                    databaseCommand.Parameters.AddWithValue("@OrderDate", orderDate);
+                OrderID = 0, // will be populated by the database
+            };
+            await this.dbContext.OrderHistory.AddAsync(orderHistory);
+            await this.dbContext.SaveChangesAsync(); // Here the OrderHistory record is created and the orderHistory.OrderID is populated
 
-                    await databaseConnection.OpenAsync();
-                    await databaseCommand.ExecuteNonQueryAsync();
-                }
-            }
-        }
-
-        public async Task UpdateOrderAsync(int orderId, int productType, string paymentMethod, DateTime orderDate)
-        {
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
+            // Now, add the new Order
+            Order order = new Order
             {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "UpdateOrder";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@OrderID", orderId);
-                    databaseCommand.Parameters.AddWithValue("@ProductType", productType);
-                    databaseCommand.Parameters.AddWithValue("@PaymentMethod", paymentMethod);
-                    databaseCommand.Parameters.AddWithValue("@OrderDate", orderDate);
-
-                    await databaseConnection.OpenAsync();
-                    await databaseCommand.ExecuteNonQueryAsync();
-                }
-            }
+                OrderID = 0, // Will be populated by the database
+                ProductID = productId,
+                BuyerID = buyerId,
+                ProductType = productType,
+                PaymentMethod = paymentMethod,
+                OrderSummaryID = orderSummaryId,
+                OrderDate = DateTime.SpecifyKind(orderDate, DateTimeKind.Utc), // Ensure the order date is in UTC
+                OrderHistoryID = orderHistory.OrderID, // The new order history record ID which was populated by the database
+            };
+            await this.dbContext.Orders.AddAsync(order);
+            await this.dbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Updates an existing order with new product type, payment method, and order date.
+        /// </summary>
+        /// <param name="orderId">The ID of the order to update.</param>
+        /// <param name="productType">The new product type for the order.</param>
+        /// <param name="paymentMethod">The new payment method for the order.</param>
+        /// <param name="orderDate">The new order date for the order.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the order with the specified ID is not found.</exception>
+        public async Task UpdateOrderAsync(int orderId, string productType, string paymentMethod, DateTime orderDate)
+        {
+            Order? order = await this.dbContext.Orders.FindAsync(orderId)
+                                ?? throw new KeyNotFoundException($"UpdateOrderAsync: Order with ID {orderId} not found");
+
+            order.ProductType = productType;
+            order.PaymentMethod = paymentMethod;
+            order.OrderDate = DateTime.SpecifyKind(orderDate, DateTimeKind.Utc);
+
+            await this.dbContext.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Deletes an order from the database.
+        /// </summary>
+        /// <param name="orderId">The ID of the order to delete.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the order with the specified ID is not found.</exception>
         public async Task DeleteOrderAsync(int orderId)
         {
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "DeleteOrder";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@OrderID", orderId);
+            Order? order = await this.dbContext.Orders.FindAsync(orderId)
+                                ?? throw new KeyNotFoundException($"DeleteOrderAsync: Order with ID {orderId} not found");
 
-                    await databaseConnection.OpenAsync();
-                    await databaseCommand.ExecuteNonQueryAsync();
-                }
-            }
+            this.dbContext.Orders.Remove(order);
+            await this.dbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Retrieves the borrowed order history for a buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>A list of borrowed orders.</returns>
         public async Task<List<Order>> GetBorrowedOrderHistoryAsync(int buyerId)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_borrowed_order_history";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    await databaseConnection.OpenAsync();
+            List<Order> orders = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId && o.ProductType == "borrowed")
+                .OrderByDescending(o => o.OrderDate) // Exactly like in the get_borrowed_order_history stored procedure
+                .ToListAsync();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
-                }
-            }
             return orders;
         }
 
+        /// <summary>
+        /// Retrieves the new or used order history for a buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>A list of new or used orders.</returns>
         public async Task<List<Order>> GetNewOrUsedOrderHistoryAsync(int buyerId)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_new_or_used_order_history";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    await databaseConnection.OpenAsync();
+            List<Order> orders = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId && (o.ProductType == "new" || o.ProductType == "used"))
+                .OrderByDescending(o => o.OrderDate) // Exactly like in the get_new_or_used_order_history stored procedure
+                .ToListAsync();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
-                }
-            }
             return orders;
         }
 
+        /// <summary>
+        /// Retrieves orders by name for a buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <param name="text">The text to search for.</param>
+        /// <returns>A list of orders filtered by name.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the product with the specified ID is not found.</exception>
         public async Task<List<Order>> GetOrdersByNameAsync(int buyerId, string text)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_orders_by_name";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    databaseCommand.Parameters.AddWithValue("@text", text);
-                    await databaseConnection.OpenAsync();
+            List<Order> ordersFilteredByName = new List<Order>();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
+            // First fetch all orders from the buyer
+            List<Order> buyerOrders = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId)
+                .ToListAsync();
+
+            // Then, take the product from each order in the buyerOrders and filter them by name like in the stored procedure get_orders_by_name
+            foreach (Order order in buyerOrders)
+            {
+                Product product = await this.dbContext.Products.FindAsync(order.ProductID)
+                                        ?? throw new KeyNotFoundException($"GetOrdersByNameAsync: Product with ID {order.ProductID} not found");
+                if (product.Name.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0) // This is exactly like the sql server <LIKE '%@'+@text+'%'> (case insensitive)
+                {
+                    ordersFilteredByName.Add(order);
                 }
             }
-            return orders;
+
+            return ordersFilteredByName;
         }
 
+        /// <summary>
+        /// Retrieves orders from 2024 for a buyer.
+        /// OBS: This function and the one with 2025 should have the year parametrized.
+        /// CAN BE REFACTORED.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>A list of orders from 2024.</returns>
         public async Task<List<Order>> GetOrdersFrom2024Async(int buyerId)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_orders_from_2024";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    await databaseConnection.OpenAsync();
+            List<Order> ordersFrom2024 = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId && o.OrderDate.Year == 2024)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
-                }
-            }
-            return orders;
+            return ordersFrom2024;
         }
 
+        /// <summary>
+        /// Retrieves orders from 2025 for a buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>A list of orders from 2025.</returns>
         public async Task<List<Order>> GetOrdersFrom2025Async(int buyerId)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_orders_from_2025";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    await databaseConnection.OpenAsync();
+            List<Order> ordersFrom2025 = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId && o.OrderDate.Year == 2025)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
-                }
-            }
-            return orders;
+            return ordersFrom2025;
         }
 
+        /// <summary>
+        /// Retrieves orders from the last six months for a buyer.
+        /// OBS: The funcitons related to the number of months should have the number of months parametrized.
+        /// CAN BE REFACTORED.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>A list of orders from the last six months.</returns>
         public async Task<List<Order>> GetOrdersFromLastSixMonthsAsync(int buyerId)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_orders_from_last_6_months";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    await databaseConnection.OpenAsync();
+            List<Order> ordersFromLastSixMonths = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId && o.OrderDate >= DateTime.Now.AddMonths(-6))
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
-                }
-            }
-            return orders;
+            return ordersFromLastSixMonths;
         }
 
+        /// <summary>
+        /// Retrieves orders from the last three months for a buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>A list of orders from the last three months.</returns>
         public async Task<List<Order>> GetOrdersFromLastThreeMonthsAsync(int buyerId)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_orders_from_last_3_months";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
-                    await databaseConnection.OpenAsync();
+            List<Order> ordersFromLastThreeMonths = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId && o.OrderDate >= DateTime.Now.AddMonths(-3))
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
-                }
-            }
-            return orders;
+            return ordersFromLastThreeMonths;
         }
 
+        /// <summary>
+        /// Retrieves orders from an order history for a buyer.
+        /// </summary>
+        /// <param name="orderHistoryId">The ID of the order history.</param>
+        /// <returns>A list of orders from the order history.</returns>
         public async Task<List<Order>> GetOrdersFromOrderHistoryAsync(int orderHistoryId)
         {
-            List<Order> orders = new List<Order>();
-            using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "get_orders_from_order_history";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@OrderHistoryID", orderHistoryId);
-                    await databaseConnection.OpenAsync();
+            List<Order> ordersFromOrderHistory = await this.dbContext.Orders
+                .Where(o => o.OrderHistoryID == orderHistoryId)
+                .ToListAsync();
 
-                    using (IDataReader reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            Order order = new Order()
-                            {
-                                OrderID = reader.GetInt32(reader.GetOrdinal("OrderID")),
-                                ProductID = reader.GetInt32(reader.GetOrdinal("ProductID")),
-                                BuyerID = reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                OrderSummaryID = reader.GetInt32(reader.GetOrdinal("OrderSummaryID")),
-                                OrderHistoryID = reader.GetInt32(reader.GetOrdinal("OrderHistoryID")),
-                                ProductType = reader.GetInt32(reader.GetOrdinal("ProductType")),
-                                PaymentMethod = reader.IsDBNull(reader.GetOrdinal("PaymentMethod")) ? string.Empty : reader.GetString(reader.GetOrdinal("PaymentMethod")),
-                                OrderDate = reader.IsDBNull(reader.GetOrdinal("OrderDate")) ? DateTime.MinValue : reader.GetDateTime(reader.GetOrdinal("OrderDate"))
-                            };
-                            orders.Add(order);
-                        }
-                    }
-                }
-            }
-            return orders;
+            return ordersFromOrderHistory;
         }
 
-        public async Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string searchText = null, string timePeriod = null)
+        /// <summary>
+        /// Retrieves orders with product information for a buyer.
+        /// Filters orders by search text and time period only if present.
+        /// </summary>
+        /// <param name="userId">The ID of the buyer.</param>
+        /// <param name="searchText">The text to search for.</param>
+        /// <param name="timePeriod">The time period to filter by.</param>
+        /// <returns>A list of orders with product information.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the product with the specified ID is not found.</exception>
+        /// <exception cref="ArgumentException">Thrown when the time period is invalid.</exception>
+        public async Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string? searchText = null, string? timePeriod = null)
         {
+            List<Order> ordersDb = await this.dbContext.Orders
+                .Where(o => o.BuyerID == userId)
+                .ToListAsync();
+
             List<OrderDisplayInfo> orderDisplayInfos = new List<OrderDisplayInfo>();
 
-            using (var connection = databaseProvider.CreateConnection(connectionString))
+            foreach (Order order in ordersDb)
             {
-                using (var command = connection.CreateCommand())
+                Product product = await this.dbContext.Products.FindAsync(order.ProductID)
+                                        ?? throw new KeyNotFoundException($"GetOrdersWithProductInfoAsync: Product with ID {order.ProductID} not found");
+
+                // This boolean is used to check if the product name corresponds to the search text, if the search text is present.
+                bool shouldIncludeProductBySearchText = searchText == null || (searchText != null && product.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0);
+
+                if (shouldIncludeProductBySearchText) // if searching by text corresponds, then we can check the time period
                 {
-                    string query = @"SELECT 
-                        o.OrderID, 
-                        p.name AS ProductName, 
-                        o.ProductType,  
-                        p.productType AS ProductTypeName,  
-                        o.OrderDate, 
-                        o.PaymentMethod, 
-                        o.OrderSummaryID
-                    FROM [Order] o
-                    JOIN [DummyProduct] p ON o.ProductType = p.ID
-                    WHERE o.BuyerID = @UserId";
-
-                    if (!string.IsNullOrEmpty(searchText))
+                    switch (timePeriod)
                     {
-                        query += " AND p.name LIKE @SearchText";
-                    }
-
-                    if (timePeriod == "Last 3 Months")
-                    {
-                        query += " AND o.OrderDate >= DATEADD(month, -3, GETDATE())";
-                    }
-                    else if (timePeriod == "Last 6 Months")
-                    {
-                        query += " AND o.OrderDate >= DATEADD(month, -6, GETDATE())";
-                    }
-                    else if (timePeriod == "This Year")
-                    {
-                        query += " AND YEAR(o.OrderDate) = YEAR(GETDATE())";
-                    }
-
-                    command.CommandText = query;
-                    command.Parameters.AddWithValue("@UserId", userId);
-                    if (!string.IsNullOrEmpty(searchText))
-                    {
-                        command.Parameters.AddWithValue("@SearchText", $"%{searchText}%");
-                    }
-
-                    await connection.OpenAsync();
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var orderId = reader.GetInt32(reader.GetOrdinal("OrderID"));
-                            var productName = reader.GetString(reader.GetOrdinal("ProductName"));
-                            var productType = reader.GetInt32(reader.GetOrdinal("ProductType"));
-                            var productTypeName = reader.GetString(reader.GetOrdinal("ProductTypeName"));
-                            var orderDate = reader.GetDateTime(reader.GetOrdinal("OrderDate"));
-                            var paymentMethod = reader.GetString(reader.GetOrdinal("PaymentMethod"));
-                            var orderSummaryId = reader.GetInt32(reader.GetOrdinal("OrderSummaryID"));
-
-                            string productCategory = (productTypeName == "new" || productTypeName == "used") ? "new" : "borrowed";
-
-                            orderDisplayInfos.Add(new OrderDisplayInfo
-                            {
-                                OrderID = orderId,
-                                ProductName = productName,
-                                ProductTypeName = productTypeName,
-                                OrderDate = orderDate.ToString("yyyy-MM-dd"),
-                                PaymentMethod = paymentMethod,
-                                OrderSummaryID = orderSummaryId,
-                                ProductCategory = productCategory
-                            });
-                        }
+                        case null:
+                            orderDisplayInfos.Add(CreateOrderDisplayInfoFromOrderAndProduct(order, product));
+                            break;
+                        case "Last 3 Months" when order.OrderDate >= DateTime.Now.AddMonths(-3):
+                            orderDisplayInfos.Add(CreateOrderDisplayInfoFromOrderAndProduct(order, product));
+                            break;
+                        case "Last 6 Months" when order.OrderDate >= DateTime.Now.AddMonths(-6):
+                            orderDisplayInfos.Add(CreateOrderDisplayInfoFromOrderAndProduct(order, product));
+                            break;
+                        case "This Year" when order.OrderDate.Year == DateTime.Now.Year:
+                            orderDisplayInfos.Add(CreateOrderDisplayInfoFromOrderAndProduct(order, product));
+                            break;
+                        default:
+                            throw new ArgumentException($"GetOrdersWithProductInfoAsync: Invalid time period: {timePeriod}");
                     }
                 }
             }
@@ -439,75 +295,54 @@ namespace MarketPlace924.Repository
             return orderDisplayInfos;
         }
 
+        /// <summary>
+        /// Retrieves the product category types for a buyer.
+        /// </summary>
+        /// <param name="userId">The ID of the buyer.</param>
+        /// <returns>A dictionary of order summary IDs and product category types.</returns>
         public async Task<Dictionary<int, string>> GetProductCategoryTypesAsync(int userId)
         {
             Dictionary<int, string> productCategoryTypes = new Dictionary<int, string>();
 
-            using (var connection = databaseProvider.CreateConnection(connectionString))
+            List<Order> ordersDb = await this.dbContext.Orders
+                .Where(o => o.BuyerID == userId)
+                .ToListAsync();
+
+            foreach (Order order in ordersDb)
             {
-                using (var command = connection.CreateCommand())
-                {
-                    string query = @"SELECT 
-                        o.OrderSummaryID,
-                        p.productType
-                    FROM [Order] o
-                    JOIN [DummyProduct] p ON o.ProductType = p.ID
-                    WHERE o.BuyerID = @UserId";
-
-                    command.CommandText = query;
-                    command.Parameters.AddWithValue("@UserId", userId);
-
-                    await connection.OpenAsync();
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var orderSummaryId = reader.GetInt32(reader.GetOrdinal("OrderSummaryID"));
-                            var productTypeName = reader.GetString(reader.GetOrdinal("productType"));
-
-                            productCategoryTypes[orderSummaryId] = (productTypeName == "new" || productTypeName == "used") ? "new" : "borrowed";
-                        }
-                    }
-                }
+                string productCategory = (order.ProductType == "new" || order.ProductType == "used") ? "new" : "borrowed";
+                productCategoryTypes.Add(order.OrderSummaryID, productCategory);
             }
 
             return productCategoryTypes;
         }
 
+        /// <summary>
+        /// Retrieves an order summary by its ID.
+        /// </summary>
+        /// <param name="orderSummaryId">The ID of the order summary.</param>
+        /// <returns>The order summary.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when the order summary with the specified ID is not found.</exception>
         public async Task<OrderSummary> GetOrderSummaryAsync(int orderSummaryId)
         {
-            using (var connection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = "SELECT * FROM [OrderSummary] WHERE ID = @OrderSummaryId";
-                    command.Parameters.AddWithValue("@OrderSummaryId", orderSummaryId);
+            return await this.dbContext.OrderSummary.FindAsync(orderSummaryId)
+                ?? throw new KeyNotFoundException($"GetOrderSummaryAsync: OrderSummary with ID {orderSummaryId} not found");
+        }
 
-                    await connection.OpenAsync();
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            return new OrderSummary
-                            {
-                                ID = reader.GetInt32(reader.GetOrdinal("ID")),
-                                Subtotal = (float)reader.GetDouble(reader.GetOrdinal("Subtotal")),
-                                WarrantyTax = (float)reader.GetDouble(reader.GetOrdinal("WarrantyTax")),
-                                DeliveryFee = (float)reader.GetDouble(reader.GetOrdinal("DeliveryFee")),
-                                FinalTotal = (float)reader.GetDouble(reader.GetOrdinal("FinalTotal")),
-                                FullName = reader.GetString(reader.GetOrdinal("FullName")),
-                                Email = reader.GetString(reader.GetOrdinal("Email")),
-                                PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                                Address = reader.GetString(reader.GetOrdinal("Address")),
-                                PostalCode = reader.GetString(reader.GetOrdinal("PostalCode")),
-                                AdditionalInfo = reader.IsDBNull(reader.GetOrdinal("AdditionalInfo")) ? null : reader.GetString(reader.GetOrdinal("AdditionalInfo")),
-                                ContractDetails = reader.IsDBNull(reader.GetOrdinal("ContractDetails")) ? null : reader.GetString(reader.GetOrdinal("ContractDetails"))
-                            };
-                        }
-                    }
-                }
-            }
-            throw new KeyNotFoundException($"OrderSummary with ID {orderSummaryId} not found");
+        private static OrderDisplayInfo CreateOrderDisplayInfoFromOrderAndProduct(Order order, Product product)
+        {
+            string productCategory = (product.ProductType == "new" || product.ProductType == "used") ? "new" : "borrowed";
+
+            return new OrderDisplayInfo
+            {
+                OrderID = order.OrderID,
+                ProductName = product.Name,
+                ProductTypeName = product.ProductType,
+                OrderDate = order.OrderDate.ToString("yyyy-MM-dd"),
+                PaymentMethod = order.PaymentMethod,
+                OrderSummaryID = order.OrderSummaryID,
+                ProductCategory = productCategory,
+            };
         }
     }
 }

@@ -20,10 +20,10 @@ namespace MarketPlace924.Service
         }
 
         // Implemented interface methods by calling repository methods
-        public Task AddRenewedContractAsync(IContract contract, byte[] pdfFile)
+        public Task AddRenewedContractAsync(IContract contract)
         {
             // You might add business logic here before or after calling the repository
-            return contractRenewalRepository.AddRenewedContractAsync(contract, pdfFile);
+            return contractRenewalRepository.AddRenewedContractAsync(contract);
         }
 
         public Task<List<IContract>> GetRenewedContractsAsync()

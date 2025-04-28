@@ -1,79 +1,169 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
-
-namespace MarketPlace924.Repository
+﻿namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Text.Json;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.DataTransferObjects;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
+    /// <summary>
+    /// Proxy repository class for managing contract operations via REST API.
+    /// </summary>
     public class ContractProxyRepository : IContractRepository
     {
-        public Task<IContract> AddContractAsync(IContract contract, byte[] pdfFile)
+        private const string ApiBaseRoute = "api/contracts";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContractProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base url of the API.</param>
+        public ContractProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
-        public Task<List<IContract>> GetAllContractsAsync()
+        /// <inheritdoc />
+        public async Task<IContract> AddContractAsync(IContract contract, byte[] pdfFile)
         {
-            throw new NotImplementedException();
+            // Create a DTO to send both contract data and PDF file
+            var requestDto = new AddContractRequest
+            {
+                Contract = contract as Contract,
+                PdfFile = pdfFile,
+            };
+
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", requestDto);
+            response.EnsureSuccessStatusCode();
+            var newContract = await response.Content.ReadFromJsonAsync<Contract>();
+            return newContract ?? new Contract(); // Return default if null
         }
 
-        public Task<(int BuyerID, string BuyerName)> GetContractBuyerAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<List<IContract>> GetAllContractsAsync()
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}");
+            response.EnsureSuccessStatusCode();
+            var contracts = await response.Content.ReadFromJsonAsync<List<Contract>>();
+            return contracts?.ConvertAll(c => (IContract)c) ?? new List<IContract>();
         }
 
-        public Task<IContract> GetContractByIdAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<(int BuyerID, string BuyerName)> GetContractBuyerAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/buyer");
+            response.EnsureSuccessStatusCode();
+            var buyerInfo = await response.Content.ReadFromJsonAsync<(int, string)>();
+            return buyerInfo;
         }
 
-        public Task<List<IContract>> GetContractHistoryAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<IContract> GetContractByIdAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}");
+            response.EnsureSuccessStatusCode();
+            var contract = await response.Content.ReadFromJsonAsync<Contract>();
+            return contract ?? new Contract(); // Return default if null
         }
 
-        public Task<List<IContract>> GetContractsByBuyerAsync(int buyerId)
+        /// <inheritdoc />
+        public async Task<List<IContract>> GetContractHistoryAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/history");
+            response.EnsureSuccessStatusCode();
+            var history = await response.Content.ReadFromJsonAsync<List<Contract>>();
+            return history?.ConvertAll(c => (IContract)c) ?? new List<IContract>();
         }
 
-        public Task<(int SellerID, string SellerName)> GetContractSellerAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<List<IContract>> GetContractsByBuyerAsync(int buyerId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}");
+            response.EnsureSuccessStatusCode();
+            var contracts = await response.Content.ReadFromJsonAsync<List<Contract>>();
+            return contracts?.ConvertAll(c => (IContract)c) ?? new List<IContract>();
         }
 
-        public Task<DateTime?> GetDeliveryDateByContractIdAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<(int SellerID, string SellerName)> GetContractSellerAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/seller");
+            response.EnsureSuccessStatusCode();
+            var sellerInfo = await response.Content.ReadFromJsonAsync<(int, string)>();
+            return sellerInfo;
         }
 
-        public Task<(string PaymentMethod, DateTime OrderDate)> GetOrderDetailsAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<DateTime?> GetDeliveryDateByContractIdAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/delivery-date");
+            response.EnsureSuccessStatusCode();
+            try
+            {
+                var deliveryDate = await response.Content.ReadFromJsonAsync<DateTime?>();
+                return deliveryDate;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
 
-        public Task<Dictionary<string, object>> GetOrderSummaryInformationAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<(string PaymentMethod, DateTime OrderDate)> GetOrderDetailsAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/order-details");
+            response.EnsureSuccessStatusCode();
+            var orderDetails = await response.Content.ReadFromJsonAsync<(string, DateTime)>();
+            return orderDetails;
         }
 
-        public Task<byte[]> GetPdfByContractIdAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<Dictionary<string, object>> GetOrderSummaryInformationAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/order-summary");
+            response.EnsureSuccessStatusCode();
+            var orderSummary = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+            return orderSummary ?? new Dictionary<string, object>();
         }
 
-        public Task<IPredefinedContract> GetPredefinedContractByPredefineContractTypeAsync(PredefinedContractType predefinedContractType)
+        /// <inheritdoc />
+        public async Task<byte[]> GetPdfByContractIdAsync(long contractId)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/pdf");
+            response.EnsureSuccessStatusCode();
+            var pdfFile = await response.Content.ReadAsByteArrayAsync();
+            return pdfFile;
         }
 
-        public Task<(DateTime? StartDate, DateTime? EndDate, double price, string name)?> GetProductDetailsByContractIdAsync(long contractId)
+        /// <inheritdoc />
+        public async Task<IPredefinedContract> GetPredefinedContractByPredefineContractTypeAsync(PredefinedContractType predefinedContractType)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/predefined/{(int)predefinedContractType}");
+            response.EnsureSuccessStatusCode();
+            var contract = await response.Content.ReadFromJsonAsync<PredefinedContract>();
+            return contract ?? new PredefinedContract { ContractID = 0, ContractContent = string.Empty };
+        }
+
+        /// <inheritdoc />
+        public async Task<(DateTime? StartDate, DateTime? EndDate, double price, string name)?> GetProductDetailsByContractIdAsync(long contractId)
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/product-details");
+            response.EnsureSuccessStatusCode();
+            try
+            {
+                var productDetails = await response.Content.ReadFromJsonAsync<(DateTime?, DateTime?, double, string)?>();
+                return productDetails;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
     }
 }

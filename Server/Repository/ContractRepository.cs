@@ -1,37 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+﻿// <copyright file="ContractRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
+    /// <summary>
+    /// Represents a repository for contract operations.
+    /// </summary>
     public class ContractRepository : IContractRepository
     {
-        private readonly string connectionString;
-        private readonly IDatabaseProvider databaseProvider;
+        private readonly MarketPlaceDbContext dbContext;
 
-        public ContractRepository(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContractRepository"/> class.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
+        public ContractRepository(MarketPlaceDbContext dbContext)
         {
-        }
-
-        public ContractRepository(string connectionString, IDatabaseProvider databaseProvider)
-        {
-            if (connectionString == null)
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
-            this.connectionString = connectionString;
-            this.databaseProvider = databaseProvider;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -39,42 +34,12 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="predefinedContractType">The type of predefined contract to retrieve.</param>
         /// <returns>The predefined contract.</returns>
+        /// <exception cref="Exception">Thrown when the predefined contract is not found.</exception>
         public async Task<IPredefinedContract> GetPredefinedContractByPredefineContractTypeAsync(PredefinedContractType predefinedContractType)
         {
-            IPredefinedContract predefinedContract = null;
-
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetPredefinedContractByID";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@PContractID", (int)predefinedContractType);
-
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            predefinedContract = new PredefinedContract
-                            {
-                                ContractID = reader.GetInt32(reader.GetOrdinal("ID")),
-                                ContractContent = (string)reader["content"]
-                            };
-                        }
-                    }
-                }
-            }
-
-            // If the contract is null, return a new instance with an empty content.
-            if (predefinedContract == null)
-            {
-                return new PredefinedContract
-                {
-                    ContractID = 0,
-                    ContractContent = string.Empty
-                };
-            }
+            PredefinedContract? predefinedContract = await this.dbContext.PredefinedContracts
+                .Where(p => p.ContractID == (int)predefinedContractType)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetPredefinedContractByPredefineContractTypeAsync: Predefined contract not found for predefined contract type: " + predefinedContractType);
 
             return predefinedContract;
         }
@@ -84,47 +49,12 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve.</param>
         /// <returns>The contract.</returns>
+        /// <exception cref="Exception">Thrown when the contract is not found.</exception>
         public async Task<IContract> GetContractByIdAsync(long contractId)
         {
-            IContract contract = null;
-
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetContractByID";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
-
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            contract = new Contract
-                            {
-                                ContractID = reader.GetInt32(reader.GetOrdinal("ID")),
-                                OrderID = reader.GetInt32(reader.GetOrdinal("orderID")),
-                                ContractStatus = reader.GetString(reader.GetOrdinal("contractStatus")),
-                                ContractContent = (string)reader["contractContent"],
-                                RenewalCount = reader.GetInt32(reader.GetOrdinal("renewalCount")),
-                                PredefinedContractID = reader.IsDBNull(reader.GetOrdinal("predefinedContractID"))
-                                    ? null
-                                    : (int?)reader.GetInt32(reader.GetOrdinal("predefinedContractID")),
-                                PDFID = reader.GetInt32(reader.GetOrdinal("pdfID")),
-                                RenewedFromContractID = reader.IsDBNull(reader.GetOrdinal("renewedFromContractID"))
-                                    ? null
-                                    : (long?)reader.GetInt64(reader.GetOrdinal("renewedFromContractID"))
-                            };
-                        }
-                    }
-                }
-            }
-
-            if (contract == null)
-            {
-                return new Contract();
-            }
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractByIdAsync: Contract not found for contract ID: " + contractId);
 
             return contract;
         }
@@ -135,88 +65,46 @@ namespace MarketPlace924.Repository
         /// <returns>The list of contracts.</returns>
         public async Task<List<IContract>> GetAllContractsAsync()
         {
-            var contracts = new List<IContract>();
+            List<Contract> contracts = await this.dbContext.Contracts.ToListAsync();
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetAllContracts";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var contract = new Contract
-                            {
-                                ContractID = reader.GetInt64(reader.GetOrdinal("ID")),
-                                OrderID = reader.GetInt32(reader.GetOrdinal("orderID")),
-                                ContractStatus = reader.GetString(reader.GetOrdinal("contractStatus")),
-                                ContractContent = (string)reader["contractContent"],
-                                RenewalCount = reader.GetInt32(reader.GetOrdinal("renewalCount")),
-                                PredefinedContractID = reader.IsDBNull(reader.GetOrdinal("predefinedContractID"))
-                                    ? null
-                                    : (int?)reader.GetInt32(reader.GetOrdinal("predefinedContractID")),
-                                PDFID = reader.GetInt32(reader.GetOrdinal("pdfID")),
-                                RenewedFromContractID = reader.IsDBNull(reader.GetOrdinal("renewedFromContractID"))
-                                    ? null
-                                    : (long?)reader.GetInt64(reader.GetOrdinal("renewedFromContractID"))
-                            };
-                            contracts.Add(contract);
-                        }
-                    }
-                }
-            }
-
-            return contracts;
+            return contracts.Cast<IContract>().ToList();
         }
 
         /// <summary>
         /// Asynchronously retrieves the renewal history for a contract using the GetContractHistory stored procedure.
+        /// OBS: ContractHistory table does not exist in the database
+        /// I will assume that I should take all contracts as long as I have an existing RenewedFromContractID
+        /// Thus I should go back in time until I reach a contract with no RenewedFromContractID
+        /// and return all those contracts in a list, which will be in REVERSE chronological order.
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the history for.</param>
         /// <returns>The list of contracts.</returns>
+        /// <exception cref="Exception">Thrown when the contract is not found.</exception>
         public async Task<List<IContract>> GetContractHistoryAsync(long contractId)
         {
-            var history = new List<IContract>();
+            List<IContract> contractHistory = new List<IContract>();
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
+            // Get the contract with the given contract ID
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractHistoryAsync: Contract not found for contract ID: " + contractId);
+
+            // Go back in time until I reach a contract with no RenewedFromContractID
+            while (contract.RenewedFromContractID != null)
             {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetContractHistory";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
+                contractHistory.Add(contract);
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var contract = new Contract
-                            {
-                                ContractID = reader.GetInt64(reader.GetOrdinal("ID")),
-                                OrderID = reader.GetInt32(reader.GetOrdinal("orderID")),
-                                ContractStatus = reader.GetString(reader.GetOrdinal("contractStatus")),
-                                ContractContent = (string)reader["contractContent"],
-                                RenewalCount = reader.GetInt32(reader.GetOrdinal("renewalCount")),
-                                PredefinedContractID = reader.IsDBNull(reader.GetOrdinal("predefinedContractID"))
-                                    ? null
-                                    : (int?)reader.GetInt32(reader.GetOrdinal("predefinedContractID")),
-                                PDFID = reader.GetInt32(reader.GetOrdinal("pdfID")),
-                                RenewedFromContractID = reader.IsDBNull(reader.GetOrdinal("renewedFromContractID"))
-                                    ? null
-                                    : (long?)reader.GetInt64(reader.GetOrdinal("renewedFromContractID"))
-                            };
-                            history.Add(contract);
-                        }
-                    }
-                }
+                // Fetch the *previous* contract and reassign the contract variable
+                // This contract will now refer to this *new* object instance of a contract
+                contract = await this.dbContext.Contracts
+                    .Where(c => c.ContractID == contract.RenewedFromContractID)
+                    .FirstOrDefaultAsync() ?? throw new Exception("GetContractHistoryAsync: Contract not found for contract ID: " + contract.RenewedFromContractID);
             }
 
-            return history;
+            // Add the final contract (the one with no RenewedFromContractID) to the history as well.
+            contractHistory.Add(contract);
+
+            return contractHistory;
         }
 
         /// <summary>
@@ -227,52 +115,40 @@ namespace MarketPlace924.Repository
         /// <returns>The new contract.</returns>
         public async Task<IContract> AddContractAsync(IContract contract, byte[] pdfFile)
         {
-            IContract newContract = new Contract();
+            bool pdfExists = await this.dbContext.PDFs
+                .AnyAsync(p => p.PdfID == contract.PDFID);
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
+            PDF pdfToUpdateOrInsert = new PDF
             {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "AddContract";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
+                PdfID = contract.PDFID,
+                File = pdfFile,
+                ContractID = (int)contract.ContractID, // not used in the database but needed for the constructor
+            };
 
-                    databaseCommand.Parameters.AddWithValue("@OrderID", contract.OrderID);
-                    databaseCommand.Parameters.AddWithValue("@ContractStatus", contract.ContractStatus);
-                    databaseCommand.Parameters.AddWithValue("@ContractContent", contract.ContractContent);
-                    databaseCommand.Parameters.AddWithValue("@RenewalCount", contract.RenewalCount);
-                    databaseCommand.Parameters.AddWithValue("@PredefinedContractID",
-                        contract.PredefinedContractID.HasValue ? (object)contract.PredefinedContractID.Value : DBNull.Value);
-                    databaseCommand.Parameters.AddWithValue("@PDFID", contract.PDFID);
-                    databaseCommand.Parameters.AddWithValue("@PDFFile", pdfFile);
-                    databaseCommand.Parameters.AddWithValue("@RenewedFromContractID",
-                        contract.RenewedFromContractID.HasValue ? (object)contract.RenewedFromContractID.Value : DBNull.Value);
-
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            newContract = new Contract
-                            {
-                                ContractID = reader.GetInt64(reader.GetOrdinal("ID")),
-                                OrderID = reader.GetInt32(reader.GetOrdinal("orderID")),
-                                ContractStatus = reader.GetString(reader.GetOrdinal("contractStatus")),
-                                ContractContent = (string)reader["contractContent"],
-                                RenewalCount = reader.GetInt32(reader.GetOrdinal("renewalCount")),
-                                PredefinedContractID = reader.IsDBNull(reader.GetOrdinal("predefinedContractID"))
-                                    ? null
-                                    : (int?)reader.GetInt32(reader.GetOrdinal("predefinedContractID")),
-                                PDFID = reader.GetInt32(reader.GetOrdinal("pdfID")),
-                                RenewedFromContractID = reader.IsDBNull(reader.GetOrdinal("renewedFromContractID"))
-                                    ? null
-                                    : (long?)reader.GetInt64(reader.GetOrdinal("renewedFromContractID"))
-                            };
-                        }
-                    }
-                }
+            if (pdfExists) // if the pdf exists, update the pdf file
+            {
+                this.dbContext.PDFs.Update(pdfToUpdateOrInsert);
+            }
+            else // if the pdf does not exist, insert a new pdf file
+            {
+                pdfToUpdateOrInsert.PdfID = 0; // set the id to 0 to avoid conflict with the existing pdf
+                this.dbContext.PDFs.Add(pdfToUpdateOrInsert);
             }
 
-            return newContract;
+            // Create the entity to be added and tracked by Entity Framework
+            Contract contractToAdd = contract.ToContract();
+
+            // Ensure the correct PDFID is set on the entity being added
+            contractToAdd.PDFID = pdfToUpdateOrInsert.PdfID;
+
+            // Add the entity to the DbContext
+            this.dbContext.Contracts.Add(contractToAdd);
+
+            // Save changes, which generates the ContractID and updates contractToAdd and also updated the PDFID on the contractToAdd if needed (MAGIC)
+            await this.dbContext.SaveChangesAsync();
+
+            // Return the tracked entity, which now contains the database-generated ID
+            return contractToAdd;
         }
 
         /// <summary>
@@ -280,32 +156,34 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the seller information for.</param>
         /// <returns>The seller information.</returns>
+        /// <exception cref="Exception">Thrown when the contract, order or seller is not found.</exception>
         public async Task<(int SellerID, string SellerName)> GetContractSellerAsync(long contractId)
         {
-            (int SellerID, string SellerName) sellerInfo = (0, string.Empty);
+            // Get the contract for the given contract ID
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Contract not found for contract ID: " + contractId);
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetContractSeller";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
+            // Get the order for the contract
+            Order? order = await this.dbContext.Orders
+                .Where(o => o.OrderID == contract.OrderID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Order not found for order ID: " + contract.OrderID);
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            sellerInfo = (
-                                SellerID: reader.GetInt32(reader.GetOrdinal("SellerID")),
-                                SellerName: reader.GetString(reader.GetOrdinal("SellerName")));
-                        }
-                    }
-                }
-            }
+            // Get the product for the order
+            Product? product = await this.dbContext.Products
+                .Where(p => p.ProductId == order.ProductID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Product not found for product ID: " + order.ProductID);
 
-            return sellerInfo;
+            // Get the seller for the product
+            Seller? seller = await this.dbContext.Sellers
+                .Where(s => s.Id == product.SellerId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Seller not found for seller ID: " + product.SellerId);
+
+            // return seller; // this could be done in the future, I did not do it now because I don't want to change the function signature / repo interface -Alex
+            // Alternative return values, I don't know which one should be returned -Alex
+            // return (seller.Id, seller.Username);
+            // return (seller.Id, seller.Username + " " + seller.StoreName);
+            return (seller.Id, seller.StoreName);
         }
 
         /// <summary>
@@ -313,32 +191,26 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the buyer information for.</param>
         /// <returns>The buyer information.</returns>
+        /// <exception cref="Exception">Thrown when the contract, order or buyer is not found.</exception>
         public async Task<(int BuyerID, string BuyerName)> GetContractBuyerAsync(long contractId)
         {
-            (int BuyerID, string BuyerName) buyerInfo = (0, string.Empty);
+            // Get the contract for the given contract ID
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractBuyerAsync: Contract not found for contract ID: " + contractId);
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetContractBuyer";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
+            // Get the order for the contract
+            Order? order = await this.dbContext.Orders
+                .Where(o => o.OrderID == contract.OrderID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractBuyerAsync: Order not found for order ID: " + contract.OrderID);
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            buyerInfo = (
-                                BuyerID: reader.GetInt32(reader.GetOrdinal("BuyerID")),
-                                BuyerName: reader.GetString(reader.GetOrdinal("BuyerName")));
-                        }
-                    }
-                }
-            }
+            // Get the buyer for the order
+            Buyer? buyer = await this.dbContext.Buyers
+                .Where(b => b.Id == order.BuyerID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetContractBuyerAsync: Buyer not found for buyer ID: " + order.BuyerID);
 
-            return buyerInfo;
+            // return buyer; // this could be done in the future, I did not do it now because I don't want to change the function signature / repo interface -Alex
+            return (buyer.Id, buyer.FirstName + " " + buyer.LastName);
         }
 
         /// <summary>
@@ -346,39 +218,40 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the order summary information for.</param>
         /// <returns>The order summary information.</returns>
+        /// <exception cref="Exception">Thrown when the contract, order or order summary is not found.</exception>
         public async Task<Dictionary<string, object>> GetOrderSummaryInformationAsync(long contractId)
         {
-            var orderSummary = new Dictionary<string, object>();
+            Dictionary<string, object> orderSummary = new Dictionary<string, object>();
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetOrderSummaryInformation";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
+            // Get the contract for the given contract ID
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetOrderSummaryInformationAsync: Contract not found for contract ID: " + contractId);
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            orderSummary["ID"] = reader["ID"];
-                            orderSummary["subtotal"] = reader["subtotal"];
-                            orderSummary["warrantyTax"] = reader["warrantyTax"];
-                            orderSummary["deliveryFee"] = reader["deliveryFee"];
-                            orderSummary["finalTotal"] = reader["finalTotal"];
-                            orderSummary["fullName"] = reader["fullName"];
-                            orderSummary["email"] = reader["email"];
-                            orderSummary["phoneNumber"] = reader["phoneNumber"];
-                            orderSummary["address"] = reader["address"];
-                            orderSummary["postalCode"] = reader["postalCode"];
-                            orderSummary["additionalInfo"] = reader["additionalInfo"];
-                            orderSummary["ContractDetails"] = reader["ContractDetails"];
-                        }
-                    }
-                }
-            }
+            // Get the order for the contract
+            Order? order = await this.dbContext.Orders
+                .Where(o => o.OrderID == contract.OrderID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetOrderSummaryInformationAsync: Order not found for order ID: " + contract.OrderID);
+
+            // Get the OrderSummary for the order
+            OrderSummary? orderSummaryDb = await this.dbContext.OrderSummary
+                .Where(os => os.ID == order.OrderSummaryID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetOrderSummaryInformationAsync: Order summary not found for order ID: " + order.OrderID);
+
+            // Populate the order summary dictionary
+            // Optional fields can be null, so we need to check for null and return the default value
+            orderSummary["ID"] = orderSummaryDb.ID;
+            orderSummary["subtotal"] = orderSummaryDb.Subtotal;
+            orderSummary["warrantyTax"] = orderSummaryDb.WarrantyTax;
+            orderSummary["deliveryFee"] = orderSummaryDb.DeliveryFee;
+            orderSummary["finalTotal"] = orderSummaryDb.FinalTotal;
+            orderSummary["fullName"] = orderSummaryDb.FullName ?? string.Empty;
+            orderSummary["email"] = orderSummaryDb.Email ?? string.Empty;
+            orderSummary["phoneNumber"] = orderSummaryDb.PhoneNumber ?? string.Empty;
+            orderSummary["address"] = orderSummaryDb.Address ?? string.Empty;
+            orderSummary["postalCode"] = orderSummaryDb.PostalCode ?? string.Empty;
+            orderSummary["additionalInfo"] = orderSummaryDb.AdditionalInfo ?? string.Empty;
+            orderSummary["ContractDetails"] = orderSummaryDb.ContractDetails ?? string.Empty;
 
             return orderSummary;
         }
@@ -388,40 +261,26 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the product details for.</param>
         /// <returns>The product details.</returns>
+        /// <exception cref="Exception">Thrown when the contract, order or product is not found.</exception>
         public async Task<(DateTime? StartDate, DateTime? EndDate, double price, string name)?> GetProductDetailsByContractIdAsync(long contractId)
         {
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetProductDetailsByContractID";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
+            // Get the contract for the given contract ID
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetProductDetailsByContractIdAsync: Contract not found for contract ID: " + contractId);
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            int startDateOrdinal = reader.GetOrdinal("startDate");
-                            int endDateOrdinal = reader.GetOrdinal("endDate");
-                            int priceOrdinal = reader.GetOrdinal("price");
-                            int nameOrdinal = reader.GetOrdinal("name");
+            // Get the order of the contract
+            Order? order = await this.dbContext.Orders
+                .Where(o => o.OrderID == contract.OrderID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetProductDetailsByContractIdAsync: Order not found for order ID: " + contract.OrderID);
 
-                            var startDate = reader.IsDBNull(startDateOrdinal) ? (DateTime?)null : reader.GetDateTime(startDateOrdinal);
-                            var endDate = reader.IsDBNull(endDateOrdinal) ? (DateTime?)null : reader.GetDateTime(endDateOrdinal);
-                            // Assuming price and name are non-nullable based on the original code and exception.
-                            // Add null checks if these can also be null in the database.
-                            var price = reader.GetDouble(priceOrdinal);
-                            var name = reader.GetString(nameOrdinal);
+            // Get the product of the order
+            Product? product = await this.dbContext.Products
+                .Where(p => p.ProductId == order.ProductID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetProductDetailsByContractIdAsync: Product not found for product ID: " + order.ProductID);
 
-                            return (startDate, endDate, price, name);
-                        }
-                    }
-                }
-            }
-
-            return default; // Return null if no record found
+            // Return the product details
+            return (product.StartDate?.DateTime, product.EndDate?.DateTime, product.Price, product.Name);
         }
 
         /// <summary>
@@ -431,44 +290,25 @@ namespace MarketPlace924.Repository
         /// <returns>The list of contracts.</returns>
         public async Task<List<IContract>> GetContractsByBuyerAsync(int buyerId)
         {
-            var contracts = new List<IContract>();
+            List<Contract> allContracts = new List<Contract>();
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
+            // Get all orders for the buyer
+            List<Order> orders = await this.dbContext.Orders
+                .Where(o => o.BuyerID == buyerId)
+                .ToListAsync();
+
+            // For each order get all of its contracts
+            // Relationship is one to many, that's why we have a list of contracts for each order
+            foreach (Order order in orders)
             {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetContractsByBuyer";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@BuyerID", buyerId);
+                List<Contract> contracts = await this.dbContext.Contracts
+                    .Where(c => c.OrderID == order.OrderID)
+                    .ToListAsync();
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var contract = new Contract
-                            {
-                                ContractID = reader.GetInt64(reader.GetOrdinal("ID")),
-                                OrderID = reader.GetInt32(reader.GetOrdinal("orderID")),
-                                ContractStatus = reader.GetString(reader.GetOrdinal("contractStatus")),
-                                ContractContent = (string)reader["contractContent"],
-                                RenewalCount = reader.GetInt32(reader.GetOrdinal("renewalCount")),
-                                PredefinedContractID = reader.IsDBNull(reader.GetOrdinal("predefinedContractID"))
-                                    ? null
-                                    : (int?)reader.GetInt32(reader.GetOrdinal("predefinedContractID")),
-                                PDFID = reader.GetInt32(reader.GetOrdinal("pdfID")),
-                                AdditionalTerms = reader.GetString(reader.GetOrdinal("AdditionalTerms")),
-                                RenewedFromContractID = reader.IsDBNull(reader.GetOrdinal("renewedFromContractID"))
-                                    ? null
-                                    : (long?)reader.GetInt64(reader.GetOrdinal("renewedFromContractID"))
-                            };
-                            contracts.Add(contract);
-                        }
-                    }
-                }
+                allContracts.AddRange(contracts); // Add the contracts to the list of all contracts
             }
 
-            return contracts;
+            return allContracts.Cast<IContract>().ToList(); // Cast the list of contracts to a list of IContract
         }
 
         /// <summary>
@@ -476,41 +316,18 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the order details for.</param>
         /// <returns>The order details, with PaymentMethod potentially null.</returns>
-        // Change return type to allow nullable PaymentMethod
-        public async Task<(string? PaymentMethod, DateTime OrderDate)> GetOrderDetailsAsync(long contractId)
+        /// <exception cref="Exception">Thrown when the contract or order is not found.</exception>
+        public async Task<(string PaymentMethod, DateTime OrderDate)> GetOrderDetailsAsync(long contractId)
         {
-            string? paymentMethod = null; // Use nullable string
-            DateTime orderDate = default;
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetOrderDetailsAsync: Contract not found for contract ID: " + contractId);
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetOrderDetails";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
+            Order? order = await this.dbContext.Orders
+                .Where(o => o.OrderID == contract.OrderID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetOrderDetailsAsync: Order not found for order ID: " + contract.OrderID);
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            int paymentMethodOrdinal = reader.GetOrdinal("PaymentMethod");
-                            int orderDateOrdinal = reader.GetOrdinal("OrderDate");
-
-                            // Check for DBNull before casting PaymentMethod
-                            if (!reader.IsDBNull(paymentMethodOrdinal))
-                            {
-                                paymentMethod = reader.GetString(paymentMethodOrdinal);
-                            }
-                            // Assuming OrderDate is never null based on original code. Add check if needed.
-                            orderDate = reader.GetDateTime(orderDateOrdinal);
-                        }
-                    }
-                }
-            }
-
-            return (paymentMethod, orderDate);
+            return (order.PaymentMethod, order.OrderDate.DateTime);
         }
 
         /// <summary>
@@ -518,34 +335,18 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the delivery date for.</param>
         /// <returns>The delivery date.</returns>
+        /// <exception cref="Exception">Thrown when the contract or tracked order is not found.</exception>
         public async Task<DateTime?> GetDeliveryDateByContractIdAsync(long contractId)
         {
-            DateTime? deliveryDate = null;
+            Contract? contract = await this.dbContext.Contracts
+                .Where(c => c.ContractID == contractId)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetDeliveryDateByContractIdAsync: Contract not found for contract ID: " + contractId);
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetDeliveryDateByContractID";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
+            TrackedOrder? trackedOrder = await this.dbContext.TrackedOrders
+                .Where(to => to.OrderID == contract.OrderID)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetDeliveryDateByContractIdAsync: Tracked order not found for order ID: " + contract.OrderID);
 
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            int ordinal = reader.GetOrdinal("EstimatedDeliveryDate");
-                            if (!reader.IsDBNull(ordinal))
-                            {
-                                deliveryDate = reader.GetDateTime(ordinal);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return deliveryDate;
+            return trackedOrder.EstimatedDeliveryDate.ToDateTime(TimeOnly.MinValue);
         }
 
         /// <summary>
@@ -553,30 +354,23 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the PDF file for.</param>
         /// <returns>The PDF file.</returns>
+        /// <exception cref="Exception">Thrown when the PDF is not found.</exception>
         public async Task<byte[]> GetPdfByContractIdAsync(long contractId)
         {
-            byte[] pdfFile = null;
+            int pdfId = await this.dbContext.PDFs
+                .Where(p => p.ContractID == contractId)
+                .Select(p => p.PdfID)
+                .FirstOrDefaultAsync();
 
-            using (var databaseConnection = databaseProvider.CreateConnection(connectionString))
+            if (pdfId == 0) // int cannot be null, so it will be 0 if not found
             {
-                using (var databaseCommand = databaseConnection.CreateCommand())
-                {
-                    databaseCommand.CommandText = "GetPdfByContractID";
-                    databaseCommand.CommandType = CommandType.StoredProcedure;
-                    databaseCommand.Parameters.AddWithValue("@ContractID", contractId);
-
-                    await databaseConnection.OpenAsync();
-                    using (var reader = await databaseCommand.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            pdfFile = (byte[])reader["PdfFile"];
-                        }
-                    }
-                }
+                throw new Exception("GetPdfByContractIdAsync: PDF not found for contract ID: " + contractId);
             }
 
-            return pdfFile;
+            return await this.dbContext.PDFs
+                .Where(p => p.PdfID == pdfId)
+                .Select(p => p.File)
+                .FirstOrDefaultAsync() ?? throw new Exception("GetPdfByContractIdAsync: PDF file not found for PDF ID: " + pdfId);
         }
     }
 }

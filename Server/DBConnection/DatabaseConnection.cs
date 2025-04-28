@@ -2,6 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+// TODO: Remove after complete refactoring of the repository -Alex
 namespace Server.DBConnection
 {
     using System;

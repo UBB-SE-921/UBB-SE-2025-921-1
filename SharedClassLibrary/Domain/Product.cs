@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 /// </summary>
 public class Product
 {
+    // Add this private parameterless constructor for Entity Framework Core
+    private Product() { }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
     /// </summary>
@@ -26,9 +29,9 @@ public class Product
     /// <param name="price">The price of the product.</param>
     /// <param name="stock">The available stock quantity.</param>
     /// <param name="sellerId">The identifier of the seller.</param>
-    public Product(int id, string name, string description, double price, int stock, int sellerId)
+    public Product(int productId, string name, string description, double price, int stock, int sellerId)
     {
-        this.ProductId = id;
+        this.ProductId = productId;
         this.Name = name;
         this.Description = description;
         this.Price = price;
@@ -65,4 +68,15 @@ public class Product
     /// Gets or sets the available stock quantity.
     /// </summary>
     public int Stock { get; set; }
+
+    /// <summary>
+    /// Gets or sets the start date for the product (eg, for rental period).
+    /// </summary>
+    public DateTimeOffset? StartDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the end date for the product (eg for rental period).
+    /// </summary>
+    public DateTimeOffset? EndDate { get; set; }
+    public string ProductType { get; set; }
 }

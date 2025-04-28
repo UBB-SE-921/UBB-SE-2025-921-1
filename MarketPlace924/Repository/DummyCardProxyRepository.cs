@@ -1,28 +1,54 @@
-﻿using System;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+﻿// <copyright file="DummyCardProxyRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace MarketPlace924.Repository
 {
+    using System;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.IRepository;
+
+    /// <summary>
+    /// Proxy repository class for managing dummy card operations via REST API.
+    /// </summary>
     public class DummyCardProxyRepository : IDummyCardRepository
     {
-        public Task DeleteCardAsync(string cardNumber)
+        private const string ApiBaseRoute = "api/dummycards";
+        private readonly HttpClient httpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DummyCardProxyRepository"/> class.
+        /// </summary>
+        /// <param name="baseApiUrl">The base url of the API.</param>
+        public DummyCardProxyRepository(string baseApiUrl)
         {
-            throw new NotImplementedException();
+            this.httpClient = new HttpClient();
+            this.httpClient.BaseAddress = new Uri(baseApiUrl);
         }
 
-        public Task<float> GetCardBalanceAsync(string cardNumber)
+        /// <inheritdoc />
+        public async Task DeleteCardAsync(string cardNumber)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{cardNumber}");
+            response.EnsureSuccessStatusCode();
         }
 
-        public Task UpdateCardBalanceAsync(string cardNumber, float balance)
+        /// <inheritdoc />
+        public async Task<float> GetCardBalanceAsync(string cardNumber)
         {
-            throw new NotImplementedException();
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{cardNumber}/balance");
+            response.EnsureSuccessStatusCode();
+            var balance = await response.Content.ReadFromJsonAsync<float>();
+            return balance;
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateCardBalanceAsync(string cardNumber, float balance)
+        {
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{cardNumber}/balance", balance);
+            response.EnsureSuccessStatusCode();
         }
     }
 }
