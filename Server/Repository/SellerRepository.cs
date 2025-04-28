@@ -8,6 +8,7 @@ namespace Server.Repository
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Server.DataModels;
@@ -39,8 +40,12 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when the seller is not found.</exception>
         public async Task<Seller> GetSellerInfo(User user)
         {
-            Seller sellerDb = await this.dbContext.Sellers.FindAsync(user.UserId)
+            User userDb = await this.dbContext.Users.FindAsync(user.UserId)
+                                    ?? throw new Exception("GetSellerInfo: User not found");
+            Seller sellerDb = await this.dbContext.Sellers.FindAsync(userDb.UserId)
                                     ?? throw new Exception("GetSellerInfo: Seller not found");
+
+            sellerDb.User = userDb;
             return sellerDb;
         }
 

@@ -157,11 +157,6 @@ namespace MarketPlace924.ViewModel
         public ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>();
 
         /// <summary>
-        /// Gets or sets a value indicating whether the view model is in creation mode.
-        /// </summary>
-        public bool CreationMode { get; set; }
-
-        /// <summary>
         /// Gets or sets the store name error message.
         /// </summary>
         public string StoreNameError { get; set; } = string.Empty;
@@ -304,20 +299,14 @@ namespace MarketPlace924.ViewModel
         /// </summary>
         public async void UpdateProfile()
         {
-            if (this.CreationMode)
-            {
-                await this.sellerService.CreateSeller(this.seller);
-            }
-            else
-            {
-                await this.sellerService.UpdateSeller(this.seller);
-            }
-
             if (this.seller != null)
             {
                 this.seller.StoreName = this.StoreName;
                 this.seller.StoreAddress = this.Address;
                 this.seller.StoreDescription = this.Description;
+                this.seller.User.Username = this.Username;
+                this.seller.User.Email = this.Email;
+                this.seller.User.PhoneNumber = this.PhoneNumber;
 
                 if (this.seller.Id > HighestInvalidSellerId)
                 {
@@ -363,8 +352,6 @@ namespace MarketPlace924.ViewModel
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task LoadSellerProfile()
         {
-            this.CreationMode = this.seller.StoreName == null;
-
             if (this.seller != null)
             {
                 if (this.seller.StoreName == null)

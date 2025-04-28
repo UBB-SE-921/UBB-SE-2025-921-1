@@ -91,11 +91,6 @@ namespace MarketPlace924.ViewModel
         ObservableCollection<Product> Products { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the view model is in creation mode.
-        /// </summary>
-        bool CreationMode { get; set; }
-
-        /// <summary>
         /// Gets or sets the store name error message.
         /// </summary>
         string StoreNameError { get; set; }

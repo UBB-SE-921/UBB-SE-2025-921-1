@@ -17,7 +17,15 @@ namespace SharedClassLibrary.Domain
     public class Seller
     {
         // Add this private parameterless constructor for Entity Framework Core
-        private Seller() { }
+        private Seller() 
+        {
+            this.User = new User();
+            this.StoreName = string.Empty;
+            this.StoreDescription = string.Empty;
+            this.StoreAddress = string.Empty;
+            this.FollowersCount = 0;
+            this.TrustScore = 0;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Seller"/> class with the specified user and store details.
