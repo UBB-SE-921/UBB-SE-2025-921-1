@@ -44,6 +44,13 @@ namespace Marketplace924.Service
         }
 
         /// <inheritdoc/>
+        public async Task<int> CreateOrderHistoryAsync()
+        {
+            return await orderHistoryRepository.CreateOrderHistoryAsync();
+        }
+
+
+        /// <inheritdoc/>
         public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryId)
         {
             if (orderHistoryId <= 0)

@@ -72,13 +72,14 @@
 
         <!-- Purchase Button with custom style with rounded corners -->
         <Button 
-            Content="Purchase" 
-            Style="{StaticResource BlueButtonStyle}"
-            FontWeight="SemiBold"
-            Padding="15,8"
-            Grid.Row="2"
-            Margin="50,10,0,20" 
-            HorizontalAlignment="Left"/>
+        Content="Purchase" 
+        Style="{StaticResource BlueButtonStyle}"
+        FontWeight="SemiBold"
+        Padding="15,8"
+        Grid.Row="2"
+        Margin="50,10,0,20" 
+        HorizontalAlignment="Left"
+        Click="PurchaseButton_Click"/>
 
         <!-- Cart Items ListView with styled elements -->
         <ListView 

@@ -1,6 +1,7 @@
 namespace MarketPlace924.ViewModel
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -27,6 +28,39 @@ namespace MarketPlace924.ViewModel
             this.buyerId = buyerId;
 
             RemoveFromCartCommand = new RelayCommand<Product>(async (product) => await DecreaseQuantityAsync(product));
+        }
+
+        /// <summary>
+        /// Gets the buyer ID associated with this shopping cart.
+        /// </summary>
+        public int BuyerId => this.buyerId;
+
+        /// <summary>
+        /// Gets the total price of all items in the cart.
+        /// </summary>
+        /// <returns>The total price of all items.</returns>
+        public double GetCartTotal()
+        {
+            double total = 0;
+            foreach (var item in this.CartItems)
+            {
+                total += item.TotalPrice;
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Gets all the products in the cart with their quantities for checkout.
+        /// </summary>
+        /// <returns>A dictionary containing products and their quantities.</returns>
+        public Dictionary<Product, int> GetProductsForCheckout()
+        {
+            var products = new Dictionary<Product, int>();
+            foreach (var item in this.CartItems)
+            {
+                products.Add(item.Product, item.Quantity);
+            }
+            return products;
         }
 
         public async Task LoadCartItemsAsync()
