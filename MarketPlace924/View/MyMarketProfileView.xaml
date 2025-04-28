@@ -75,10 +75,10 @@
             <!-- Product Grid -->
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
                 <ListView ItemsSource="{Binding SellerProducts}" SelectionMode="None"
-                      ScrollViewer.VerticalScrollMode="Enabled"
-                      ScrollViewer.HorizontalScrollMode="Disabled"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"> 
+              ScrollViewer.VerticalScrollMode="Enabled"
+              ScrollViewer.HorizontalScrollMode="Disabled"
+              ScrollViewer.VerticalScrollBarVisibility="Auto"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <!-- Grid layout for horizontal alignment but vertical scrolling -->
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -89,11 +89,31 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:Product">
                             <Border Style="{StaticResource ProductBorder}">
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Name}" Style="{StaticResource PrimaryLabel}" />
-                                    <TextBlock Text="{Binding Description}" />
-                                    <TextBlock Text="{Binding Price}" Foreground="Green" />
-                                </StackPanel>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Product Info -->
+                                    <StackPanel Grid.Row="0">
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource PrimaryLabel}" />
+                                        <TextBlock Text="{Binding Description}" />
+                                        <TextBlock Text="{Binding Price}" Foreground="Green" />
+                                    </StackPanel>
+
+                                    <!-- Add to Cart Button -->
+                                    <Button Grid.Row="1" Width="35" Height="35"
+                                ToolTipService.ToolTip="Add To Cart" Padding="0"
+                                Command="{Binding DataContext.AddToCartCommand, ElementName=ProductsList}"
+                                CommandParameter="{Binding}">
+                                        <Image Width="17" Height="17">
+                                            <Image.Source>
+                                                <SvgImageSource UriSource="ms-appx:///Assets/BuyerIcons/cart-add.svg" />
+                                            </Image.Source>
+                                        </Image>
+                                    </Button>
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>

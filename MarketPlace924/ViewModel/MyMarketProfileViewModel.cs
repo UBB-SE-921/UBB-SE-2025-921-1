@@ -13,6 +13,7 @@ namespace MarketPlace924.ViewModel
     using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
+    using CommunityToolkit.Mvvm.Input;
     using MarketPlace924.Domain;
     using MarketPlace924.Helper;
     using MarketPlace924.Service;
@@ -41,6 +42,11 @@ namespace MarketPlace924.ViewModel
         private ObservableCollection<string> notifications = new ObservableCollection<string>();
 
         /// <summary>
+        /// Gets the command for adding a product to the shopping cart.
+        /// </summary>
+        public ICommand AddToCartCommand { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MyMarketProfileViewModel"/> class.
         /// </summary>
         /// <param name="buyerService">The buyer service for data interaction.</param>
@@ -56,15 +62,53 @@ namespace MarketPlace924.ViewModel
             this.SellerProducts = new ObservableCollection<Product>();
             this.filteredProducts = new ObservableCollection<Product>();
 
-            this.FollowCommand = new RelayCommand(this.ToggleFollow);
+            this.FollowCommand = new MarketPlace924.Helper.RelayCommand(this.ToggleFollow);
+
+            // Initialize the AddToCartCommand
+            this.AddToCartCommand = new RelayCommand<Product>(async (product) => await this.AddProductToCartAsync(product));
 
             _ = this.LoadMyMarketProfileData(); // Load initial data
         }
+
 
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Adds a product to the shopping cart.
+        /// </summary>
+        /// <param name="product">The product to add to the cart.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task AddProductToCartAsync(Product product)
+        {
+            if (product == null)
+            {
+                return;
+            }
+
+            try
+            {
+                // Use the current buyer ID instead of a hardcoded value
+                var shoppingCartViewModel = new ShoppingCartViewModel(
+                    new MarketPlace924.Repository.ShoppingCartRepository(
+                        new MarketPlace924.DBConnection.DatabaseConnection()),
+                    this.buyer.Id);
+
+                await shoppingCartViewModel.AddToCartAsync(product, 1);
+
+                // Optionally show a confirmation dialog
+                await this.ShowDialog("Success", $"Added {product.Name} to your cart!");
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                System.Diagnostics.Debug.WriteLine($"Error adding product to cart: {ex.Message}");
+                await this.ShowDialog("Error", "There was a problem adding the product to your cart.");
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets a value indicating whether the seller is followed by the buyer.

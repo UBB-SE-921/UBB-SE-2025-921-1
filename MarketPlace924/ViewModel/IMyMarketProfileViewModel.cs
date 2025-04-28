@@ -65,6 +65,12 @@ namespace MarketPlace924.ViewModel
         ObservableCollection<string> Notifications { get; set; }
 
         /// <summary>
+        /// Gets the command for adding a product to the shopping cart.
+        /// </summary>
+        ICommand AddToCartCommand { get; }
+
+
+        /// <summary>
         /// Gets or sets the phone number.
         /// </summary>
         string PhoneNumber { get; set; }
