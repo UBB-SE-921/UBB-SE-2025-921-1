@@ -15,32 +15,14 @@ namespace MarketPlace924.Service
     {
         private readonly IOrderSummaryRepository orderSummaryRepository;
         
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OrderSummaryService"/> class.
-        /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        public OrderSummaryService(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
-        {
-        }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderSummaryService"/> class with a specified database provider.
         /// </summary>
         /// <param name="connectionString">The database connection string.</param>
         /// <param name="databaseProvider">The database provider to use.</param>
-        public OrderSummaryService(string connectionString, IDatabaseProvider databaseProvider)
+        public OrderSummaryService()
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
             this.orderSummaryRepository = new OrderSummaryProxyRepository(AppConfig.GetBaseApiUrl());
         }
 

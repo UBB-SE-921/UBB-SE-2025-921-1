@@ -69,10 +69,14 @@ public class Product
     /// </summary>
     public int Stock { get; set; }
 
-    // from Art-Attack - added by Alex, not merged by who needed to do it
-    public string ProductType { get; set; }
-
+    /// <summary>
+    /// Gets or sets the start date for the product (eg, for rental period).
+    /// </summary>
     public DateTimeOffset? StartDate { get; set; }
 
+    /// <summary>
+    /// Gets or sets the end date for the product (eg for rental period).
+    /// </summary>
     public DateTimeOffset? EndDate { get; set; }
+    public string ProductType { get; set; }
 }

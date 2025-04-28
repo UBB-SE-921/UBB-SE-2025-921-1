@@ -39,7 +39,7 @@ namespace MarketPlace924.ViewModel
                 throw new ArgumentNullException(nameof(databaseProvider));
             }
 
-            orderService = new OrderService(connectionString, databaseProvider);
+            orderService = new OrderService();
         }
 
         /// <summary>

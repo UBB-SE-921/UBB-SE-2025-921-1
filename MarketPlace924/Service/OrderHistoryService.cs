@@ -16,32 +16,15 @@ namespace MarketPlace924.Service
     {
         private readonly IOrderHistoryRepository orderHistoryRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OrderHistoryService"/> class.
-        /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        public OrderHistoryService(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
-        {
-        }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderHistoryService"/> class with a specified database provider.
         /// </summary>
         /// <param name="connectionString">The database connection string.</param>
         /// <param name="databaseProvider">The database provider to use.</param>
-        public OrderHistoryService(string connectionString, IDatabaseProvider databaseProvider)
+        public OrderHistoryService()
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
-            if (databaseProvider == null)
-            {
-                throw new ArgumentNullException(nameof(databaseProvider));
-            }
-
             this.orderHistoryRepository = new OrderHistoryProxyRepository(AppConfig.GetBaseApiUrl());
         }
 

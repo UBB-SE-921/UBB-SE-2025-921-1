@@ -26,6 +26,7 @@ namespace MarketPlace924
         private readonly ISellerService sellerService;
         private readonly IAdminService adminService;
         private readonly IAnalyticsService analyticsService;
+        private readonly IShoppingCartService shoppingCartService;
         private User? user;
 
         /// <summary>
@@ -167,6 +168,20 @@ namespace MarketPlace924
                     this.Stage.Navigate(typeof(AdminView), new AdminViewModel(this.adminService, this.analyticsService, this.userService));
                     break;
             }
+        }
+        /// <summary>
+        /// Navigates to the My Cart view.
+        /// </summary>
+        private void NavigateToMyCart()
+        {
+            if (this.user == null || this.user.Role != UserRole.Buyer)
+            {
+                return; // Ensure only buyers can access the cart
+            }
+
+            var buyerId = this.user.UserId; // Use the current user's ID as the buyer ID
+            var shoppingCartViewModel = new ShoppingCartViewModel(this.shoppingCartService, buyerId);
+            this.Stage.Navigate(typeof(MyCartView), shoppingCartViewModel);
         }
     }
 }

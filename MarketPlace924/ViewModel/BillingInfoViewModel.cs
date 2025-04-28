@@ -56,14 +56,12 @@ namespace MarketPlace924.ViewModel
         {
             // Initialize services with dependency injection support
             // In a real-world application, these would ideally be injected through constructor
-            string connectionString = Configuration.CONNECTION_STRING;
-            IDatabaseProvider databaseProvider = new SqlDatabaseProvider();
 
-            orderHistoryService = new OrderHistoryService(connectionString, databaseProvider);
-            orderService = new OrderService(connectionString, databaseProvider);
-            orderSummaryService = new OrderSummaryService(connectionString, databaseProvider);
-            dummyWalletService = new DummyWalletService(connectionString, databaseProvider);
-            dummyProductService = new DummyProductService(connectionString, databaseProvider);
+            orderHistoryService = new OrderHistoryService();
+            orderService = new OrderService();
+            orderSummaryService = new OrderSummaryService();
+            dummyWalletService = new DummyWalletService();
+            dummyProductService = new DummyProductService();
 
             DummyProducts = new List<DummyProduct>();
             this.orderHistoryID = orderHistoryID;
