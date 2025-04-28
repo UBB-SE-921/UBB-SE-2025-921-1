@@ -91,7 +91,7 @@
                         <TextBlock Text="Save" VerticalAlignment="Center" FontSize="16" />
                     </StackPanel>
                 </Button>
-                <Button Click="{x:Bind ViewModel.ResetInfo}"
+                <!-- <Button Click="{x:Bind ViewModel.ResetInfo}"
                         Visibility="{x:Bind ViewModel.CreationMode, Mode=OneWay, Converter={StaticResource BoolCollapsedConverter}}"
                         Style="{StaticResource PrimaryButton}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
@@ -102,7 +102,7 @@
                         </Image>
                         <TextBlock Text="Reset" VerticalAlignment="Center" FontSize="16" />
                     </StackPanel>
-                </Button>
+                </Button> -->
             </StackPanel>
         </StackPanel>
 
@@ -123,7 +123,7 @@
             </StackPanel>
         </StackPanel>
 
-        <Grid Grid.Row="4" Margin="0,30,0,0"
+        <!-- <Grid Grid.Row="4" Margin="0,30,0,0"
               Visibility="{x:Bind ViewModel.CreationMode, Mode=OneWay, Converter={StaticResource BoolCollapsedConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3.5*" />
@@ -135,6 +135,6 @@
                 <local:BuyerMockAddPurchase ViewModel="{x:Bind ViewModel, Mode=OneWay}" VerticalAlignment="Center"
                                             Margin="20" />
             </StackPanel>
-        </Grid>
+        </Grid> -->
     </Grid>
 </Page>

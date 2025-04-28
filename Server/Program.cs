@@ -8,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = AppConfig.GetConnectionString("MyLocalDb");
 
 // Add services to the container.
-builder.Services.AddDbContext<MarketPlaceDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
+    options.UseSqlServer(connectionString)
+        .EnableSensitiveDataLogging()
+);
 
 // Register all repositories
 builder.Services.AddScoped<DatabaseConnection>();

@@ -64,11 +64,6 @@ namespace MarketPlace924.ViewModel
         IBuyerBadgeViewModel? BuyerBadge { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the profile is in creation mode.
-        /// </summary>
-        bool CreationMode { get; set; }
-
-        /// <summary>
         /// Gets a value indicating whether the shipping address can be edited.
         /// </summary>
         bool ShippingAddressEnabled { get; }
