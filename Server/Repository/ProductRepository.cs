@@ -9,18 +9,18 @@ using SharedClassLibrary.Shared;
 // WILL NOT IMPLEMENT DUMMY PRODUCT REPOSITORY - SHOULD BE REPLACED WITH ACTUAL PRODUCT REPOSITORY -Alex
 namespace Server.Repository
 {
-    public class DummyProductRepository : IDummyProductRepository
+    public class ProductRepository : IProductRepository
     {
         private readonly string connectionString;
         private readonly IDatabaseProvider databaseProvider;
 
         [ExcludeFromCodeCoverage]
-        public DummyProductRepository(string connectionString)
+        public ProductRepository(string connectionString)
             : this(connectionString, new SqlDatabaseProvider())
         {
         }
 
-        public DummyProductRepository(string connectionString, IDatabaseProvider databaseProvider)
+        public ProductRepository(string connectionString, IDatabaseProvider databaseProvider)
         {
             if (connectionString == null)
             {
@@ -36,13 +36,13 @@ namespace Server.Repository
             this.databaseProvider = databaseProvider;
         }
 
-        public async Task AddDummyProductAsync(string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        public async Task AddProductAsync(string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate)
         {
             using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
             {
                 using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
                 {
-                    databaseCommand.CommandText = "AddDummyProduct";
+                    databaseCommand.CommandText = "AddProduct";
                     databaseCommand.CommandType = CommandType.StoredProcedure;
 
                     AddParameter(databaseCommand, "@Name", name);
@@ -58,13 +58,13 @@ namespace Server.Repository
             }
         }
 
-        public async Task UpdateDummyProductAsync(int id, string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        public async Task UpdateProductAsync(int id, string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate)
         {
             using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
             {
                 using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
                 {
-                    databaseCommand.CommandText = "UpdateDummyProduct";
+                    databaseCommand.CommandText = "UpdateProduct";
                     databaseCommand.CommandType = CommandType.StoredProcedure;
 
                     AddParameter(databaseCommand, "@ID", id);
@@ -81,13 +81,13 @@ namespace Server.Repository
             }
         }
 
-        public async Task DeleteDummyProduct(int id)
+        public async Task DeleteProduct(int id)
         {
             using (IDbConnection databaseConnection = databaseProvider.CreateConnection(connectionString))
             {
                 using (IDbCommand databaseCommand = databaseConnection.CreateCommand())
                 {
-                    databaseCommand.CommandText = "DeleteDummyProduct";
+                    databaseCommand.CommandText = "DeleteProduct";
                     databaseCommand.CommandType = CommandType.StoredProcedure;
 
                     AddParameter(databaseCommand, "@ID", id);
@@ -124,13 +124,13 @@ namespace Server.Repository
             }
         }
 
-        public async Task<DummyProduct> GetDummyProductByIdAsync(int productId)
+        public async Task<Product> GetProductByIdAsync(int productId)
         {
             using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
             {
                 using (IDbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = "GetDummyProductByID";
+                    command.CommandText = "GetProductByID";
                     command.CommandType = CommandType.StoredProcedure;
 
                     AddParameter(command, "@productID", productId);
@@ -141,17 +141,18 @@ namespace Server.Repository
                     {
                         if (await reader.ReadAsync())
                         {
-                            return new DummyProduct
+                            return new Product
                             {
-                                ID = reader.GetInt32(reader.GetOrdinal("ID")),
+                                ProductId = reader.GetInt32(reader.GetOrdinal("ID")),
                                 Name = reader.GetString(reader.GetOrdinal("Name")),
-                                Price = (float)reader.GetDouble(reader.GetOrdinal("Price")),
-                                SellerID = reader.IsDBNull(reader.GetOrdinal("SellerID")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("SellerID")),
+                                Price = (double)reader.GetDouble(reader.GetOrdinal("Price")),
+                                SellerId = reader.IsDBNull(reader.GetOrdinal("SellerID")) ? 0 : (int)reader.GetInt32(reader.GetOrdinal("SellerID")),
                                 ProductType = reader.GetString(reader.GetOrdinal("ProductType")),
                                 StartDate = reader.IsDBNull(reader.GetOrdinal("StartDate")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("StartDate")),
                                 EndDate = reader.IsDBNull(reader.GetOrdinal("EndDate")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("EndDate"))
                             };
                         }
+
                         return null;
                     }
                 }

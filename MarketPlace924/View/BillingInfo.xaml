@@ -73,9 +73,9 @@
                             <Run Text="Price: " FontWeight="Bold"/>
                              <Run Text="{Binding Price}"/>
                             </TextBlock>
-                        <TextBlock  FontSize="16" Foreground="Black" Visibility="{Binding SellerID, Converter={StaticResource  SellerToVisibilityConverter}}" >
+                        <TextBlock  FontSize="16" Foreground="Black" Visibility="{Binding SellerId, Converter={StaticResource  SellerToVisibilityConverter}}" >
                               <Run Text="Seller ID: " FontWeight="Bold"/>
-                               <Run Text="{Binding SellerID}"/>
+                               <Run Text="{Binding SellerId}"/>
                         </TextBlock>
                         <StackPanel Orientation="Horizontal" Visibility="{Binding ProductType, Converter={StaticResource BorrowedToVisibilityConverter}}">
                             <TextBlock Foreground="Black" Text="Start Date: " FontWeight="Bold"/>

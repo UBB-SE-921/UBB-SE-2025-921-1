@@ -24,7 +24,7 @@ namespace MarketPlace924.Service
         }
 
         /// <inheritdoc/>
-        public async Task<float> GetWalletBalanceAsync(int userId)
+        public async Task<double> GetWalletBalanceAsync(int userId)
         {
             if (userId <= 0)
             {
@@ -35,7 +35,7 @@ namespace MarketPlace924.Service
         }
 
         /// <inheritdoc/>
-        public async Task UpdateWalletBalance(int userId, float newBalance)
+        public async Task UpdateWalletBalance(int userId, double newBalance)
         {
             if (userId <= 0)
             {

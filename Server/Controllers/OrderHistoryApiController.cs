@@ -36,17 +36,17 @@ namespace Server.Controllers
         /// <param name="orderHistoryId">The ID of the order history.</param>
         /// <returns>A list of dummy products.</returns>
         [HttpGet("{orderHistoryId}/dummy-products")]
-        [ProducesResponseType(typeof(List<DummyProduct>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Product>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<DummyProduct>>> GetDummyProductsFromOrderHistory(int orderHistoryId)
+        public async Task<ActionResult<List<Product>>> GetProductsFromOrderHistory(int orderHistoryId)
         {
             try
             {
                 // Call the repository method to get the dummy products
-                var dummyProducts = await this.orderHistoryRepository.GetDummyProductsFromOrderHistoryAsync(orderHistoryId);
+                var products = await this.orderHistoryRepository.GetProductsFromOrderHistoryAsync(orderHistoryId);
 
                 // Return the list of dummy products with a 200 OK status
-                return this.Ok(dummyProducts);
+                return this.Ok(products);
             }
             catch (Exception ex)
             {

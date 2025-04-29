@@ -45,7 +45,7 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task UpdateOrderSummaryAsync(int id, float subtotal, float warrantyTax, float deliveryFee, float finalTotal, string fullName, string email, string phoneNumber, string address, string postalCode, string additionalInfo, string contractDetails)
+        public async Task UpdateOrderSummaryAsync(int id, double subtotal, double warrantyTax, double deliveryFee, double finalTotal, string fullName, string email, string phoneNumber, string address, string postalCode, string additionalInfo, string contractDetails)
         {
             // Create a DTO to send the update parameters
             var requestDto = new UpdateOrderSummaryRequest

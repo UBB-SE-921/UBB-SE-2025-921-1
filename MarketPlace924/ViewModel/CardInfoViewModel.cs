@@ -24,9 +24,9 @@ namespace MarketPlace924.ViewModel
 
         private int orderHistoryID;
 
-        private float subtotal;
-        private float deliveryFee;
-        private float total;
+        private double subtotal;
+        private double deliveryFee;
+        private double total;
 
         private string email;
         private string cardholder;
@@ -34,8 +34,8 @@ namespace MarketPlace924.ViewModel
         private string cardMonth;
         private string cardYear;
         private string cardCVC;
-        public ObservableCollection<DummyProduct> ProductList { get; set; }
-        public List<DummyProduct> DummyProducts;
+        public ObservableCollection<Product> ProductList { get; set; }
+        public List<Product> Products;
         public CardInfoViewModel(
             IOrderHistoryRepository orderHistoryModel,
             IOrderSummaryRepository orderSummaryModel,
@@ -92,8 +92,8 @@ namespace MarketPlace924.ViewModel
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task InitializeViewModelAsync()
         {
-            DummyProducts = await GetDummyProductsFromOrderHistoryAsync(orderHistoryID);
-            ProductList = new ObservableCollection<DummyProduct>(DummyProducts);
+            Products = await GetProductsFromOrderHistoryAsync(orderHistoryID);
+            ProductList = new ObservableCollection<Product>(Products);
 
             OnPropertyChanged(nameof(ProductList));
 
@@ -117,7 +117,7 @@ namespace MarketPlace924.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public float Subtotal
+        public double Subtotal
         {
             get => subtotal;
             set
@@ -127,7 +127,7 @@ namespace MarketPlace924.ViewModel
             }
         }
 
-        public float DeliveryFee
+        public double DeliveryFee
         {
             get => deliveryFee;
             set
@@ -137,7 +137,7 @@ namespace MarketPlace924.ViewModel
             }
         }
 
-        public float Total
+        public double Total
         {
             get => total;
             set
@@ -211,10 +211,10 @@ namespace MarketPlace924.ViewModel
         /// Asynchronously retrieves dummy products associated with the specified order history.
         /// </summary>
         /// <param name="orderHistoryID">The unique identifier for the order history.</param>
-        /// <returns>A task that represents the asynchronous operation, containing a list of <see cref="DummyProduct"/> objects.</returns>
-        public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryID)
+        /// <returns>A task that represents the asynchronous operation, containing a list of <see cref="Product"/> objects.</returns>
+        public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryID)
         {
-            return await orderHistoryModel.GetDummyProductsFromOrderHistoryAsync(orderHistoryID);
+            return await orderHistoryModel.GetProductsFromOrderHistoryAsync(orderHistoryID);
         }
 
         /// <summary>
@@ -223,13 +223,13 @@ namespace MarketPlace924.ViewModel
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task ProcessCardPaymentAsync()
         {
-            float balance = await dummyCardModel.GetCardBalanceAsync(CardNumber);
+            double balance = await dummyCardModel.GetCardBalanceAsync(CardNumber);
 
             OrderSummary orderSummary = await orderSummaryModel.GetOrderSummaryByIdAsync(orderHistoryID);
 
-            float totalSum = orderSummary.FinalTotal;
+            double totalSum = orderSummary.FinalTotal;
 
-            float newBalance = balance - totalSum;
+            double newBalance = balance - totalSum;
 
             await dummyCardModel.UpdateCardBalanceAsync(CardNumber, newBalance);
         }

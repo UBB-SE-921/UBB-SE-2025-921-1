@@ -13,7 +13,7 @@ namespace SharedClassLibrary.IRepository
         /// <param name="userId">The ID of the user whose wallet balance to retrieve.</param>
         /// <returns>A task representing the asynchronous operation that returns the wallet balance.</returns>
         /// <exception cref="Exception">Thrown when the wallet is not found for the specified user.</exception>
-        Task<float> GetWalletBalanceAsync(int userId);
+        Task<double> GetWalletBalanceAsync(int userId);
 
         /// <summary>
         /// Updates the wallet balance for the specified user.
@@ -22,6 +22,6 @@ namespace SharedClassLibrary.IRepository
         /// <param name="newBalance">The new wallet balance.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         /// <exception cref="Exception">Thrown when the wallet is not found for the specified user.</exception>
-        Task UpdateWalletBalance(int userId, float newBalance);
+        Task UpdateWalletBalance(int userId, double newBalance);
     }
 } 

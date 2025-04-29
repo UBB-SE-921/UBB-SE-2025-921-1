@@ -11,7 +11,7 @@ namespace MarketPlace924.Services
     public class WaitListViewModel : IWaitListViewModel
     {
         private readonly IWaitListRepository waitListModel;
-        private readonly IDummyProductRepository dummyProductModel;
+        private readonly IProductRepository productModel;
 
         /// <summary>
         /// Default constructor for WaitListViewModel.
@@ -19,13 +19,13 @@ namespace MarketPlace924.Services
         /// <param name="connectionString">The database connection string. Cannot be null or empty.</param>
         /// <remarks>
         /// Initializes a new instance of the WaitListViewModel class with the specified connection string,
-        /// creating new instances of the required model dependencies (WaitListRepository and DummyProductModel).
+        /// creating new instances of the required model dependencies (WaitListRepository and ProductModel).
         /// This constructor is typically used in production scenarios where real database connections are needed.
         /// </remarks>
         public WaitListViewModel(string connectionString)
         {
             waitListModel = new WaitListProxyRepository(AppConfig.GetBaseApiUrl());
-            dummyProductModel = new DummyProductProxyRepository(AppConfig.GetBaseApiUrl());
+            productModel = new ProductProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         /// <summary>
@@ -115,18 +115,18 @@ namespace MarketPlace924.Services
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
         public async Task<string> GetSellerNameAsync(int? sellerId)
         {
-            return await dummyProductModel.GetSellerNameAsync(sellerId);
+            return await productModel.GetSellerNameAsync(sellerId);
         }
 
         /// <summary>
         /// Gets a dummy product by its ID asynchronously.
         /// </summary>
         /// <param name="productId">The ID of the product. Must be a positive integer.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains the DummyProduct object.</returns>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the Product object.</returns>
         /// <exception cref="SqlException">Thrown when there is an error executing the SQL command.</exception>
-        public async Task<DummyProduct> GetDummyProductByIdAsync(int productId)
+        public async Task<Product> GetProductByIdAsync(int productId)
         {
-            return await dummyProductModel.GetDummyProductByIdAsync(productId);
+            return await productModel.GetProductByIdAsync(productId);
         }
     }
 }

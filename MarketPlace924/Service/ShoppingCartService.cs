@@ -11,6 +11,7 @@ namespace MarketPlace924.Service
     using System.Linq;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
     using MarketPlace924.Repository;
     using MarketPlace924.Helper;
 

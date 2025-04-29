@@ -68,8 +68,8 @@ namespace MarketPlace924.Services
         /// Asynchronously retrieves the dummy product corresponding to the specified product ID.
         /// </summary>
         /// <param name="productId">The unique identifier of the product.</param>
-        /// <returns>A task that returns the <see cref="DummyProduct"/> object.</returns>
-        Task<DummyProduct> GetDummyProductByIdAsync(int productId);
+        /// <returns>A task that returns the <see cref="Product"/> object.</returns>
+        Task<Product> GetProductByIdAsync(int productId);
 
         /// <summary>
         /// Retrieves the waitlist position of a user for a specific product.

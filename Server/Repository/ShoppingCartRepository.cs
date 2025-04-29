@@ -4,19 +4,20 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Server.DBConnection;
+    using SharedClassLibrary.IRepository;
     using SharedClassLibrary.Domain;
     using Microsoft.Data.SqlClient;
 
     /// <summary>
     /// Repository for managing shopping cart operations in the database.
     /// </summary>
-    class ShoppingCartRepository : IShoppingCartRepository
+    public class ShoppingCartRepository : IShoppingCartRepository
     {
         private DatabaseConnection databaseConnection;
 

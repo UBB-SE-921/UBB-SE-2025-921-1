@@ -19,7 +19,7 @@ namespace MarketPlace924.ViewModel
         private readonly IOrderHistoryService orderHistoryService;
         private readonly IOrderSummaryService orderSummaryService;
         private readonly IOrderService orderService;
-        private readonly IDummyProductService dummyProductService;
+        private readonly IProductService productService;
         private readonly IDummyWalletService dummyWalletService;
 
         private int orderHistoryID;
@@ -40,13 +40,13 @@ namespace MarketPlace924.ViewModel
         private DateTimeOffset startDate;
         private DateTimeOffset endDate;
 
-        private float subtotal;
-        private float deliveryFee;
-        private float total;
-        private float warrantyTax;
+        private double subtotal;
+        private double deliveryFee;
+        private double total;
+        private double warrantyTax;
 
-        public ObservableCollection<DummyProduct> ProductList { get; set; }
-        public List<DummyProduct> DummyProducts;
+        public ObservableCollection<Product> ProductList { get; set; }
+        public List<Product> Products;
 
         private Dictionary<Product, int> cartItems;
         private double cartTotal;
@@ -61,59 +61,41 @@ namespace MarketPlace924.ViewModel
             // Initialize services with dependency injection support
             // In a real-world application, these would ideally be injected through constructor
 
-            orderHistoryService = new OrderHistoryService();
-            orderService = new OrderService();
-            orderSummaryService = new OrderSummaryService();
-            dummyWalletService = new DummyWalletService();
-            dummyProductService = new DummyProductService();
+            this.orderHistoryService = new OrderHistoryService();
+            this.orderService = new OrderService();
+            this.orderSummaryService = new OrderSummaryService();
+            this.dummyWalletService = new DummyWalletService();
+            this.productService = new ProductService();
 
-            DummyProducts = new List<DummyProduct>();
+            this.Products = new List<Product>();
             this.orderHistoryID = orderHistoryID;
 
-            _ = InitializeViewModelAsync();
+            _ = this.InitializeViewModelAsync();
 
-            warrantyTax = 0;
+            this.warrantyTax = 0;
         }
 
         /// <summary>
-        /// Sets the cart items for checkout and converts them to DummyProducts.
+        /// Sets the cart items for checkout and converts them to Products.
         /// </summary>
         /// <param name="cartItems">The dictionary of products and quantities.</param>
         public void SetCartItems(Dictionary<Product, int> cartItems)
         {
             this.cartItems = cartItems;
 
-            // Convert the cart items to DummyProducts for display
-            DummyProducts = new List<DummyProduct>();
+            // Convert the cart items to Products for display
+            this.Products = new List<Product>();
 
             foreach (var item in cartItems)
             {
-                var product = item.Key;
-                var quantity = item.Value;
-
-                // Create a dummy product for each cart item (potentially with multiple quantities)
-                for (int i = 0; i < quantity; i++)
-                {
-                    var dummyProduct = new DummyProduct
-                    {
-                        ID = product.ProductId,
-                        Name = product.Name,
-                        Price = (float)product.Price,
-                        ProductType = product.ProductType ?? "new", // Default to "new" if not specified
-                        SellerID = product.SellerId,
-                        StartDate = product.StartDate?.DateTime,
-                        EndDate = product.EndDate?.DateTime
-                    };
-
-                    DummyProducts.Add(dummyProduct);
-                }
+               this.Products.Add(item.Key);
             }
 
-            ProductList = new ObservableCollection<DummyProduct>(DummyProducts);
-            OnPropertyChanged(nameof(ProductList));
+            this.ProductList = new ObservableCollection<Product>(this.Products);
+            this.OnPropertyChanged(nameof(this.ProductList));
 
-            SetVisibilityRadioButtons();
-            CalculateOrderTotal();
+            this.SetVisibilityRadioButtons();
+            this.CalculateOrderTotal();
         }
 
         /// <summary>
@@ -123,10 +105,10 @@ namespace MarketPlace924.ViewModel
         public void SetCartTotal(double total)
         {
             this.cartTotal = total;
-            this.Total = (float)total;
-            this.Subtotal = (float)total - this.DeliveryFee - this.WarrantyTax;
-            OnPropertyChanged(nameof(Total));
-            OnPropertyChanged(nameof(Subtotal));
+            this.Total = (double)total;
+            this.Subtotal = (double)total - this.DeliveryFee - this.WarrantyTax;
+            this.OnPropertyChanged(nameof(this.Total));
+            this.OnPropertyChanged(nameof(this.Subtotal));
         }
 
         /// <summary>
@@ -143,34 +125,34 @@ namespace MarketPlace924.ViewModel
         /// </summary>
         public void CalculateOrderTotal()
         {
-            if (DummyProducts == null || DummyProducts.Count == 0)
+            if (this.Products == null || this.Products.Count == 0)
             {
-                Total = 0;
-                Subtotal = 0;
-                DeliveryFee = 0;
+                this.Total = 0;
+                this.Subtotal = 0;
+                this.DeliveryFee = 0;
                 return;
             }
 
-            float subtotalProducts = 0;
-            foreach (var product in DummyProducts)
+            double subtotalProducts = 0;
+            foreach (var product in this.Products)
             {
                 subtotalProducts += product.Price;
             }
 
             // For orders over 200, a fixed delivery fee of 13.99 will be added
             // (this is only for orders of new, used or borrowed products)
-            Subtotal = subtotalProducts;
+            this.Subtotal = subtotalProducts;
 
-            string productType = DummyProducts[0].ProductType;
+            string productType = this.Products[0].ProductType;
             if (subtotalProducts >= 200 || productType == "refill" || productType == "bid")
             {
-                Total = subtotalProducts;
-                DeliveryFee = 0;
+                this.Total = subtotalProducts;
+                this.DeliveryFee = 0;
             }
             else
             {
-                DeliveryFee = 13.99f;
-                Total = subtotalProducts + DeliveryFee;
+                this.DeliveryFee = 13.99f;
+                this.Total = subtotalProducts + this.DeliveryFee;
             }
         }
 
@@ -180,8 +162,8 @@ namespace MarketPlace924.ViewModel
         /// <returns>A task representing the asynchronous operation.</returns>
         //public async Task InitializeViewModelAsync()
         //{
-        //    DummyProducts = await GetDummyProductsFromOrderHistoryAsync(orderHistoryID);
-        //    ProductList = new ObservableCollection<DummyProduct>(DummyProducts);
+        //    Products = await GetProductsFromOrderHistoryAsync(orderHistoryID);
+        //    ProductList = new ObservableCollection<Product>(Products);
 
         //    OnPropertyChanged(nameof(ProductList));
 
@@ -193,36 +175,36 @@ namespace MarketPlace924.ViewModel
         public async Task InitializeViewModelAsync()
         {
             // If we already have cart items (from ShoppingCartView), don't load from order history
-            if (DummyProducts.Count == 0)
+            if (this.Products.Count == 0)
             {
                 // Only try to get from order history if no cart items were passed and the ID is valid
-                if (orderHistoryID > 0)
+                if (this.orderHistoryID > 0)
                 {
                     try
                     {
-                        DummyProducts = await GetDummyProductsFromOrderHistoryAsync(orderHistoryID);
-                        ProductList = new ObservableCollection<DummyProduct>(DummyProducts);
-                        OnPropertyChanged(nameof(ProductList));
+                        this.Products = await this.GetProductsFromOrderHistoryAsync(this.orderHistoryID);
+                        this.ProductList = new ObservableCollection<Product>(this.Products);
+                        this.OnPropertyChanged(nameof(this.ProductList));
                     }
                     catch (Exception ex)
                     {
                         // Handle case where there might not be order history yet
                         System.Diagnostics.Debug.WriteLine($"Error loading from order history: {ex.Message}");
                         // Initialize empty collections to avoid null references
-                        DummyProducts = new List<DummyProduct>();
-                        ProductList = new ObservableCollection<DummyProduct>();
+                        this.Products = new List<Product>();
+                        this.ProductList = new ObservableCollection<Product>();
                     }
                 }
             }
 
             // Make sure ProductList is never null
-            if (ProductList == null)
+            if (this.ProductList == null)
             {
-                ProductList = new ObservableCollection<DummyProduct>(DummyProducts ?? new List<DummyProduct>());
+                this.ProductList = new ObservableCollection<Product>(this.Products ?? new List<Product>());
             }
 
-            SetVisibilityRadioButtons();
-            CalculateOrderTotal();
+            this.SetVisibilityRadioButtons();
+            this.CalculateOrderTotal();
         }
 
 
@@ -232,27 +214,27 @@ namespace MarketPlace924.ViewModel
         /// </summary>
         public void SetVisibilityRadioButtons()
         {
-            if (ProductList.Count > 0)
+            if (this.ProductList.Count > 0)
             {
-                string firstProductType = ProductList[0].ProductType;
+                string firstProductType = this.ProductList[0].ProductType;
 
                 if (firstProductType == "new" || firstProductType == "used" || firstProductType == "borrowed")
                 {
-                    IsCardEnabled = true;
-                    IsCashEnabled = true;
-                    IsWalletEnabled = false;
+                    this.IsCardEnabled = true;
+                    this.IsCashEnabled = true;
+                    this.IsWalletEnabled = false;
                 }
                 else if (firstProductType == "bid")
                 {
-                    IsCardEnabled = false;
-                    IsCashEnabled = false;
-                    IsWalletEnabled = true;
+                    this.IsCardEnabled = false;
+                    this.IsCashEnabled = false;
+                    this.IsWalletEnabled = true;
                 }
                 else if (firstProductType == "refill")
                 {
-                    IsCardEnabled = true;
-                    IsCashEnabled = false;
-                    IsWalletEnabled = false;
+                    this.IsCardEnabled = true;
+                    this.IsCashEnabled = false;
+                    this.IsWalletEnabled = false;
                 }
             }
         }
@@ -297,14 +279,14 @@ namespace MarketPlace924.ViewModel
             try
             {
                 // Set a default order history ID if we're going to have connection issues
-                int fallbackOrderHistoryId = orderHistoryID > 0 ? orderHistoryID : new Random().Next(10000, 99999);
+                int fallbackOrderHistoryId = this.orderHistoryID > 0 ? this.orderHistoryID : new Random().Next(10000, 99999);
 
-                string paymentMethod = SelectedPaymentMethod;
+                string paymentMethod = this.SelectedPaymentMethod;
                 if (string.IsNullOrEmpty(paymentMethod))
                 {
                     // Set a default payment method if none is selected
-                    paymentMethod = IsCashEnabled ? "cash" : (IsCardEnabled ? "card" : "wallet");
-                    SelectedPaymentMethod = paymentMethod;
+                    paymentMethod = this.IsCashEnabled ? "cash" : (this.IsCardEnabled ? "card" : "wallet");
+                    this.SelectedPaymentMethod = paymentMethod;
                 }
 
                 // Flag to track if we should continue despite errors
@@ -312,7 +294,7 @@ namespace MarketPlace924.ViewModel
                 bool usesFallbackData = false;
 
                 // If this is a new order from the cart (not an existing order history)
-                if (cartItems != null && cartItems.Count > 0)
+                if (this.cartItems != null && this.cartItems.Count > 0)
                 {
                     try
                     {
@@ -326,7 +308,7 @@ namespace MarketPlace924.ViewModel
                         //{
                         //    System.Diagnostics.Debug.WriteLine($"Database connection error: {ex.Message}");
                             // Use the fallback ID since we couldn't get a real one
-                            orderHistoryID = fallbackOrderHistoryId;
+                            this.orderHistoryID = fallbackOrderHistoryId;
                             usesFallbackData = true;
                             continueToNextWindow = true; // Continue despite the error
                         //}
@@ -334,18 +316,18 @@ namespace MarketPlace924.ViewModel
                         // Create order summary with error handling
                         try
                         {
-                            await orderSummaryService.UpdateOrderSummaryAsync(
-                                orderHistoryID,
-                                Subtotal,
-                                warrantyTax,
-                                DeliveryFee,
-                                Total,
-                                FullName ?? "Guest User",
-                                Email ?? "guest@example.com",
-                                PhoneNumber ?? "000-000-0000",
-                                Address ?? "No Address Provided",
-                                ZipCode ?? "00000",
-                                AdditionalInfo,
+                            await this.orderSummaryService.UpdateOrderSummaryAsync(
+                                this.orderHistoryID,
+                                this.Subtotal,
+                                this.warrantyTax,
+                                this.DeliveryFee,
+                                this.Total,
+                                this.FullName ?? "Guest User",
+                                this.Email ?? "guest@example.com",
+                                this.PhoneNumber ?? "000-000-0000",
+                                this.Address ?? "No Address Provided",
+                                this.ZipCode ?? "00000",
+                                this.AdditionalInfo,
                                 null);
                         }
                         catch (Exception ex)
@@ -357,13 +339,13 @@ namespace MarketPlace924.ViewModel
 
                         // Create order entries for each product
                         bool anyOrdersAdded = false;
-                        if (cartItems.Count > 0)
+                        if (this.cartItems.Count > 0)
                         {
                             // Even if we can't add to database, we'll pretend we did for UI flow purposes
                             anyOrdersAdded = true;
                         }
 
-                        foreach (var item in cartItems)
+                        foreach (var item in this.cartItems)
                         {
                             try
                             {
@@ -398,12 +380,12 @@ namespace MarketPlace924.ViewModel
                                     try
                                     {
                                         // Add each product to the order
-                                        await orderService.AddOrderAsync(
+                                        await this.orderService.AddOrderAsync(
                                             product.ProductId,
-                                            buyerId,
+                                            this.buyerId,
                                             productTypeInt.ToString(),
                                             paymentMethod,
-                                            orderHistoryID,
+                                            this.orderHistoryID,
                                             DateTime.Now);
                                     }
                                     catch (Exception ex)
@@ -432,7 +414,7 @@ namespace MarketPlace924.ViewModel
                         // Skip the existing order flow since we just created new orders
                         if (continueToNextWindow || anyOrdersAdded)
                         {
-                            await OpenNextWindowAsync(paymentMethod);
+                            await this.OpenNextWindowAsync(paymentMethod);
                             return;
                         }
                     }
@@ -440,7 +422,7 @@ namespace MarketPlace924.ViewModel
                     {
                         System.Diagnostics.Debug.WriteLine($"Error creating orders: {ex.Message}");
                         // We'll still try to open the next window despite errors
-                        await OpenNextWindowAsync(paymentMethod);
+                        await this.OpenNextWindowAsync(paymentMethod);
                         return;
                     }
                 }
@@ -453,7 +435,7 @@ namespace MarketPlace924.ViewModel
                         List<Order> orderList = null;
                         try
                         {
-                            orderList = await orderService.GetOrdersFromOrderHistoryAsync(orderHistoryID);
+                            orderList = await this.orderService.GetOrdersFromOrderHistoryAsync(this.orderHistoryID);
                         }
                         catch (Exception ex)
                         {
@@ -464,18 +446,18 @@ namespace MarketPlace924.ViewModel
                         // Update the order summary using the service
                         try
                         {
-                            await orderSummaryService.UpdateOrderSummaryAsync(
-                                orderHistoryID,
-                                Subtotal,
-                                warrantyTax,
-                                DeliveryFee,
-                                Total,
-                                FullName ?? "Guest User",
-                                Email ?? "guest@example.com",
-                                PhoneNumber ?? "000-000-0000",
-                                Address ?? "No Address Provided",
-                                ZipCode ?? "00000",
-                                AdditionalInfo,
+                            await this.orderSummaryService.UpdateOrderSummaryAsync(
+                                this.orderHistoryID,
+                                this.Subtotal,
+                                this.warrantyTax,
+                                this.DeliveryFee,
+                                this.Total,
+                                this.FullName ?? "Guest User",
+                                this.Email ?? "guest@example.com",
+                                this.PhoneNumber ?? "000-000-0000",
+                                this.Address ?? "No Address Provided",
+                                this.ZipCode ?? "00000",
+                                this.AdditionalInfo,
                                 null);
                         }
                         catch (Exception ex)
@@ -485,13 +467,13 @@ namespace MarketPlace924.ViewModel
                         }
 
                         // Always proceed to next window in development mode
-                        await OpenNextWindowAsync(paymentMethod);
+                        await this.OpenNextWindowAsync(paymentMethod);
                     }
                     catch (Exception ex)
                     {
                         System.Diagnostics.Debug.WriteLine($"Error processing existing order: {ex.Message}");
                         // Still try to proceed to next window
-                        await OpenNextWindowAsync(paymentMethod);
+                        await this.OpenNextWindowAsync(paymentMethod);
                     }
                 }
             }
@@ -501,7 +483,7 @@ namespace MarketPlace924.ViewModel
                 // Last resort - still try to open next window with default payment method
                 try
                 {
-                    await OpenNextWindowAsync(SelectedPaymentMethod ?? "cash");
+                    await this.OpenNextWindowAsync(this.SelectedPaymentMethod ?? "cash");
                 }
                 catch (Exception innerEx)
                 {
@@ -555,7 +537,7 @@ namespace MarketPlace924.ViewModel
                 if (selectedPaymentMethod == "card")
                 {
                     var billingInfoWindow = new BillingInfoWindow();
-                    var cardInfoPage = new CardInfo(orderHistoryID);
+                    var cardInfoPage = new CardInfo(this.orderHistoryID);
                     billingInfoWindow.Content = cardInfoPage;
 
                     try
@@ -566,7 +548,7 @@ namespace MarketPlace924.ViewModel
                     {
                         System.Diagnostics.Debug.WriteLine($"Error activating CardInfo window: {ex.Message}");
                         // Try a different approach if activation fails
-                        ShowBasicSuccessMessage("Your order has been processed.");
+                        this.ShowBasicSuccessMessage("Your order has been processed.");
                     }
                 }
                 else
@@ -575,7 +557,7 @@ namespace MarketPlace924.ViewModel
                     {
                         try
                         {
-                            await ProcessWalletRefillAsync();
+                            await this.ProcessWalletRefillAsync();
                         }
                         catch (Exception ex)
                         {
@@ -587,7 +569,7 @@ namespace MarketPlace924.ViewModel
                     try
                     {
                         var billingInfoWindow = new BillingInfoWindow();
-                        var finalisePurchasePage = new FinalisePurchase(orderHistoryID);
+                        var finalisePurchasePage = new FinalisePurchase(this.orderHistoryID);
                         billingInfoWindow.Content = finalisePurchasePage;
 
                         billingInfoWindow.Activate();
@@ -596,7 +578,7 @@ namespace MarketPlace924.ViewModel
                     {
                         System.Diagnostics.Debug.WriteLine($"Error activating FinalisePurchase window: {ex.Message}");
                         // Show a basic success message if window activation fails
-                        ShowBasicSuccessMessage("Your order has been completed successfully!");
+                        this.ShowBasicSuccessMessage("Your order has been completed successfully!");
                     }
                 }
             }
@@ -604,7 +586,7 @@ namespace MarketPlace924.ViewModel
             {
                 System.Diagnostics.Debug.WriteLine($"Error opening next window: {ex.Message}");
                 // Last resort - show simple message
-                ShowBasicSuccessMessage("Thank you for your order!");
+                this.ShowBasicSuccessMessage("Thank you for your order!");
             }
         }
 
@@ -634,11 +616,11 @@ namespace MarketPlace924.ViewModel
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task ProcessWalletRefillAsync()
         {
-            float walletBalance = await dummyWalletService.GetWalletBalanceAsync(1);
+            double walletBalance = await this.dummyWalletService.GetWalletBalanceAsync(1);
 
-            float newBalance = walletBalance - Total;
+            double newBalance = walletBalance - this.Total;
 
-            await dummyWalletService.UpdateWalletBalance(1, newBalance);
+            await this.dummyWalletService.UpdateWalletBalance(1, newBalance);
         }
 
         /// <summary>
@@ -652,7 +634,7 @@ namespace MarketPlace924.ViewModel
         /// <param name="propertyName">The name of the property that changed.</param>
         protected void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
@@ -661,12 +643,12 @@ namespace MarketPlace924.ViewModel
         /// <param name="orderHistoryID">The order history identifier used for calculation.</param>
         //public void CalculateOrderTotal(int orderHistoryID)
         //{
-        //    float subtotalProducts = 0;
-        //    if (DummyProducts.Count == 0)
+        //    double subtotalProducts = 0;
+        //    if (Products.Count == 0)
         //    {
         //        return;
         //    }
-        //    foreach (var product in DummyProducts)
+        //    foreach (var product in Products)
         //    {
         //        subtotalProducts += product.Price;
         //    }
@@ -674,7 +656,7 @@ namespace MarketPlace924.ViewModel
         //    // For orders over 200 RON, a fixed delivery fee of 13.99 will be added
         //    // (this is only for orders of new, used or borrowed products)
         //    Subtotal = subtotalProducts;
-        //    if (subtotalProducts >= 200 || DummyProducts[0].ProductType == "refill" || DummyProducts[0].ProductType == "bid")
+        //    if (subtotalProducts >= 200 || Products[0].ProductType == "refill" || Products[0].ProductType == "bid")
         //    {
         //        Total = subtotalProducts;
         //    }
@@ -688,65 +670,61 @@ namespace MarketPlace924.ViewModel
         public void CalculateOrderTotal(int orderHistoryID)
         {
             // Call the parameter-less version
-            CalculateOrderTotal();
+            this.CalculateOrderTotal();
         }
 
         /// <summary>
-        /// Asynchronously retrieves dummy products associated with the specified order history.
+        /// Asynchronously retrieves products associated with the specified order history.
         /// </summary>
         /// <param name="orderHistoryID">The unique identifier for the order history.</param>
-        /// <returns>A task representing the asynchronous operation that returns a list of <see cref="DummyProduct"/>.</returns>
-        public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryID)
+        /// <returns>A task representing the asynchronous operation that returns a list of <see cref="Product"/>.</returns>
+        public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryID)
         {
-            return await orderHistoryService.GetDummyProductsFromOrderHistoryAsync(orderHistoryID);
+            return await this.orderHistoryService.GetProductsFromOrderHistoryAsync(orderHistoryID);
         }
 
         /// <summary>
         /// Applies the borrowed tax to the specified dummy product if applicable.
         /// </summary>
-        /// <param name="dummyProduct">The dummy product on which to apply the borrowed tax.</param>
+        /// <param name="product">The dummy product on which to apply the borrowed tax.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task ApplyBorrowedTax(DummyProduct dummyProduct)
+        public async Task ApplyBorrowedTax(Product product)
         {
-            if (dummyProduct == null || dummyProduct.ProductType != "borrowed")
+            if (product == null || product.ProductType != "borrowed")
             {
                 return;
             }
-            if (StartDate > EndDate)
+            if (this.StartDate > this.EndDate)
             {
                 return;
             }
-            int monthsBorrowed = ((EndDate.Year - StartDate.Year) * 12) + EndDate.Month - StartDate.Month;
+            int monthsBorrowed = ((this.EndDate.Year - this.StartDate.Year) * 12) + this.EndDate.Month - this.StartDate.Month;
             if (monthsBorrowed <= 0)
             {
                 monthsBorrowed = 1;
             }
 
-            float warrantyTaxAmount = 0.2f;
+            double warrantyTaxAmount = 0.2;
 
-            float finalPrice = dummyProduct.Price * monthsBorrowed;
+            double finalPrice = product.Price * monthsBorrowed;
 
-            warrantyTax += finalPrice * warrantyTaxAmount;
+            this.warrantyTax += finalPrice * warrantyTaxAmount;
 
-            WarrantyTax = warrantyTax;
+            this.WarrantyTax = (double)this.warrantyTax;
 
-            dummyProduct.Price = finalPrice + WarrantyTax;
+            product.Price = finalPrice + this.WarrantyTax;
 
-            CalculateOrderTotal(orderHistoryID);
+            this.CalculateOrderTotal(this.orderHistoryID);
 
-            DateTime newStartDate = startDate.Date;
-            DateTime newEndDate = endDate.Date;
+            DateTime newStartDate = this.startDate.Date;
+            DateTime newEndDate = this.endDate.Date;
 
-            dummyProduct.StartDate = newStartDate;
-            dummyProduct.EndDate = newEndDate;
+            product.StartDate = newStartDate;
+            product.EndDate = newEndDate;
 
-            if (dummyProduct.SellerID == null)
-            {
-                dummyProduct.SellerID = 0;
-            }
-
-            await dummyProductService.UpdateDummyProductAsync(dummyProduct.ID, dummyProduct.Name, dummyProduct.Price, (int)dummyProduct.SellerID, dummyProduct.ProductType, newStartDate, newEndDate);
+            await this.productService.UpdateProductAsync(product.ProductId, product.Name, product.Price, (int)product.SellerId, product.ProductType, newStartDate, newEndDate);
         }
+
         [ExcludeFromCodeCoverage]
         /// <summary>
         /// Updates the start date for the product's rental period.
@@ -754,8 +732,8 @@ namespace MarketPlace924.ViewModel
         /// <param name="date">The new start date as a <see cref="DateTimeOffset"/>.</param>
         public void UpdateStartDate(DateTimeOffset date)
         {
-            startDate = date.DateTime;
-            StartDate = date.DateTime;
+            this.startDate = date.DateTime;
+            this.StartDate = date.DateTime;
         }
         [ExcludeFromCodeCoverage]
 
@@ -765,178 +743,178 @@ namespace MarketPlace924.ViewModel
         /// <param name="date">The new end date as a <see cref="DateTimeOffset"/>.</param>
         public void UpdateEndDate(DateTimeOffset date)
         {
-            endDate = date.DateTime;
-            EndDate = date.DateTime;
+            this.endDate = date.DateTime;
+            this.EndDate = date.DateTime;
         }
 
         [ExcludeFromCodeCoverage]
         public string SelectedPaymentMethod
         {
-            get => selectedPaymentMethod;
+            get => this.selectedPaymentMethod;
             set
             {
-                selectedPaymentMethod = value;
-                OnPropertyChanged(nameof(SelectedPaymentMethod));
+                this.selectedPaymentMethod = value;
+                this.OnPropertyChanged(nameof(this.SelectedPaymentMethod));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public string FullName
         {
-            get => fullName;
+            get => this.fullName;
             set
             {
-                fullName = value;
-                OnPropertyChanged(nameof(FullName));
+                this.fullName = value;
+                this.OnPropertyChanged(nameof(this.FullName));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public string Email
         {
-            get => email;
+            get => this.email;
             set
             {
-                email = value;
-                OnPropertyChanged(nameof(Email));
+                this.email = value;
+                this.OnPropertyChanged(nameof(this.Email));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public string PhoneNumber
         {
-            get => phoneNumber;
+            get => this.phoneNumber;
             set
             {
-                phoneNumber = value;
-                OnPropertyChanged(nameof(PhoneNumber));
+                this.phoneNumber = value;
+                this.OnPropertyChanged(nameof(this.PhoneNumber));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public string Address
         {
-            get => address;
+            get => this.address;
             set
             {
-                address = value;
-                OnPropertyChanged(nameof(Address));
+                this.address = value;
+                this.OnPropertyChanged(nameof(this.Address));
             }
         }
         [ExcludeFromCodeCoverage]
         public string ZipCode
         {
-            get => zipCode;
+            get => this.zipCode;
             set
             {
-                zipCode = value;
-                OnPropertyChanged(nameof(ZipCode));
+                this.zipCode = value;
+                this.OnPropertyChanged(nameof(this.ZipCode));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public string AdditionalInfo
         {
-            get => additionalInfo;
+            get => this.additionalInfo;
             set
             {
-                additionalInfo = value;
-                OnPropertyChanged(nameof(AdditionalInfo));
+                this.additionalInfo = value;
+                this.OnPropertyChanged(nameof(this.AdditionalInfo));
             }
         }
         [ExcludeFromCodeCoverage]
         public bool IsWalletEnabled
         {
-            get => isWalletEnabled;
+            get => this.isWalletEnabled;
             set
             {
-                isWalletEnabled = value;
-                OnPropertyChanged(nameof(IsWalletEnabled));
+                this.isWalletEnabled = value;
+                this.OnPropertyChanged(nameof(this.IsWalletEnabled));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public bool IsCashEnabled
         {
-            get => isCashEnabled;
+            get => this.isCashEnabled;
             set
             {
-                isCashEnabled = value;
-                OnPropertyChanged(nameof(IsCashEnabled));
+                this.isCashEnabled = value;
+                this.OnPropertyChanged(nameof(this.IsCashEnabled));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public bool IsCardEnabled
         {
-            get => isCardEnabled;
+            get => this.isCardEnabled;
             set
             {
-                isCardEnabled = value;
-                OnPropertyChanged(nameof(IsCardEnabled));
+                this.isCardEnabled = value;
+                this.OnPropertyChanged(nameof(this.IsCardEnabled));
             }
         }
 
         [ExcludeFromCodeCoverage]
-        public float Subtotal
+        public double Subtotal
         {
-            get => subtotal;
+            get => this.subtotal;
             set
             {
-                subtotal = value;
-                OnPropertyChanged(nameof(Subtotal));
+                this.subtotal = value;
+                this.OnPropertyChanged(nameof(this.Subtotal));
             }
         }
         [ExcludeFromCodeCoverage]
-        public float DeliveryFee
+        public double DeliveryFee
         {
-            get => deliveryFee;
+            get => this.deliveryFee;
             set
             {
-                deliveryFee = value;
-                OnPropertyChanged(nameof(DeliveryFee));
+                this.deliveryFee = value;
+                this.OnPropertyChanged(nameof(this.DeliveryFee));
             }
         }
         [ExcludeFromCodeCoverage]
-        public float Total
+        public double Total
         {
-            get => total;
+            get => this.total;
             set
             {
-                total = value;
-                OnPropertyChanged(nameof(Total));
+                this.total = value;
+                this.OnPropertyChanged(nameof(this.Total));
             }
         }
         [ExcludeFromCodeCoverage]
-        public float WarrantyTax
+        public double WarrantyTax
         {
-            get => warrantyTax;
+            get => this.warrantyTax;
             set
             {
-                warrantyTax = value;
-                OnPropertyChanged(nameof(warrantyTax));
+                this.warrantyTax = value;
+                this.OnPropertyChanged(nameof(this.warrantyTax));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public DateTimeOffset StartDate
         {
-            get => startDate;
+            get => this.startDate;
             set
             {
-                startDate = value;
-                OnPropertyChanged(nameof(StartDate));
+                this.startDate = value;
+                this.OnPropertyChanged(nameof(this.StartDate));
             }
         }
 
         [ExcludeFromCodeCoverage]
         public DateTimeOffset EndDate
         {
-            get => endDate;
+            get => this.endDate;
             set
             {
-                endDate = value;
-                OnPropertyChanged(nameof(EndDate));
+                this.endDate = value;
+                this.OnPropertyChanged(nameof(this.EndDate));
             }
         }
     }

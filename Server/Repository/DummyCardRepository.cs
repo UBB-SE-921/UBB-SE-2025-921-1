@@ -50,7 +50,7 @@ namespace Server.Repository
         /// <param name="balance">The balance amount the card to be updated to.</param>
         /// <returns> A task representing the asynchronous operation.</returns>
         /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
-        public async Task UpdateCardBalanceAsync(string cardNumber, float balance)
+        public async Task UpdateCardBalanceAsync(string cardNumber, double balance)
         {
             DummyCardEntity cardToUpdate = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
                                                 ?? throw new Exception($"UpdateCardBalanceAsync: No card with number: {cardNumber}");
@@ -64,7 +64,7 @@ namespace Server.Repository
         /// <param name="cardNumber">The number of the card of which to get the balance from.</param>
         /// <returns> The balance of the card.</returns>
         /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
-        public async Task<float> GetCardBalanceAsync(string cardNumber)
+        public async Task<double> GetCardBalanceAsync(string cardNumber)
         {
             DummyCardEntity cardToGet = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
                                                 ?? throw new Exception($"GetCardBalanceAsync: No card with number: {cardNumber}");

@@ -14,8 +14,8 @@ namespace MarketPlace924.ViewModel
         /// Asynchronously retrieves dummy products associated with the specified order history.
         /// </summary>
         /// <param name="orderHistoryID">The unique identifier for the order history.</param>
-        /// <returns>A task representing the asynchronous operation that returns a list of <see cref="DummyProduct"/> objects.</returns>
-        Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryID);
+        /// <returns>A task representing the asynchronous operation that returns a list of <see cref="Product"/> objects.</returns>
+        Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryID);
 
         /// <summary>
         /// Calculates the total order amount for the specified order history, including applicable fees.
@@ -26,9 +26,9 @@ namespace MarketPlace924.ViewModel
         /// <summary>
         /// Applies the borrowed tax calculation to the specified dummy product.
         /// </summary>
-        /// <param name="dummyProduct">The dummy product on which to apply the borrowed tax.</param>
+        /// <param name="product">The product on which to apply the borrowed tax.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task ApplyBorrowedTax(DummyProduct dummyProduct);
+        Task ApplyBorrowedTax(Product product);
 
         /// <summary>
         /// Updates the start date for the product's rental period.

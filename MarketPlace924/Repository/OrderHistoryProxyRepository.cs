@@ -31,13 +31,13 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryId)
+        public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{orderHistoryId}/dummy-products");
             response.EnsureSuccessStatusCode();
 
-            var dummyProducts = await response.Content.ReadFromJsonAsync<List<DummyProduct>>();
-            return dummyProducts ?? new List<DummyProduct>();
+            var products = await response.Content.ReadFromJsonAsync<List<Product>>();
+            return products ?? new List<Product>();
         }
     }
 }

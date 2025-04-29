@@ -37,44 +37,9 @@ namespace Server.Repository
         }
 
         /// <inheritdoc/>
-        public async Task<int> CreateOrderHistoryAsync()
+        public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryId)
         {
-            int orderHistoryId = 0;
-
-            using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
-            {
-                using (IDbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "INSERT INTO [OrderHistory] DEFAULT VALUES; SELECT SCOPE_IDENTITY();";
-                    command.CommandType = CommandType.Text;
-
-                    try
-                    {
-                        await connection.OpenAsync();
-
-                        // Execute the command and get the newly created ID
-                        var result = await command.ExecuteScalarAsync();
-                        if (result != null && result != DBNull.Value)
-                        {
-                            orderHistoryId = Convert.ToInt32(result);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        // For development, when database connection fails, return a dummy ID
-                        System.Diagnostics.Debug.WriteLine($"Database error: {ex.Message}");
-                        orderHistoryId = new Random().Next(10000, 99999); // Generate a random ID for testing
-                    }
-                }
-            }
-
-            return orderHistoryId;
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryId)
-        {
-            List<DummyProduct> dummyProducts = new List<DummyProduct>();
+            List<Product> products = new List<Product>();
 
             using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
             {
@@ -93,47 +58,47 @@ namespace Server.Repository
                     {
                         while (await dataReader.ReadAsync())
                         {
-                            DummyProduct dummyProduct = new DummyProduct();
+                            Product product = new Product();
 
-                            dummyProduct.ID = dataReader.GetInt32(dataReader.GetOrdinal("productID"));
-                            dummyProduct.Name = dataReader.GetString(dataReader.GetOrdinal("name"));
-                            dummyProduct.Price = (float)dataReader.GetDouble(dataReader.GetOrdinal("price"));
-                            dummyProduct.ProductType = dataReader.GetString(dataReader.GetOrdinal("productType"));
+                            product.ProductId = dataReader.GetInt32(dataReader.GetOrdinal("productID"));
+                            product.Name = dataReader.GetString(dataReader.GetOrdinal("name"));
+                            product.Price = (double)dataReader.GetDouble(dataReader.GetOrdinal("price"));
+                            product.ProductType = dataReader.GetString(dataReader.GetOrdinal("productType"));
 
                             if (dataReader["SellerID"] == DBNull.Value)
                             {
-                                dummyProduct.SellerID = 0;
+                                product.SellerId = 0;
                             }
                             else
                             {
-                                dummyProduct.SellerID = dataReader.GetInt32(dataReader.GetOrdinal("SellerID"));
+                                product.SellerId = dataReader.GetInt32(dataReader.GetOrdinal("SellerID"));
                             }
 
                             if (dataReader["startDate"] == DBNull.Value)
                             {
-                                dummyProduct.StartDate = DateTime.MinValue;
+                                product.StartDate = DateTime.MinValue;
                             }
                             else
                             {
-                                dummyProduct.StartDate = dataReader.GetDateTime(dataReader.GetOrdinal("startDate"));
+                                product.StartDate = dataReader.GetDateTime(dataReader.GetOrdinal("startDate"));
                             }
 
                             if (dataReader["endDate"] == DBNull.Value)
                             {
-                                dummyProduct.EndDate = DateTime.MaxValue;
+                                product.EndDate = DateTime.MaxValue;
                             }
                             else
                             {
-                                dummyProduct.EndDate = dataReader.GetDateTime(dataReader.GetOrdinal("endDate"));
+                                product.EndDate = dataReader.GetDateTime(dataReader.GetOrdinal("endDate"));
                             }
 
-                            dummyProducts.Add(dummyProduct);
+                            products.Add(product);
                         }
                     }
                 }
             }
 
-            return dummyProducts;
+            return products;
         }
     }
 } 

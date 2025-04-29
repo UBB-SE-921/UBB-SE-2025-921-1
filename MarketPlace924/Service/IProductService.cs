@@ -7,7 +7,7 @@ namespace MarketPlace924.Service
     /// <summary>
     /// Defines operations for managing dummy products.
     /// </summary>
-    public interface IDummyProductService
+    public interface IProductService
     {
         /// <summary>
         /// Updates a dummy product in the database.
@@ -20,6 +20,6 @@ namespace MarketPlace924.Service
         /// <param name="startDate">The start date for borrowed products.</param>
         /// <param name="endDate">The end date for borrowed products.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateDummyProductAsync(int id, string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate);
+        Task UpdateProductAsync(int id, string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate);
     }
 } 

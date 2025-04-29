@@ -27,7 +27,7 @@ namespace MarketPlace924.Service
         }
 
         /// <inheritdoc/>
-        public async Task UpdateOrderSummaryAsync(int id, float subtotal, float warrantyTax, float deliveryFee, float finalTotal,
+        public async Task UpdateOrderSummaryAsync(int id, double subtotal, double warrantyTax, double deliveryFee, double finalTotal,
                                      string fullName, string email, string phoneNumber, string address,
                                      string postalCode, string additionalInfo, string contractDetails)
         {

@@ -30,14 +30,14 @@ namespace MarketPlace924.Service
 
 
         /// <inheritdoc/>
-        public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryId)
+        public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryId)
         {
             if (orderHistoryId <= 0)
             {
                 throw new ArgumentException("Order history ID must be positive", nameof(orderHistoryId));
             }
 
-            return await orderHistoryRepository.GetDummyProductsFromOrderHistoryAsync(orderHistoryId);
+            return await orderHistoryRepository.GetProductsFromOrderHistoryAsync(orderHistoryId);
         }
     }
 }

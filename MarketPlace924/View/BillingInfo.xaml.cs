@@ -102,7 +102,7 @@ namespace MarketPlace924.View
         /// <returns></returns>
         private async Task UpdateBorrowedProductTax(DatePicker sender)
         {
-            if (DataContext is BillingInfoViewModel viewModel && sender.DataContext is DummyProduct product)
+            if (DataContext is BillingInfoViewModel viewModel && sender.DataContext is Product product)
             {
                 await viewModel.ApplyBorrowedTax(product);
             }

@@ -35,9 +35,9 @@ namespace Server.Controllers
         /// <param name="userId">The ID of the user.</param>
         /// <returns>The wallet balance.</returns>
         [HttpGet("{userId}/balance")]
-        [ProducesResponseType(typeof(float), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(double), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<float>> GetWalletBalance(int userId)
+        public async Task<ActionResult<double>> GetWalletBalance(int userId)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace Server.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateWalletBalance(int userId, [FromBody] float newBalance)
+        public async Task<IActionResult> UpdateWalletBalance(int userId, [FromBody] double newBalance)
         {
             if (newBalance < 0)
             {

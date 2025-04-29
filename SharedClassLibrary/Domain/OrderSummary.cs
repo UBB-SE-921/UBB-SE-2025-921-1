@@ -5,10 +5,10 @@ namespace SharedClassLibrary.Domain
     public class OrderSummary
     {
         public int ID { get; set; }
-        public float Subtotal { get; set; }
-        public float WarrantyTax { get; set; }
-        public float DeliveryFee { get; set; }
-        public float FinalTotal { get; set; }
+        public double Subtotal { get; set; }
+        public double WarrantyTax { get; set; }
+        public double DeliveryFee { get; set; }
+        public double FinalTotal { get; set; }
         public string? FullName { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }

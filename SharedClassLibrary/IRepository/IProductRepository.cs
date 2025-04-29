@@ -7,7 +7,7 @@ namespace SharedClassLibrary.IRepository
     /// <summary>
     /// Defines database operations for dummy products.
     /// </summary>
-    public interface IDummyProductRepository
+    public interface IProductRepository
     {
         /// <summary>
         /// Updates a dummy product in the database.
@@ -20,11 +20,11 @@ namespace SharedClassLibrary.IRepository
         /// <param name="startDate">The start date for borrowed products.</param>
         /// <param name="endDate">The end date for borrowed products.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task UpdateDummyProductAsync(int id, string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate);
+        Task UpdateProductAsync(int id, string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate);
 
-        Task AddDummyProductAsync(string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate);
-        Task DeleteDummyProduct(int id);
+        Task AddProductAsync(string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate);
+        Task DeleteProduct(int id);
         Task<string> GetSellerNameAsync(int? sellerId);
-        Task<DummyProduct> GetDummyProductByIdAsync(int productId);
+        Task<Product> GetProductByIdAsync(int productId);
     }
 } 

@@ -1,4 +1,4 @@
-// <copyright file="DummyProductProxyRepository.cs" company="PlaceholderCompany">
+// <copyright file="ProductProxyRepository.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -15,25 +15,25 @@ namespace MarketPlace924.Repository
     /// <summary>
     /// Proxy repository class for managing dummy product operations via REST API.
     /// </summary>
-    public class DummyProductProxyRepository : IDummyProductRepository
+    public class ProductProxyRepository : IProductRepository
     {
-        private const string ApiBaseRoute = "api/dummyproducts";
+        private const string ApiBaseRoute = "api/products";
         private readonly HttpClient httpClient;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DummyProductProxyRepository"/> class.
+        /// Initializes a new instance of the <see cref="ProductProxyRepository"/> class.
         /// </summary>
         /// <param name="baseApiUrl">The base url of the API.</param>
-        public DummyProductProxyRepository(string baseApiUrl)
+        public ProductProxyRepository(string baseApiUrl)
         {
             this.httpClient = new HttpClient();
             this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
         }
 
         /// <inheritdoc />
-        public async Task AddDummyProductAsync(string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        public async Task AddProductAsync(string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate)
         {
-            var requestDto = new DummyProductRequest
+            var requestDto = new ProductRequest
             {
                 Name = name,
                 Price = price,
@@ -48,14 +48,14 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task DeleteDummyProduct(int id)
+        public async Task DeleteProduct(int id)
         {
             var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{id}");
             response.EnsureSuccessStatusCode();
         }
 
         /// <inheritdoc />
-        public async Task<DummyProduct> GetDummyProductByIdAsync(int productId)
+        public async Task<Product> GetProductByIdAsync(int productId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{productId}");
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -64,7 +64,7 @@ namespace MarketPlace924.Repository
             }
 
             response.EnsureSuccessStatusCode();
-            var product = await response.Content.ReadFromJsonAsync<DummyProduct>();
+            var product = await response.Content.ReadFromJsonAsync<Product>();
             return product;
         }
 
@@ -83,9 +83,9 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task UpdateDummyProductAsync(int id, string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        public async Task UpdateProductAsync(int id, string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate)
         {
-            var requestDto = new DummyProductRequest
+            var requestDto = new ProductRequest
             {
                 Name = name,
                 Price = price,

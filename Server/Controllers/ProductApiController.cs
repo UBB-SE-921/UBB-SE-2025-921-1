@@ -1,4 +1,4 @@
-﻿// <copyright file="DummyProductApiController.cs" company="PlaceholderCompany">
+﻿// <copyright file="ProductApiController.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
@@ -12,19 +12,19 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing dummy product data.
     /// </summary>
-    [Route("api/dummyproducts")]
+    [Route("api/products")]
     [ApiController]
-    public class DummyProductApiController : ControllerBase
+    public class ProductApiController : ControllerBase
     {
-        private readonly IDummyProductRepository dummyProductRepository;
+        private readonly IProductRepository productRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DummyProductApiController"/> class.
+        /// Initializes a new instance of the <see cref="ProductApiController"/> class.
         /// </summary>
-        /// <param name="dummyProductRepository">The dummy product repository dependency.</param>
-        public DummyProductApiController(IDummyProductRepository dummyProductRepository)
+        /// <param name="productRepository">The dummy product repository dependency.</param>
+        public ProductApiController(IProductRepository productRepository)
         {
-            this.dummyProductRepository = dummyProductRepository;
+            this.productRepository = productRepository;
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Server.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> AddDummyProduct([FromBody] DummyProductRequest request)
+        public async Task<ActionResult> AddProduct([FromBody] ProductRequest request)
         {
             if (request == null || string.IsNullOrEmpty(request.Name) || request.Price <= 0)
             {
@@ -45,7 +45,7 @@ namespace Server.Controllers
 
             try
             {
-                await this.dummyProductRepository.AddDummyProductAsync(
+                await this.productRepository.AddProductAsync(
                     request.Name,
                     request.Price,
                     request.SellerID,
@@ -72,7 +72,7 @@ namespace Server.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> UpdateDummyProduct(int id, [FromBody] DummyProductRequest request)
+        public async Task<ActionResult> UpdateProduct(int id, [FromBody] ProductRequest request)
         {
             if (request == null || string.IsNullOrEmpty(request.Name) || request.Price <= 0)
             {
@@ -81,7 +81,7 @@ namespace Server.Controllers
 
             try
             {
-                await this.dummyProductRepository.UpdateDummyProductAsync(
+                await this.productRepository.UpdateProductAsync(
                     id,
                     request.Name,
                     request.Price,
@@ -106,11 +106,11 @@ namespace Server.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> DeleteDummyProduct(int id)
+        public async Task<ActionResult> DeleteProduct(int id)
         {
             try
             {
-                await this.dummyProductRepository.DeleteDummyProduct(id);
+                await this.productRepository.DeleteProduct(id);
                 return this.NoContent();
             }
             catch (Exception ex)
@@ -125,14 +125,14 @@ namespace Server.Controllers
         /// <param name="productId">The ID of the dummy product to retrieve.</param>
         /// <returns>The dummy product.</returns>
         [HttpGet("{productId}")]
-        [ProducesResponseType(typeof(DummyProduct), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<DummyProduct>> GetDummyProductById(int productId)
+        public async Task<ActionResult<Product>> GetProductById(int productId)
         {
             try
             {
-                var product = await this.dummyProductRepository.GetDummyProductByIdAsync(productId);
+                var product = await this.productRepository.GetProductByIdAsync(productId);
                 if (product == null)
                 {
                     return this.NotFound($"Dummy product with ID {productId} not found.");
@@ -158,7 +158,7 @@ namespace Server.Controllers
         {
             try
             {
-                var sellerName = await this.dummyProductRepository.GetSellerNameAsync(sellerId);
+                var sellerName = await this.productRepository.GetSellerNameAsync(sellerId);
                 return this.Ok(sellerName);
             }
             catch (Exception ex)

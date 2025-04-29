@@ -29,17 +29,17 @@ namespace MarketPlace924.Repository
         }
 
         /// <inheritdoc />
-        public async Task<float> GetWalletBalanceAsync(int userId)
+        public async Task<double> GetWalletBalanceAsync(int userId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{userId}/balance");
             response.EnsureSuccessStatusCode();
 
-            var balance = await response.Content.ReadFromJsonAsync<float>();
+            var balance = await response.Content.ReadFromJsonAsync<double>();
             return balance;
         }
 
         /// <inheritdoc />
-        public async Task UpdateWalletBalance(int userId, float newBalance)
+        public async Task UpdateWalletBalance(int userId, double newBalance)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{userId}/balance", newBalance);
             response.EnsureSuccessStatusCode();

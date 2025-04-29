@@ -257,7 +257,7 @@ namespace Server.Repository
         }
 
         /// <summary>
-        /// Asynchronously retrieves the startDate and endDate for a contract from the DummyProduct table.
+        /// Asynchronously retrieves the startDate and endDate for a contract from the Product table.
         /// </summary>
         /// <param name="contractId">The ID of the contract to retrieve the product details for.</param>
         /// <returns>The product details.</returns>

@@ -22,17 +22,17 @@ namespace MarketPlace924.ViewModel
 
         private int orderHistoryID;
 
-        private float subtotal;
-        private float deliveryFee;
-        private float total;
+        private double subtotal;
+        private double deliveryFee;
+        private double total;
 
         private string fullname;
         private string phone;
         private string email;
         private string paymentMethod;
         private string orderStatus;
-        public ObservableCollection<DummyProduct> ProductList { get; set; }
-        public List<DummyProduct> DummyProducts;
+        public ObservableCollection<Product> ProductList { get; set; }
+        public List<Product> Products;
         public List<Order> Orders;
 
         /// <summary>
@@ -60,8 +60,8 @@ namespace MarketPlace924.ViewModel
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task InitializeViewModelAsync()
         {
-            DummyProducts = await GetDummyProductsFromOrderHistoryAsync(orderHistoryID);
-            ProductList = new ObservableCollection<DummyProduct>(DummyProducts);
+            Products = await GetProductsFromOrderHistoryAsync(orderHistoryID);
+            ProductList = new ObservableCollection<Product>(Products);
 
             OnPropertyChanged(nameof(ProductList));
 
@@ -107,10 +107,10 @@ namespace MarketPlace924.ViewModel
         /// Asynchronously retrieves dummy products associated with the specified order history.
         /// </summary>
         /// <param name="orderHistoryID">The unique identifier for the order history.</param>
-        /// <returns>A task that returns a list of <see cref="DummyProduct"/> objects.</returns>
-        public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryID)
+        /// <returns>A task that returns a list of <see cref="Product"/> objects.</returns>
+        public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryID)
         {
-            return await orderHistoryService.GetDummyProductsFromOrderHistoryAsync(orderHistoryID);
+            return await orderHistoryService.GetProductsFromOrderHistoryAsync(orderHistoryID);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace MarketPlace924.ViewModel
             }
         }
 
-        public float Subtotal
+        public double Subtotal
         {
             get => subtotal;
             set
@@ -134,7 +134,7 @@ namespace MarketPlace924.ViewModel
             }
         }
 
-        public float DeliveryFee
+        public double DeliveryFee
         {
             get => deliveryFee;
             set
@@ -144,7 +144,7 @@ namespace MarketPlace924.ViewModel
             }
         }
 
-        public float Total
+        public double Total
         {
             get => total;
             set

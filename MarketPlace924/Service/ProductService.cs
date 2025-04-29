@@ -12,21 +12,21 @@ namespace MarketPlace924.Service
     /// <summary>
     /// Service for managing dummy product operations.
     /// </summary>
-    public class DummyProductService : IDummyProductService
+    public class ProductService : IProductService
     {
-        private readonly IDummyProductRepository dummyProductRepository;
+        private readonly IProductRepository productRepository;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DummyProductService"/> class with a specified database provider.
+        /// Initializes a new instance of the <see cref="ProductService"/> class with a specified database provider.
         /// </summary>
-        public DummyProductService()
+        public ProductService()
         {
-            this.dummyProductRepository = new DummyProductProxyRepository(AppConfig.GetBaseApiUrl());
+            this.productRepository = new ProductProxyRepository(AppConfig.GetBaseApiUrl());
         }
 
         /// <inheritdoc/>
-        public async Task UpdateDummyProductAsync(int id, string name, float price, int sellerId, string productType, DateTime startDate, DateTime endDate)
+        public async Task UpdateProductAsync(int id, string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate)
         {
             // Validate inputs
             if (id <= 0)
@@ -59,7 +59,7 @@ namespace MarketPlace924.Service
                     throw new ArgumentException("Start date cannot be after end date", nameof(startDate));
                 }
             }
-            await dummyProductRepository.UpdateDummyProductAsync(id, name, price, sellerId, productType, startDate, endDate);
+            await productRepository.UpdateProductAsync(id, name, price, sellerId, productType, startDate, endDate);
         }
     }
 }
