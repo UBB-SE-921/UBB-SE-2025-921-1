@@ -10,7 +10,7 @@ namespace MarketPlace924.ViewModel
     using System.Globalization;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
     using Microsoft.UI.Xaml.Controls;
 
     /// <summary>

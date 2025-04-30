@@ -9,7 +9,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
 using SharedClassLibrary.Shared;
 using MarketPlace924.Repository;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 
 namespace MarketPlace924.ViewModel
 {

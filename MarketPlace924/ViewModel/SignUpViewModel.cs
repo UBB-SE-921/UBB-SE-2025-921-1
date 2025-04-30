@@ -7,8 +7,8 @@ namespace MarketPlace924.ViewModel
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
     using System.Windows.Input;
-    using MarketPlace924.Helper;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Helper;
+    using SharedClassLibrary.Service;
     using Microsoft.UI.Xaml.Controls;
 
     /// <summary>

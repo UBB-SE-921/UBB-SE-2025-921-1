@@ -1,6 +1,6 @@
 using Server.DBConnection;
 using Microsoft.EntityFrameworkCore;
-using Server.Helper;
+using SharedClassLibrary.Helper;
 using Server.Repository;
 using SharedClassLibrary.IRepository;
 

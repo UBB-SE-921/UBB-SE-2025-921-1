@@ -15,7 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 using MarketPlace924.ViewModel; // For ShoppingCartViewModel
 using MarketPlace924.Repository;
-using MarketPlace924.Service; // For ShoppingCartRepository
+using SharedClassLibrary.Service; // For ShoppingCartRepository
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 

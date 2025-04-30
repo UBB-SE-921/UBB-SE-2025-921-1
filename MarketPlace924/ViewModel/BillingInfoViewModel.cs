@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using SharedClassLibrary.Shared;
 using MarketPlace924.Utils;
 
@@ -88,7 +88,7 @@ namespace MarketPlace924.ViewModel
 
             foreach (var item in cartItems)
             {
-               this.Products.Add(item.Key);
+                this.Products.Add(item.Key);
             }
 
             this.ProductList = new ObservableCollection<Product>(this.Products);
@@ -307,10 +307,10 @@ namespace MarketPlace924.ViewModel
                         //catch (Exception ex)
                         //{
                         //    System.Diagnostics.Debug.WriteLine($"Database connection error: {ex.Message}");
-                            // Use the fallback ID since we couldn't get a real one
-                            this.orderHistoryID = fallbackOrderHistoryId;
-                            usesFallbackData = true;
-                            continueToNextWindow = true; // Continue despite the error
+                        // Use the fallback ID since we couldn't get a real one
+                        this.orderHistoryID = fallbackOrderHistoryId;
+                        usesFallbackData = true;
+                        continueToNextWindow = true; // Continue despite the error
                         //}
 
                         // Create order summary with error handling

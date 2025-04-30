@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using SharedClassLibrary.Shared;
 using Microsoft.UI.Xaml.Controls;
 
@@ -43,12 +43,12 @@ namespace MarketPlace924.ViewModel
         {
             string connectionString = Configuration.CONNECTION_STRING;
             IDatabaseProvider databaseProvider = new SqlDatabaseProvider();
-            
+
             orderHistoryService = new OrderHistoryService();
             orderService = new OrderService();
             orderSummaryService = new OrderSummaryService();
             notificationViewModel = new NotificationViewModel(1);
-            
+
             this.orderHistoryID = orderHistoryID;
 
             _ = InitializeViewModelAsync();

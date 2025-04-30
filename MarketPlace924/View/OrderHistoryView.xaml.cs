@@ -10,7 +10,7 @@ using SharedClassLibrary.Domain;
 using MarketPlace924.ViewModel;
 using Microsoft.UI.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using MarketPlace924.Service; // Add this using directive if not present
+using SharedClassLibrary.Service; // Add this using directive if not present
 using SharedClassLibrary.Shared; // Add this using directive for Configuration
 
 namespace MarketPlace924

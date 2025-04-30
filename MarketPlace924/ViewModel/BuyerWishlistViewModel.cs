@@ -10,7 +10,7 @@ namespace MarketPlace924.ViewModel
     using System.Linq;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
 
     /// <summary>
     /// View model class for managing buyer wishlist data and operations.
@@ -68,7 +68,7 @@ namespace MarketPlace924.ViewModel
         }
 
         /// <inheritdoc/>
-        public ObservableCollection<string> SortOptions { get; } = new ()
+        public ObservableCollection<string> SortOptions { get; } = new()
     {
         "Sort by: Price Ascending",
         "Sort by: Price Descending",

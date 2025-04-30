@@ -11,7 +11,7 @@ namespace MarketPlace924.ViewModel
     using System.Text;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
 
     /// <summary>
     /// Interface for managing buyer profile view model operations and linkage updates.
