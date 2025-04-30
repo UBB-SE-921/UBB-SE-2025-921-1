@@ -6,12 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Service; // Added using for Service namespace
+using SharedClassLibrary.Service; // Added using for Service namespace
 using SharedClassLibrary.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using MarketPlace924.Repository;
-using MarketPlace924.Helper;
+using SharedClassLibrary.Helper;
 
 namespace MarketPlace924.ViewModel
 {

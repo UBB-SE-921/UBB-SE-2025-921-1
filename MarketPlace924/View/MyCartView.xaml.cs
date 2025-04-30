@@ -12,11 +12,12 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using MarketPlace924.ViewModel; 
+using MarketPlace924.ViewModel;
 using MarketPlace924.Repository;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 
-namespace MarketPlace924.View { 
+namespace MarketPlace924.View
+{
     /// <summary>
     /// A page that displays the shopping cart.
     /// </summary>

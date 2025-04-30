@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using MarketPlace924.Repository;
-using MarketPlace924.Service; // Add this using directive
+using SharedClassLibrary.Service; // Add this using directive
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;

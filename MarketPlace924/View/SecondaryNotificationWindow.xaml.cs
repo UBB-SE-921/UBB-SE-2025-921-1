@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using SharedClassLibrary.Domain;
 using Microsoft.UI.Xaml;
 using MarketPlace924.Services;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 
 namespace MarketPlace924
 {

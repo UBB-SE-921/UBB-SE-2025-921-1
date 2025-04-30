@@ -6,7 +6,7 @@ using System;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using MarketPlace924.ViewModel;
 namespace MarketPlace924.ViewModel
 {

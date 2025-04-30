@@ -11,7 +11,7 @@ namespace MarketPlace924.ViewModel
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
 
     /// <summary>
     /// View model class for managing buyer family synchronization data and operations.
@@ -32,7 +32,7 @@ namespace MarketPlace924.ViewModel
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <inheritdoc/>
-        public ObservableCollection<IBuyerLinkageViewModel>? Items { get; set; } = new ();
+        public ObservableCollection<IBuyerLinkageViewModel>? Items { get; set; } = new();
 
         /// <inheritdoc/>
         public async Task LoadLinkages()

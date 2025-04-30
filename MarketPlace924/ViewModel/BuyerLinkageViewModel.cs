@@ -8,7 +8,7 @@ namespace MarketPlace924.ViewModel
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
     using Microsoft.UI.Xaml;
 
     /// <summary>

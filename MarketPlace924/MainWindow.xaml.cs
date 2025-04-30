@@ -4,9 +4,9 @@
 namespace MarketPlace924
 {
     using System.Threading.Tasks;
-    using MarketPlace924.Helper;
+    using SharedClassLibrary.Helper;
     using MarketPlace924.Repository;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
     using MarketPlace924.View;
     using MarketPlace924.View.Admin;
     using MarketPlace924.ViewModel;

@@ -6,7 +6,7 @@ using MarketPlace924.Repository;
 using Microsoft.Data.SqlClient;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
-using MarketPlace924.Helper;
+using SharedClassLibrary.Helper;
 
 [ExcludeFromCodeCoverage]
 public class WaitListNotifier

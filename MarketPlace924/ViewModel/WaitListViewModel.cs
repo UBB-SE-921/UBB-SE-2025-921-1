@@ -4,7 +4,7 @@ using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
 using Microsoft.Data.SqlClient;
 using MarketPlace924.Repository;
-using MarketPlace924.Helper;
+using SharedClassLibrary.Helper;
 
 namespace MarketPlace924.Services
 {

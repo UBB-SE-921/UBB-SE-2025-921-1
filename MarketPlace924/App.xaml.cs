@@ -5,7 +5,7 @@
 namespace MarketPlace924
 {
     using System.Diagnostics;
-    using MarketPlace924.Helper;
+    using SharedClassLibrary.Helper;
     using Microsoft.UI.Xaml;
 
     /// <summary>

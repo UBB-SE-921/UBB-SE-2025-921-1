@@ -12,8 +12,8 @@ namespace MarketPlace924.ViewModel.Admin
     using LiveChartsCore.SkiaSharpView;
     using LiveChartsCore.SkiaSharpView.Painting;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Helper;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Helper;
+    using SharedClassLibrary.Service;
     using Microsoft.UI.Xaml.Controls;
     using SkiaSharp;
 
@@ -50,7 +50,7 @@ namespace MarketPlace924.ViewModel.Admin
         /// <summary>
         /// The users in the admin view.
         /// </summary>
-        private List<User> users = new ();
+        private List<User> users = new();
 
         /// <summary>
         /// The total users count.
