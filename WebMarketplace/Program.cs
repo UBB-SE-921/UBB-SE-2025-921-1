@@ -1,7 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using Server.DBConnection;
+using Server.Helper;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+var connectionString = AppConfig.GetConnectionString("MyLocalDb");
+builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
+    options.UseSqlServer(connectionString)
+        .EnableSensitiveDataLogging()
+);
 
 var app = builder.Build();
 
