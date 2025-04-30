@@ -14,7 +14,6 @@ namespace Server.Repository
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
     using SharedClassLibrary.Shared;
-    using Windows.UI.Shell;
 
     /// <summary>
     /// Represents a repository for managing orders in the database.
