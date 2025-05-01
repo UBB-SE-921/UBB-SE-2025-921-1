@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Repository;
+using SharedClassLibrary.Repository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Helper;

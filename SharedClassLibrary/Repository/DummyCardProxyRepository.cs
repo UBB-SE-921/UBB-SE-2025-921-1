@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace MarketPlace924.Repository
+namespace SharedClassLibrary.Repository
 {
     using System;
     using System.Net.Http;

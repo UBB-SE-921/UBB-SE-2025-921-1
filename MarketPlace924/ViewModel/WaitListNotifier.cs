@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using MarketPlace924.Repository;
+using SharedClassLibrary.Repository;
 using Microsoft.Data.SqlClient;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;

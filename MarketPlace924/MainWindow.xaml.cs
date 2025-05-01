@@ -5,7 +5,7 @@ namespace MarketPlace924
 {
     using System.Threading.Tasks;
     using SharedClassLibrary.Helper;
-    using MarketPlace924.Repository;
+    using SharedClassLibrary.Repository;
     using SharedClassLibrary.Service;
     using MarketPlace924.View;
     using MarketPlace924.View.Admin;
