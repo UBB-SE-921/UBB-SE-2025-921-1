@@ -27,7 +27,7 @@ namespace MarketPlace924.View
         public MyCartView()
         {
             this.InitializeComponent();
-            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: 2);
+            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: UserSession.CurrentUserId ?? 0);
             this.DataContext = this.ViewModel;
 
             // Load cart items when the page is initialized
