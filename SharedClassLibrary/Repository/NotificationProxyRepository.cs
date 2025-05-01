@@ -33,46 +33,19 @@ namespace SharedClassLibrary.Repository
         }
 
         /// <inheritdoc />
-        public void AddNotification(Notification notification)
+        public async void AddNotification(Notification notification)
         {
             if (notification == null)
             {
                 throw new ArgumentNullException(nameof(notification));
             }
 
-            Task.Run(() => this.AddNotificationAsync(notification)).GetAwaiter().GetResult();
-        }
-
-        /// <inheritdoc />
-        public List<Notification> GetNotificationsForUser(int recipientId)
-        {
-            return Task.Run(() => this.GetNotificationsForUserAsync(recipientId)).GetAwaiter().GetResult();
-        }
-
-        /// <inheritdoc />
-        public void MarkAsRead(int notificationId)
-        {
-            Task.Run(() => this.MarkAsReadAsync(notificationId)).GetAwaiter().GetResult();
-        }
-
-        /// <summary>
-        /// Asynchronously adds a new notification.
-        /// </summary>
-        /// <param name="notification">The notification to add.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task AddNotificationAsync(Notification notification)
-        {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", notification);
             response.EnsureSuccessStatusCode(); // Throw on error status.
         }
 
-        /// <summary>
-        /// Asynchronously retrieves notifications for a user based on recipient ID.
-        /// This is the actual async implementation used by the synchronous wrapper.
-        /// </summary>
-        /// <param name="recipientId">The ID of the recipient.</param>
-        /// <returns>A list of notifications for the user.</returns>
-        private async Task<List<Notification>> GetNotificationsForUserAsync(int recipientId)
+        /// <inheritdoc />
+        public async Task<List<Notification>> GetNotificationsForUser(int recipientId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{recipientId}");
             response.EnsureSuccessStatusCode(); // Throw on error status.
@@ -80,14 +53,9 @@ namespace SharedClassLibrary.Repository
             return notifications ?? new List<Notification>();
         }
 
-        /// <summary>
-        /// Asynchronously marks a notification as read.
-        /// </summary>
-        /// <param name="notificationId">The ID of the notification to mark as read.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task MarkAsReadAsync(int notificationId)
+        /// <inheritdoc />
+        public async void MarkAsRead(int notificationId)
         {
-            // Using PutAsync for idempotent update.
             var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/{notificationId}/mark-read", null); // No body needed for this PUT.
             response.EnsureSuccessStatusCode(); // Throw on error status.
         }

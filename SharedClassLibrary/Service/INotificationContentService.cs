@@ -7,7 +7,7 @@ namespace SharedClassLibrary.Service
     public interface INotificationContentService
     {
         string GetUnreadNotificationsCountText(int unreadCount);
-        List<Notification> GetNotificationsForUser(int recipientId);
+        Task<List<Notification>> GetNotificationsForUser(int recipientId);
         void MarkAsRead(int notificationId);
         void AddNotification(Notification notification);
     }
