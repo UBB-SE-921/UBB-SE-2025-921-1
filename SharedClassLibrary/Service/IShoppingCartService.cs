@@ -62,8 +62,8 @@ namespace SharedClassLibrary.Service
         /// Gets all products in the buyer's shopping cart with their quantities.
         /// </summary>
         /// <param name="buyerId">The ID of the buyer.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a dictionary with product objects as keys and quantities as values.</returns>
-        Task<Dictionary<Product, int>> GetCartItemsAsync(int buyerId);
+        /// <returns>A task that represents the asynchronous operation. The task result contains a list with products and quantities.</returns>
+        Task<List<Product>> GetCartItemsAsync(int buyerId);
 
         /// <summary>
         /// Gets the total price of all items in the buyer's shopping cart.

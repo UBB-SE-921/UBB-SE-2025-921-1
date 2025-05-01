@@ -28,8 +28,8 @@ namespace MarketPlace924.View
         /// <summary>
         /// Sets the cart items for checkout.
         /// </summary>
-        /// <param name="cartItems">The dictionary of products and quantities.</param>
-        public void SetCartItems(Dictionary<Product, int> cartItems)
+        /// <param name="cartItems">The list of products and quantities.</param>
+        public void SetCartItems(List<Product> cartItems)
         {
             if (this.DataContext is BillingInfoViewModel viewModel)
             {

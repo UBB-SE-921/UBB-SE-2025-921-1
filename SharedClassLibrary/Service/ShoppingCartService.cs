@@ -188,9 +188,9 @@ namespace SharedClassLibrary.Service
         /// Gets all products in the buyer's shopping cart with their quantities.
         /// </summary>
         /// <param name="buyerId">The ID of the buyer.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a dictionary with product objects as keys and quantities as values.</returns>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a list with product objects.</returns>
         /// <exception cref="ArgumentException">Thrown if the buyer ID is invalid.</exception>
-        public async Task<Dictionary<Product, int>> GetCartItemsAsync(int buyerId)
+        public async Task<List<Product>> GetCartItemsAsync(int buyerId)
         {
             if (buyerId <= 0)
             {
@@ -218,7 +218,7 @@ namespace SharedClassLibrary.Service
 
             foreach (var item in cartItems)
             {
-                total += item.Key.Price * item.Value;
+                total += item.Price * item.Stock;
             }
 
             return total;

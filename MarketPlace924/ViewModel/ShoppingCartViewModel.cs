@@ -50,13 +50,13 @@ namespace MarketPlace924.ViewModel
         /// <summary>
         /// Gets all the products in the cart with their quantities for checkout.
         /// </summary>
-        /// <returns>A dictionary containing products and their quantities.</returns>
-        public Dictionary<Product, int> GetProductsForCheckout()
+        /// <returns>A list containing products and their quantities.</returns>
+        public List<Product> GetProductsForCheckout()
         {
-            var products = new Dictionary<Product, int>();
+            var products = new List<Product>();
             foreach (var item in this.CartItems)
             {
-                products.Add(item.Product, item.Quantity);
+                products.Add(item.Product);
             }
 
             return products;
@@ -70,8 +70,8 @@ namespace MarketPlace924.ViewModel
             foreach (var item in cartItemsFromDb)
             {
                 this.CartItems.Add(new CartItemViewModel(
-                    item.Key,
-                    item.Value,
+                    item,
+                    item.Stock,
                     RemoveFromCartCommand));
             }
         }

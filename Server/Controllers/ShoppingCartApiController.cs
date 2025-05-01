@@ -31,11 +31,11 @@ namespace Server.Controllers
         /// Gets all items in the shopping cart for a specific buyer.
         /// </summary>
         /// <param name="buyerId">The ID of the buyer.</param>
-        /// <returns>A dictionary of products and their quantities.</returns>
+        /// <returns>A list of products and their quantities.</returns>
         [HttpGet("{buyerId}/items")]
-        [ProducesResponseType(typeof(Dictionary<Product, int>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Product>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Dictionary<Product, int>>> GetCartItems(int buyerId)
+        public async Task<ActionResult<List<Product>>> GetCartItems(int buyerId)
         {
             try
             {

@@ -55,16 +55,16 @@ namespace MarketPlace924.Repository
             }
         }
 
-        public async Task<Dictionary<Product, int>> GetCartItemsAsync(int buyerId)
+        public async Task<List<Product>> GetCartItemsAsync(int buyerId)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items";
             var response = await this.httpClient.GetAsync(requestUri);
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadFromJsonAsync<Dictionary<Product, int>>();
+                var result = await response.Content.ReadFromJsonAsync<List<Product>>();
                 if (result == null)
                 {
-                    result = new Dictionary<Product, int>();
+                    result = new List<Product>();
                 }
                 return result;
             }

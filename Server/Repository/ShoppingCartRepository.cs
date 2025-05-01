@@ -183,16 +183,16 @@ namespace Server.Repository
         /// Gets all products in the user's shopping cart with their quantities.
         /// </summary>
         /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a dictionary with product objects as keys and quantities as values.</returns>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a list with products and quantities.</returns>
         /// <exception cref="ArgumentException">Thrown when buyerId is invalid.</exception>
-        public async Task<Dictionary<Product, int>> GetCartItemsAsync(int buyerId)
+        public async Task<List<Product>> GetCartItemsAsync(int buyerId)
         {
             if (buyerId <= 0)
             {
                 throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
             }
 
-            var cartItems = new Dictionary<Product, int>();
+            var cartItems = new List<Product>();
 
             await this.databaseConnection.OpenConnection();
             var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
@@ -218,8 +218,7 @@ namespace Server.Repository
                         reader.GetInt32(reader.GetOrdinal("SellerId"))
                     );
 
-                    int quantity = reader.GetInt32(reader.GetOrdinal("Quantity"));
-                    cartItems.Add(product, quantity);
+                    cartItems.Add(product);
                 }
             }
 
