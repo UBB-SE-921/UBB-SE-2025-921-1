@@ -41,14 +41,14 @@ namespace SharedClassLibrary.Repository
             }
 
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", notification);
-            await this.ThrowOnError(nameof(AddNotificationAsync), response);
+            await this.ThrowOnError(nameof(AddNotification), response);
         }
 
         /// <inheritdoc />
         public async Task<List<Notification>> GetNotificationsForUser(int recipientId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{recipientId}");
-            await this.ThrowOnError(nameof(GetNotificationsForUserAsync), response);
+            await this.ThrowOnError(nameof(GetNotificationsForUser), response);
             var notifications = await response.Content.ReadFromJsonAsync<List<Notification>>();
             return notifications ?? new List<Notification>();
         }
@@ -57,7 +57,7 @@ namespace SharedClassLibrary.Repository
         public async void MarkAsRead(int notificationId)
         {
             var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/{notificationId}/mark-read", null); // No body needed for this PUT.
-            await this.ThrowOnError(nameof(MarkAsReadAsync), response);
+            await this.ThrowOnError(nameof(MarkAsRead), response);
         }
 
         private async Task ThrowOnError(string methodName, HttpResponseMessage response)
