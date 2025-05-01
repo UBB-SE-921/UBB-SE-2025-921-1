@@ -198,9 +198,9 @@ namespace Server.Repository
             var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
 
             sqlCommand.CommandText = @"
-                SELECT p.ProductID, p.ProductName, p.ProductDescription, p.ProductPrice, p.ProductType, p.SellerID, ci.Quantity
+                SELECT p.ProductId, p.Name, p.Description, p.Price, p.ProductType, p.SellerId, ci.Quantity
                 FROM BuyerCartItems ci
-                INNER JOIN Products p ON ci.ProductId = p.ProductID
+                INNER JOIN Products p ON ci.ProductId = p.ProductId
                 WHERE ci.BuyerId = @BuyerId";
 
             sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
@@ -210,12 +210,12 @@ namespace Server.Repository
                 while (await reader.ReadAsync())
                 {
                     var product = new Product(
-                        reader.GetInt32(reader.GetOrdinal("ProductID")),
-                        reader.GetString(reader.GetOrdinal("ProductName")),
-                        reader.GetString(reader.GetOrdinal("ProductDescription")),
-                        reader.GetDouble(reader.GetOrdinal("ProductPrice")),
-                        0, // Category - not present in your structure, using default
-                        reader.GetInt32(reader.GetOrdinal("SellerID"))
+                        reader.GetInt32(reader.GetOrdinal("ProductId")),
+                        reader.GetString(reader.GetOrdinal("Name")),
+                        reader.GetString(reader.GetOrdinal("Description")),
+                        reader.GetDouble(reader.GetOrdinal("Price")),
+                        reader.GetInt32(reader.GetOrdinal("Quantity")),
+                        reader.GetInt32(reader.GetOrdinal("SellerId"))
                     );
 
                     int quantity = reader.GetInt32(reader.GetOrdinal("Quantity"));
