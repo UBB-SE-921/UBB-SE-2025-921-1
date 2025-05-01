@@ -31,14 +31,14 @@
         public async Task AddRenewedContractAsync(IContract contract)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/add-renewed", (Contract)contract);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(AddRenewedContractAsync), response);
         }
 
         /// <inheritdoc />
         public async Task<List<IContract>> GetRenewedContractsAsync()
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/renewed");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetRenewedContractsAsync), response);
 
             // Deserialize to List<Contract> (concrete type) as interfaces usually can't be deserialized directly
             var contracts = await response.Content.ReadFromJsonAsync<List<Contract>>();
@@ -59,10 +59,23 @@
             }
 
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{contractId}/has-been-renewed");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(HasContractBeenRenewedAsync), response);
 
             var result = await response.Content.ReadFromJsonAsync<bool>();
             return result;
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

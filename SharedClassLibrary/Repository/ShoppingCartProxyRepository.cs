@@ -25,100 +25,79 @@ namespace MarketPlace924.Repository
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items?productId={productId}&quantity={quantity}";
             var response = await this.httpClient.PostAsync(requestUri, null);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"Failed to add product to cart: {response.ReasonPhrase}");
-            }
+            await this.ThrowOnError(nameof(AddProductToCartAsync), response);
         }
 
         public async Task ClearCartAsync(int buyerId)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items";
             var response = await this.httpClient.DeleteAsync(requestUri);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"Failed to clear cart: {response.ReasonPhrase}");
-            }
+            await this.ThrowOnError(nameof(ClearCartAsync), response);
         }
 
         public async Task<int> GetCartItemCountAsync(int buyerId)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items/count";
             var response = await this.httpClient.GetAsync(requestUri);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<int>();
-            }
-            else
-            {
-                throw new Exception($"Failed to get cart item count: {response.ReasonPhrase}");
-            }
+            await this.ThrowOnError(nameof(GetCartItemCountAsync), response);
+            return await response.Content.ReadFromJsonAsync<int>();
         }
 
         public async Task<List<Product>> GetCartItemsAsync(int buyerId)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items";
             var response = await this.httpClient.GetAsync(requestUri);
-            if (response.IsSuccessStatusCode)
+            await this.ThrowOnError(nameof(GetCartItemsAsync), response);
+
+            var result = await response.Content.ReadFromJsonAsync<List<Product>>();
+            if (result == null)
             {
-                var result = await response.Content.ReadFromJsonAsync<List<Product>>();
-                if (result == null)
-                {
-                    result = new List<Product>();
-                }
-                return result;
+                result = new List<Product>();
             }
-            else
-            {
-                throw new Exception($"Failed to get cart items: {response.ReasonPhrase}");
-            }
+
+            return result;
         }
 
         public async Task<int> GetProductQuantityAsync(int buyerId, int productId)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items/{productId}/quantity";
             var response = await this.httpClient.GetAsync(requestUri);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<int>();
-            }
-            else
-            {
-                throw new Exception($"Failed to get product quantity: {response.ReasonPhrase}");
-            }
+            await this.ThrowOnError(nameof(GetProductQuantityAsync), response);
+            return await response.Content.ReadFromJsonAsync<int>();
         }
 
         public async Task<bool> IsProductInCartAsync(int buyerId, int productId)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items/{productId}/exists";
             var response = await this.httpClient.GetAsync(requestUri);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<bool>();
-            }
-            else
-            {
-                throw new Exception($"Failed to check if product is in cart: {response.ReasonPhrase}");
-            }
+            await this.ThrowOnError(nameof(IsProductInCartAsync), response);
+            return await response.Content.ReadFromJsonAsync<bool>();
         }
 
         public async Task RemoveProductFromCartAsync(int buyerId, int productId)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items/{productId}";
             var response = await this.httpClient.DeleteAsync(requestUri);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"Failed to remove product from cart: {response.ReasonPhrase}");
-            }
+            await this.ThrowOnError(nameof(RemoveProductFromCartAsync), response);
         }
 
         public async Task UpdateProductQuantityAsync(int buyerId, int productId, int quantity)
         {
             var requestUri = $"{ApiBaseRoute}/{buyerId}/items/{productId}?quantity={quantity}";
             var response = await this.httpClient.PutAsync(requestUri, null);
+            await this.ThrowOnError(nameof(UpdateProductQuantityAsync), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception($"Failed to update product quantity: {response.ReasonPhrase}");
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
             }
         }
     }

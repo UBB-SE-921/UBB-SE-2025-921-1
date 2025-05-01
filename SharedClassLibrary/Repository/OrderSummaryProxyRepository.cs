@@ -39,7 +39,7 @@ namespace MarketPlace924.Repository
                 return null;
             }
 
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrderSummaryByIdAsync), response);
             var orderSummary = await response.Content.ReadFromJsonAsync<OrderSummary>();
             return orderSummary;
         }
@@ -65,7 +65,20 @@ namespace MarketPlace924.Repository
             };
 
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}", requestDto);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateOrderSummaryAsync), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

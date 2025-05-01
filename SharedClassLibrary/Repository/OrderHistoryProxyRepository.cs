@@ -34,10 +34,23 @@ namespace MarketPlace924.Repository
         public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{orderHistoryId}/dummy-products");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetProductsFromOrderHistoryAsync), response);
 
             var products = await response.Content.ReadFromJsonAsync<List<Product>>();
             return products ?? new List<Product>();
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

@@ -45,21 +45,21 @@ namespace MarketPlace924.Repository
             };
 
             var response = await this.httpClient.PostAsJsonAsync(ApiBaseRoute, orderData);
-            response.EnsureSuccessStatusCode(); // Throws exception if not successful
+            await this.ThrowOnError(nameof(AddOrderAsync), response); // Throws exception if not successful
         }
 
         /// <inheritdoc />
         public async Task DeleteOrderAsync(int orderId)
         {
             var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{orderId}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(DeleteOrderAsync), response);
         }
 
         /// <inheritdoc />
         public async Task<List<Order>> GetBorrowedOrderHistoryAsync(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}/history/borrowed");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetBorrowedOrderHistoryAsync), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -68,7 +68,7 @@ namespace MarketPlace924.Repository
         public async Task<List<Order>> GetNewOrUsedOrderHistoryAsync(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}/history/new-used");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetNewOrUsedOrderHistoryAsync), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -79,7 +79,7 @@ namespace MarketPlace924.Repository
             // Encode the text parameter for the query string
             var encodedText = System.Net.WebUtility.UrlEncode(text);
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}/search?text={encodedText}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrdersByNameAsync), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -88,7 +88,7 @@ namespace MarketPlace924.Repository
         public async Task<List<Order>> GetOrdersFrom2024Async(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}/history/year/2024");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrdersFrom2024Async), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -97,7 +97,7 @@ namespace MarketPlace924.Repository
         public async Task<List<Order>> GetOrdersFrom2025Async(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}/history/year/2025");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrdersFrom2025Async), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -106,7 +106,7 @@ namespace MarketPlace924.Repository
         public async Task<List<Order>> GetOrdersFromLastSixMonthsAsync(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}/history/months/6");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrdersFromLastSixMonthsAsync), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -115,7 +115,7 @@ namespace MarketPlace924.Repository
         public async Task<List<Order>> GetOrdersFromLastThreeMonthsAsync(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{buyerId}/history/months/3");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrdersFromLastThreeMonthsAsync), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -124,7 +124,7 @@ namespace MarketPlace924.Repository
         public async Task<List<Order>> GetOrdersFromOrderHistoryAsync(int orderHistoryId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/history-group/{orderHistoryId}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrdersFromOrderHistoryAsync), response);
             var orders = await response.Content.ReadFromJsonAsync<List<Order>>();
             return orders ?? new List<Order>();
         }
@@ -138,7 +138,7 @@ namespace MarketPlace924.Repository
                 throw new KeyNotFoundException($"OrderSummary with ID {orderSummaryId} not found via API.");
             }
 
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrderSummaryAsync), response);
             var summary = await response.Content.ReadFromJsonAsync<OrderSummary>();
             return summary ?? throw new InvalidOperationException("Failed to deserialize OrderSummary.");
         }
@@ -160,7 +160,7 @@ namespace MarketPlace924.Repository
             string queryString = queryParams.Count > 0 ? "?" + string.Join("&", queryParams) : string.Empty;
 
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{userId}/display{queryString}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrdersWithProductInfoAsync), response);
             var orderInfos = await response.Content.ReadFromJsonAsync<List<OrderDisplayInfo>>();
             return orderInfos ?? new List<OrderDisplayInfo>();
         }
@@ -169,7 +169,7 @@ namespace MarketPlace924.Repository
         public async Task<Dictionary<int, string>> GetProductCategoryTypesAsync(int userId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/buyer/{userId}/category-types");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetProductCategoryTypesAsync), response);
             var categories = await response.Content.ReadFromJsonAsync<Dictionary<int, string>>();
             return categories ?? new Dictionary<int, string>();
         }
@@ -185,7 +185,20 @@ namespace MarketPlace924.Repository
             };
 
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{orderId}", orderData);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateOrderAsync), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

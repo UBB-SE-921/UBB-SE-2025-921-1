@@ -44,14 +44,14 @@ namespace MarketPlace924.Repository
             };
 
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", requestDto);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(AddProductAsync), response);
         }
 
         /// <inheritdoc />
         public async Task DeleteProduct(int id)
         {
             var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{id}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(DeleteProduct), response);
         }
 
         /// <inheritdoc />
@@ -63,7 +63,7 @@ namespace MarketPlace924.Repository
                 return null;
             }
 
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetProductByIdAsync), response);
             var product = await response.Content.ReadFromJsonAsync<Product>();
             return product;
         }
@@ -77,7 +77,7 @@ namespace MarketPlace924.Repository
             }
 
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/seller/{sellerId.Value}/name");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetSellerNameAsync), response);
             var sellerName = await response.Content.ReadAsStringAsync();
             return sellerName;
         }
@@ -96,7 +96,20 @@ namespace MarketPlace924.Repository
             };
 
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{id}", requestDto);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateProductAsync), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

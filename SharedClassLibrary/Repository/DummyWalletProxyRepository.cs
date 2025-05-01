@@ -32,7 +32,7 @@ namespace MarketPlace924.Repository
         public async Task<double> GetWalletBalanceAsync(int userId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{userId}/balance");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetWalletBalanceAsync), response);
 
             var balance = await response.Content.ReadFromJsonAsync<double>();
             return balance;
@@ -42,7 +42,20 @@ namespace MarketPlace924.Repository
         public async Task UpdateWalletBalance(int userId, double newBalance)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{userId}/balance", newBalance);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateWalletBalance), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

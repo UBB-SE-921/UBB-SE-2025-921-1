@@ -36,14 +36,14 @@ namespace MarketPlace924.Repository
         public async Task AddUser(User user)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", user);
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(AddUser), response);
         }
 
         /// <inheritdoc />
         public async Task<bool> EmailExists(string email)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/email-exists?email={email}");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(EmailExists), response);
 
             var found = await response.Content.ReadFromJsonAsync<bool>();
             return found;
@@ -53,7 +53,7 @@ namespace MarketPlace924.Repository
         public async Task<List<User>> GetAllUsers()
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(GetAllUsers), response);
 
             var users = await response.Content.ReadFromJsonAsync<List<User>>();
             if (users == null)
@@ -68,7 +68,7 @@ namespace MarketPlace924.Repository
         public async Task<int> GetFailedLoginsCountByUserId(int userId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/failed-logins-count/{userId}");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(GetFailedLoginsCountByUserId), response);
 
             var failedLoginsCount = await response.Content.ReadFromJsonAsync<int>();
             return failedLoginsCount;
@@ -78,7 +78,7 @@ namespace MarketPlace924.Repository
         public async Task<int> GetTotalNumberOfUsers()
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/count");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(GetTotalNumberOfUsers), response);
 
             var userCount = await response.Content.ReadFromJsonAsync<int>();
             return userCount;
@@ -88,7 +88,7 @@ namespace MarketPlace924.Repository
         public async Task<User?> GetUserByEmail(string email)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/email/{email}");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(GetUserByEmail), response);
 
             var user = await response.Content.ReadFromJsonAsync<User>();
             return user;
@@ -98,7 +98,7 @@ namespace MarketPlace924.Repository
         public async Task<User?> GetUserByUsername(string username)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/username/{username}");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(GetUserByUsername), response);
 
             var user = await response.Content.ReadFromJsonAsync<User>();
             return user;
@@ -109,7 +109,7 @@ namespace MarketPlace924.Repository
         {
             int userId = user.UserId;
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/phone-email/{user.UserId}");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(LoadUserPhoneNumberAndEmailById), response);
 
             var newUser = await response.Content.ReadFromJsonAsync<User>();
             if (newUser == null)
@@ -125,31 +125,44 @@ namespace MarketPlace924.Repository
         public async Task UpdateUser(User user)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}", user);
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(UpdateUser), response);
         }
 
         /// <inheritdoc />
         public async Task UpdateUserFailedLoginsCount(User user, int newValueOfFailedLogIns)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update-failed-logins/{newValueOfFailedLogIns}", user);
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(UpdateUserFailedLoginsCount), response);
         }
 
         /// <inheritdoc />
         public async Task UpdateUserPhoneNumber(User user)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update-phone-number", user);
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(UpdateUserPhoneNumber), response);
         }
 
         /// <inheritdoc />
         public async Task<bool> UsernameExists(string username)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/username-exists?username={username}");
-            response.EnsureSuccessStatusCode(); // Throw an exception for non-success status codes
+            await this.ThrowOnError(nameof(UsernameExists), response);
 
             var found = await response.Content.ReadFromJsonAsync<bool>();
             return found;
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

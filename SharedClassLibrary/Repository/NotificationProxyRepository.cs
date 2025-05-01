@@ -63,7 +63,7 @@ namespace MarketPlace924.Repository
         private async Task AddNotificationAsync(Notification notification)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", notification);
-            response.EnsureSuccessStatusCode(); // Throw on error status.
+            await this.ThrowOnError(nameof(AddNotificationAsync), response);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace MarketPlace924.Repository
         private async Task<List<Notification>> GetNotificationsForUserAsync(int recipientId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{recipientId}");
-            response.EnsureSuccessStatusCode(); // Throw on error status.
+            await this.ThrowOnError(nameof(GetNotificationsForUserAsync), response);
             var notifications = await response.Content.ReadFromJsonAsync<List<Notification>>();
             return notifications ?? new List<Notification>();
         }
@@ -89,7 +89,20 @@ namespace MarketPlace924.Repository
         {
             // Using PutAsync for idempotent update.
             var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/{notificationId}/mark-read", null); // No body needed for this PUT.
-            response.EnsureSuccessStatusCode(); // Throw on error status.
+            await this.ThrowOnError(nameof(MarkAsReadAsync), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

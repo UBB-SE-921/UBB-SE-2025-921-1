@@ -37,10 +37,23 @@ namespace MarketPlace924.Repository
             }
 
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", fileBytes);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(InsertPdfAsync), response);
 
             var pdfId = await response.Content.ReadFromJsonAsync<int>();
             return pdfId;
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

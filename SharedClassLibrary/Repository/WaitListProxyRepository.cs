@@ -34,16 +34,15 @@ namespace MarketPlace924.Repository
         public async Task AddUserToWaitlist(int userId, int productWaitListId)
         {
             var response = await this.httpClient.PostAsync($"{ApiBaseRoute}/user/{userId}/product/{productWaitListId}", null);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(AddUserToWaitlist), response);
         }
 
         /// <inheritdoc />
         public async Task<List<UserWaitList>> GetUsersInWaitlist(int waitListProductId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/product/{waitListProductId}/users");
-            response.EnsureSuccessStatusCode();
-            var users = response.Content.ReadFromJsonAsync<List<UserWaitList>>()
-                                .GetAwaiter().GetResult();
+            await this.ThrowOnError(nameof(GetUsersInWaitlist), response);
+            var users = await response.Content.ReadFromJsonAsync<List<UserWaitList>>();
             return users ?? new List<UserWaitList>();
         }
 
@@ -51,9 +50,8 @@ namespace MarketPlace924.Repository
         public async Task<List<UserWaitList>> GetUsersInWaitlistOrdered(int productId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/product/{productId}/users/ordered");
-            response.EnsureSuccessStatusCode();
-            var users = response.Content.ReadFromJsonAsync<List<UserWaitList>>()
-                                .GetAwaiter().GetResult();
+            await this.ThrowOnError(nameof(GetUsersInWaitlistOrdered), response);
+            var users = await response.Content.ReadFromJsonAsync<List<UserWaitList>>();
             return users ?? new List<UserWaitList>();
         }
 
@@ -61,19 +59,16 @@ namespace MarketPlace924.Repository
         public async Task<int> GetUserWaitlistPosition(int userId, int productId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{userId}/product/{productId}/position");
-            response.EnsureSuccessStatusCode();
-            var position = response.Content.ReadFromJsonAsync<int>()
-                                   .GetAwaiter().GetResult();
-            return position;
+            await this.ThrowOnError(nameof(GetUserWaitlistPosition), response);
+            return await response.Content.ReadFromJsonAsync<int>();
         }
 
         /// <inheritdoc />
         public async Task<List<UserWaitList>> GetUserWaitlists(int userId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{userId}/waitlists");
-            response.EnsureSuccessStatusCode();
-            var waitlists = response.Content.ReadFromJsonAsync<List<UserWaitList>>()
-                                     .GetAwaiter().GetResult();
+            await this.ThrowOnError(nameof(GetUserWaitlists), response);
+            var waitlists = await response.Content.ReadFromJsonAsync<List<UserWaitList>>();
             return waitlists ?? new List<UserWaitList>();
         }
 
@@ -81,27 +76,36 @@ namespace MarketPlace924.Repository
         public async Task<int> GetWaitlistSize(int productWaitListId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/product/{productWaitListId}/size");
-            response.EnsureSuccessStatusCode();
-            var size = response.Content.ReadFromJsonAsync<int>()
-                               .GetAwaiter().GetResult();
-            return size;
+            await this.ThrowOnError(nameof(GetWaitlistSize), response);
+            return await response.Content.ReadFromJsonAsync<int>();
         }
 
         /// <inheritdoc />
         public async Task<bool> IsUserInWaitlist(int userId, int productId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{userId}/product/{productId}/exists");
-            response.EnsureSuccessStatusCode();
-            var exists = response.Content.ReadFromJsonAsync<bool>()
-                                 .GetAwaiter().GetResult();
-            return exists;
+            await this.ThrowOnError(nameof(IsUserInWaitlist), response);
+            return await response.Content.ReadFromJsonAsync<bool>();
         }
 
         /// <inheritdoc />
         public async Task RemoveUserFromWaitlist(int userId, int productWaitListId)
         {
             var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/user/{userId}/product/{productWaitListId}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(RemoveUserFromWaitlist), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }
