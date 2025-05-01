@@ -23,9 +23,9 @@ namespace SharedClassLibrary.Service
             return $"You've got #{unreadCount} unread notifications.";
         }
 
-        public List<Notification> GetNotificationsForUser(int recipientId)
+        public async Task<List<Notification>> GetNotificationsForUser(int recipientId)
         {
-            return notificationRepository.GetNotificationsForUser(recipientId);
+            return await notificationRepository.GetNotificationsForUser(recipientId);
         }
 
         public void MarkAsRead(int notificationId)

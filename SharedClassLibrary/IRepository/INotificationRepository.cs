@@ -7,7 +7,7 @@ namespace SharedClassLibrary.IRepository
     public interface INotificationRepository
     {
         void AddNotification(Notification notification);
-        List<Notification> GetNotificationsForUser(int recipientId);
+        Task<List<Notification>> GetNotificationsForUser(int recipientId);
         void MarkAsRead(int notificationId);
     }
 }
