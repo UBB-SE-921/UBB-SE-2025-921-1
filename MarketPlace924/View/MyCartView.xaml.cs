@@ -13,7 +13,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using MarketPlace924.ViewModel;
-using MarketPlace924.Repository;
 using SharedClassLibrary.Service;
 
 namespace MarketPlace924.View
