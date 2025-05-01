@@ -98,7 +98,6 @@ namespace MarketPlace924.View
             }
         }
 
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);

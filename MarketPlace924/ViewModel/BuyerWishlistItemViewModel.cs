@@ -10,7 +10,7 @@ namespace MarketPlace924.ViewModel
     using SharedClassLibrary.Service;
     using CommunityToolkit.Mvvm.Input;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Repository;
+    using SharedClassLibrary.Repository;
     /// <summary>
     /// View model class for managing buyer wishlist item data and operations.
     /// </summary>

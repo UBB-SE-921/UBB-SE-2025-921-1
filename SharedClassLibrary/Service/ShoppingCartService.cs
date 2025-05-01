@@ -12,7 +12,7 @@ namespace SharedClassLibrary.Service
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
-    using MarketPlace924.Repository;
+    using SharedClassLibrary.Repository;
     using SharedClassLibrary.Helper;
 
 

@@ -1,4 +1,4 @@
-﻿namespace MarketPlace924.Repository
+﻿namespace SharedClassLibrary.Repository
 {
     using System;
     using System.Collections.Generic;
