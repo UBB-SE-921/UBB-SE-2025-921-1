@@ -1,13 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MarketPlace924.Repository;
-using SharedClassLibrary.Domain;
+// <copyright file="ShoppingCartApiController.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Server.Controllers
 {
+    using System.Diagnostics;
+    using Microsoft.AspNetCore.Mvc;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
     /// <summary>
     /// API controller for managing shopping cart data.
     /// </summary>
@@ -18,12 +19,12 @@ namespace Server.Controllers
         private readonly IShoppingCartRepository shoppingCartRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShoppingCartController"/> class.
+        /// Initializes a new instance of the <see cref="ShoppingCartApiController"/> class.
         /// </summary>
         /// <param name="shoppingCartRepository">The shopping cart repository dependency.</param>
         public ShoppingCartApiController(IShoppingCartRepository shoppingCartRepository)
         {
-            this.shoppingCartRepository = shoppingCartRepository ?? throw new ArgumentNullException(nameof(shoppingCartRepository));
+            this.shoppingCartRepository = shoppingCartRepository;
         }
 
         /// <summary>
@@ -44,6 +45,71 @@ namespace Server.Controllers
             catch (Exception ex)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving cart items: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of items in the shopping cart for a specific buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>The number of items in the shopping cart.</returns>
+        [HttpGet("{buyerId}/items/count")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<int>> GetCartItemCount(int buyerId)
+        {
+            try
+            {
+                var itemCount = await this.shoppingCartRepository.GetCartItemCountAsync(buyerId);
+                return this.Ok(itemCount);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving cart item count: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Gets the quantity of a specific product in the shopping cart for a specific buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <param name="productId">The ID of the product.</param>
+        /// <returns>The quantity of the product in the shopping cart.</returns>
+        [HttpGet("{buyerId}/items/{productId}/quantity")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<int>> GetProductQuantity(int buyerId, int productId)
+        {
+            try
+            {
+                var quantity = await this.shoppingCartRepository.GetProductQuantityAsync(buyerId, productId);
+                return this.Ok(quantity);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving product quantity: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Checks if a specific product is in the shopping cart for a specific buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <param name="productId">The ID of the product.</param>
+        /// <returns>True if the product is in the cart; otherwise, false.</returns>
+        [HttpGet("{buyerId}/items/{productId}/exists")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<bool>> IsProductInCart(int buyerId, int productId)
+        {
+            try
+            {
+                var exists = await this.shoppingCartRepository.IsProductInCartAsync(buyerId, productId);
+                return this.Ok(exists);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while checking if the product is in the cart: {ex.Message}");
             }
         }
 
