@@ -114,8 +114,8 @@ namespace Server.Repository
         public async Task<List<Order>> GetBorrowedOrderHistoryAsync(int buyerId)
         {
             List<Order> orders = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId && o.ProductType == "borrowed")
-                .OrderByDescending(o => o.OrderDate) // Exactly like in the get_borrowed_order_history stored procedure
+                .Where(order => order.BuyerID == buyerId && order.ProductType == "borrowed")
+                .OrderByDescending(order => order.OrderDate) // Exactly like in the get_borrowed_order_history stored procedure
                 .ToListAsync();
 
             return orders;
@@ -129,8 +129,8 @@ namespace Server.Repository
         public async Task<List<Order>> GetNewOrUsedOrderHistoryAsync(int buyerId)
         {
             List<Order> orders = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId && (o.ProductType == "new" || o.ProductType == "used"))
-                .OrderByDescending(o => o.OrderDate) // Exactly like in the get_new_or_used_order_history stored procedure
+                .Where(order => order.BuyerID == buyerId && (order.ProductType == "new" || order.ProductType == "used"))
+                .OrderByDescending(order => order.OrderDate) // Exactly like in the get_new_or_used_order_history stored procedure
                 .ToListAsync();
 
             return orders;
@@ -149,7 +149,7 @@ namespace Server.Repository
 
             // First fetch all orders from the buyer
             List<Order> buyerOrders = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId)
+                .Where(order => order.BuyerID == buyerId)
                 .ToListAsync();
 
             // Then, take the product from each order in the buyerOrders and filter them by name like in the stored procedure get_orders_by_name
@@ -176,8 +176,8 @@ namespace Server.Repository
         public async Task<List<Order>> GetOrdersFrom2024Async(int buyerId)
         {
             List<Order> ordersFrom2024 = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId && o.OrderDate.Year == 2024)
-                .OrderByDescending(o => o.OrderDate)
+                .Where(order => order.BuyerID == buyerId && order.OrderDate.Year == 2024)
+                .OrderByDescending(order => order.OrderDate)
                 .ToListAsync();
 
             return ordersFrom2024;
@@ -191,8 +191,8 @@ namespace Server.Repository
         public async Task<List<Order>> GetOrdersFrom2025Async(int buyerId)
         {
             List<Order> ordersFrom2025 = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId && o.OrderDate.Year == 2025)
-                .OrderByDescending(o => o.OrderDate)
+                .Where(order => order.BuyerID == buyerId && order.OrderDate.Year == 2025)
+                .OrderByDescending(order => order.OrderDate)
                 .ToListAsync();
 
             return ordersFrom2025;
@@ -208,8 +208,8 @@ namespace Server.Repository
         public async Task<List<Order>> GetOrdersFromLastSixMonthsAsync(int buyerId)
         {
             List<Order> ordersFromLastSixMonths = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId && o.OrderDate >= DateTime.Now.AddMonths(-6))
-                .OrderByDescending(o => o.OrderDate)
+                .Where(order => order.BuyerID == buyerId && order.OrderDate >= DateTime.Now.AddMonths(-6))
+                .OrderByDescending(order => order.OrderDate)
                 .ToListAsync();
 
             return ordersFromLastSixMonths;
@@ -223,8 +223,8 @@ namespace Server.Repository
         public async Task<List<Order>> GetOrdersFromLastThreeMonthsAsync(int buyerId)
         {
             List<Order> ordersFromLastThreeMonths = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId && o.OrderDate >= DateTime.Now.AddMonths(-3))
-                .OrderByDescending(o => o.OrderDate)
+                .Where(order => order.BuyerID == buyerId && order.OrderDate >= DateTime.Now.AddMonths(-3))
+                .OrderByDescending(order => order.OrderDate)
                 .ToListAsync();
 
             return ordersFromLastThreeMonths;
@@ -238,7 +238,7 @@ namespace Server.Repository
         public async Task<List<Order>> GetOrdersFromOrderHistoryAsync(int orderHistoryId)
         {
             List<Order> ordersFromOrderHistory = await this.dbContext.Orders
-                .Where(o => o.OrderHistoryID == orderHistoryId)
+                .Where(order => order.OrderHistoryID == orderHistoryId)
                 .ToListAsync();
 
             return ordersFromOrderHistory;
@@ -257,7 +257,7 @@ namespace Server.Repository
         public async Task<List<OrderDisplayInfo>> GetOrdersWithProductInfoAsync(int userId, string? searchText = null, string? timePeriod = null)
         {
             List<Order> ordersDb = await this.dbContext.Orders
-                .Where(o => o.BuyerID == userId)
+                .Where(order => order.BuyerID == userId)
                 .ToListAsync();
 
             List<OrderDisplayInfo> orderDisplayInfos = new List<OrderDisplayInfo>();
@@ -305,7 +305,7 @@ namespace Server.Repository
             Dictionary<int, string> productCategoryTypes = new Dictionary<int, string>();
 
             List<Order> ordersDb = await this.dbContext.Orders
-                .Where(o => o.BuyerID == userId)
+                .Where(order => order.BuyerID == userId)
                 .ToListAsync();
 
             foreach (Order order in ordersDb)

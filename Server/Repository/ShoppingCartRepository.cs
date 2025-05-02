@@ -42,13 +42,13 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when buyer or product is not found or the quantity is not greater than 0.</exception>
         public async Task AddProductToCartAsync(int buyerId, int productId, int quantity)
         {
-            bool buyerExists = await this.dbContext.Buyers.AnyAsync(b => b.Id == buyerId);
+            bool buyerExists = await this.dbContext.Buyers.AnyAsync(buyer => buyer.Id == buyerId);
             if (!buyerExists)
             {
                 throw new Exception($"AddProductToCartAsync: Buyer not found for the buyer id: {buyerId}");
             }
 
-            bool productExists = await this.dbContext.Products.AnyAsync(p => p.ProductId == productId);
+            bool productExists = await this.dbContext.Products.AnyAsync(product => product.ProductId == productId);
             if (!productExists)
             {
                 throw new Exception($"AddProductToCartAsync: Product not found for the product id: {productId}");

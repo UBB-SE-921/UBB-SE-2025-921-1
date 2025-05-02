@@ -37,7 +37,7 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
         public async Task DeleteCardAsync(string cardNumber)
         {
-            DummyCardEntity cardToDelete = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
+            DummyCardEntity cardToDelete = await this.dbContext.DummyCards.FirstOrDefaultAsync(dummyCard => dummyCard.CardNumber == cardNumber)
                                                 ?? throw new Exception($"DeleteCardAsync: No card with number: {cardNumber}");
             this.dbContext.DummyCards.Remove(cardToDelete);
             await this.dbContext.SaveChangesAsync();
@@ -52,7 +52,7 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
         public async Task UpdateCardBalanceAsync(string cardNumber, double balance)
         {
-            DummyCardEntity cardToUpdate = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
+            DummyCardEntity cardToUpdate = await this.dbContext.DummyCards.FirstOrDefaultAsync(dummyCard => dummyCard.CardNumber == cardNumber)
                                                 ?? throw new Exception($"UpdateCardBalanceAsync: No card with number: {cardNumber}");
             cardToUpdate.Balance = balance;
             await this.dbContext.SaveChangesAsync();
@@ -66,7 +66,7 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when no card with the given number is found.</exception>
         public async Task<double> GetCardBalanceAsync(string cardNumber)
         {
-            DummyCardEntity cardToGet = await this.dbContext.DummyCards.FirstOrDefaultAsync(dc => dc.CardNumber == cardNumber)
+            DummyCardEntity cardToGet = await this.dbContext.DummyCards.FirstOrDefaultAsync(dummyCard => dummyCard.CardNumber == cardNumber)
                                                 ?? throw new Exception($"GetCardBalanceAsync: No card with number: {cardNumber}");
             return cardToGet.Balance;
         }

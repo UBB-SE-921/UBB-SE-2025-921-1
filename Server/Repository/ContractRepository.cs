@@ -38,7 +38,7 @@ namespace Server.Repository
         public async Task<IPredefinedContract> GetPredefinedContractByPredefineContractTypeAsync(PredefinedContractType predefinedContractType)
         {
             PredefinedContract? predefinedContract = await this.dbContext.PredefinedContracts
-                .Where(p => p.ContractID == (int)predefinedContractType)
+                .Where(predefinedContract => predefinedContract.ContractID == (int)predefinedContractType)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetPredefinedContractByPredefineContractTypeAsync: Predefined contract not found for predefined contract type: " + predefinedContractType);
 
             return predefinedContract;
@@ -53,7 +53,7 @@ namespace Server.Repository
         public async Task<IContract> GetContractByIdAsync(long contractId)
         {
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractByIdAsync: Contract not found for contract ID: " + contractId);
 
             return contract;
@@ -86,7 +86,7 @@ namespace Server.Repository
 
             // Get the contract with the given contract ID
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractHistoryAsync: Contract not found for contract ID: " + contractId);
 
             // Go back in time until I reach a contract with no RenewedFromContractID
@@ -97,7 +97,7 @@ namespace Server.Repository
                 // Fetch the *previous* contract and reassign the contract variable
                 // This contract will now refer to this *new* object instance of a contract
                 contract = await this.dbContext.Contracts
-                    .Where(c => c.ContractID == contract.RenewedFromContractID)
+                    .Where(previousContract => previousContract.ContractID == contract.RenewedFromContractID)
                     .FirstOrDefaultAsync() ?? throw new Exception("GetContractHistoryAsync: Contract not found for contract ID: " + contract.RenewedFromContractID);
             }
 
@@ -116,7 +116,7 @@ namespace Server.Repository
         public async Task<IContract> AddContractAsync(IContract contract, byte[] pdfFile)
         {
             bool pdfExists = await this.dbContext.PDFs
-                .AnyAsync(p => p.PdfID == contract.PDFID);
+                .AnyAsync(pdf => pdf.PdfID == contract.PDFID);
 
             PDF pdfToUpdateOrInsert = new PDF
             {
@@ -161,22 +161,22 @@ namespace Server.Repository
         {
             // Get the contract for the given contract ID
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Contract not found for contract ID: " + contractId);
 
             // Get the order for the contract
             Order? order = await this.dbContext.Orders
-                .Where(o => o.OrderID == contract.OrderID)
+                .Where(order => order.OrderID == contract.OrderID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Order not found for order ID: " + contract.OrderID);
 
             // Get the product for the order
             Product? product = await this.dbContext.Products
-                .Where(p => p.ProductId == order.ProductID)
+                .Where(product => product.ProductId == order.ProductID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Product not found for product ID: " + order.ProductID);
 
             // Get the seller for the product
             Seller? seller = await this.dbContext.Sellers
-                .Where(s => s.Id == product.SellerId)
+                .Where(seller => seller.Id == product.SellerId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractSellerAsync: Seller not found for seller ID: " + product.SellerId);
 
             // return seller; // this could be done in the future, I did not do it now because I don't want to change the function signature / repo interface -Alex
@@ -196,17 +196,17 @@ namespace Server.Repository
         {
             // Get the contract for the given contract ID
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractBuyerAsync: Contract not found for contract ID: " + contractId);
 
             // Get the order for the contract
             Order? order = await this.dbContext.Orders
-                .Where(o => o.OrderID == contract.OrderID)
+                .Where(order => order.OrderID == contract.OrderID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractBuyerAsync: Order not found for order ID: " + contract.OrderID);
 
             // Get the buyer for the order
             Buyer? buyer = await this.dbContext.Buyers
-                .Where(b => b.Id == order.BuyerID)
+                .Where(buyer => buyer.Id == order.BuyerID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetContractBuyerAsync: Buyer not found for buyer ID: " + order.BuyerID);
 
             // return buyer; // this could be done in the future, I did not do it now because I don't want to change the function signature / repo interface -Alex
@@ -225,17 +225,17 @@ namespace Server.Repository
 
             // Get the contract for the given contract ID
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetOrderSummaryInformationAsync: Contract not found for contract ID: " + contractId);
 
             // Get the order for the contract
             Order? order = await this.dbContext.Orders
-                .Where(o => o.OrderID == contract.OrderID)
+                .Where(order => order.OrderID == contract.OrderID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetOrderSummaryInformationAsync: Order not found for order ID: " + contract.OrderID);
 
             // Get the OrderSummary for the order
             OrderSummary? orderSummaryDb = await this.dbContext.OrderSummary
-                .Where(os => os.ID == order.OrderSummaryID)
+                .Where(orderSummary => orderSummary.ID == order.OrderSummaryID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetOrderSummaryInformationAsync: Order summary not found for order ID: " + order.OrderID);
 
             // Populate the order summary dictionary
@@ -266,17 +266,17 @@ namespace Server.Repository
         {
             // Get the contract for the given contract ID
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetProductDetailsByContractIdAsync: Contract not found for contract ID: " + contractId);
 
             // Get the order of the contract
             Order? order = await this.dbContext.Orders
-                .Where(o => o.OrderID == contract.OrderID)
+                .Where(order => order.OrderID == contract.OrderID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetProductDetailsByContractIdAsync: Order not found for order ID: " + contract.OrderID);
 
             // Get the product of the order
             Product? product = await this.dbContext.Products
-                .Where(p => p.ProductId == order.ProductID)
+                .Where(product => product.ProductId == order.ProductID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetProductDetailsByContractIdAsync: Product not found for product ID: " + order.ProductID);
 
             // Return the product details
@@ -294,7 +294,7 @@ namespace Server.Repository
 
             // Get all orders for the buyer
             List<Order> orders = await this.dbContext.Orders
-                .Where(o => o.BuyerID == buyerId)
+                .Where(order => order.BuyerID == buyerId)
                 .ToListAsync();
 
             // For each order get all of its contracts
@@ -302,7 +302,7 @@ namespace Server.Repository
             foreach (Order order in orders)
             {
                 List<Contract> contracts = await this.dbContext.Contracts
-                    .Where(c => c.OrderID == order.OrderID)
+                    .Where(contract => contract.OrderID == order.OrderID)
                     .ToListAsync();
 
                 allContracts.AddRange(contracts); // Add the contracts to the list of all contracts
@@ -320,11 +320,11 @@ namespace Server.Repository
         public async Task<(string PaymentMethod, DateTime OrderDate)> GetOrderDetailsAsync(long contractId)
         {
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetOrderDetailsAsync: Contract not found for contract ID: " + contractId);
 
             Order? order = await this.dbContext.Orders
-                .Where(o => o.OrderID == contract.OrderID)
+                .Where(order => order.OrderID == contract.OrderID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetOrderDetailsAsync: Order not found for order ID: " + contract.OrderID);
 
             return (order.PaymentMethod, order.OrderDate.DateTime);
@@ -339,11 +339,11 @@ namespace Server.Repository
         public async Task<DateTime?> GetDeliveryDateByContractIdAsync(long contractId)
         {
             Contract? contract = await this.dbContext.Contracts
-                .Where(c => c.ContractID == contractId)
+                .Where(contract => contract.ContractID == contractId)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetDeliveryDateByContractIdAsync: Contract not found for contract ID: " + contractId);
 
             TrackedOrder? trackedOrder = await this.dbContext.TrackedOrders
-                .Where(to => to.OrderID == contract.OrderID)
+                .Where(trackedOrder => trackedOrder.OrderID == contract.OrderID)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetDeliveryDateByContractIdAsync: Tracked order not found for order ID: " + contract.OrderID);
 
             return trackedOrder.EstimatedDeliveryDate.ToDateTime(TimeOnly.MinValue);
@@ -358,8 +358,8 @@ namespace Server.Repository
         public async Task<byte[]> GetPdfByContractIdAsync(long contractId)
         {
             int pdfId = await this.dbContext.PDFs
-                .Where(p => p.ContractID == contractId)
-                .Select(p => p.PdfID)
+                .Where(pdf => pdf.ContractID == contractId)
+                .Select(pdf => pdf.PdfID)
                 .FirstOrDefaultAsync();
 
             if (pdfId == 0) // int cannot be null, so it will be 0 if not found
@@ -368,8 +368,8 @@ namespace Server.Repository
             }
 
             return await this.dbContext.PDFs
-                .Where(p => p.PdfID == pdfId)
-                .Select(p => p.File)
+                .Where(pdf => pdf.PdfID == pdfId)
+                .Select(pdf => pdf.File)
                 .FirstOrDefaultAsync() ?? throw new Exception("GetPdfByContractIdAsync: PDF file not found for PDF ID: " + pdfId);
         }
     }

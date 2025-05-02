@@ -37,11 +37,11 @@ namespace Server.Repository
             Buyer buyer = await this.dbContext.Buyers.FindAsync(buyerId)
                                 ?? throw new Exception("LoadBuyerInfo: Buyer not found");
 
-            int billingAddressId = await this.dbContext.Buyers.Where(b => b.Id == buyerId)
-                                .Select(b => EF.Property<int>(b, "BillingAddressId"))
+            int billingAddressId = await this.dbContext.Buyers.Where(buyer => buyer.Id == buyerId)
+                                .Select(buyer => EF.Property<int>(buyer, "BillingAddressId"))
                                 .FirstOrDefaultAsync();
-            int shippingAddressId = await this.dbContext.Buyers.Where(b => b.Id == buyerId)
-                                .Select(b => EF.Property<int>(b, "ShippingAddressId"))
+            int shippingAddressId = await this.dbContext.Buyers.Where(buyer => buyer.Id == buyerId)
+                                .Select(buyer => EF.Property<int>(buyer, "ShippingAddressId"))
                                 .FirstOrDefaultAsync();
 
             User user = await this.dbContext.Users.FindAsync(buyerId)
@@ -84,7 +84,7 @@ namespace Server.Repository
             // --- Address Handling ---
 
             // 1. Handle Billing Address: Check if it's already tracked locally
-            var trackedBillingAddress = this.dbContext.Set<Address>().Local.FirstOrDefault(a => a.Id == buyerEntity.BillingAddress.Id && a.Id != 0);
+            var trackedBillingAddress = this.dbContext.Set<Address>().Local.FirstOrDefault(address => address.Id == buyerEntity.BillingAddress.Id && address.Id != 0);
             if (trackedBillingAddress != null)
             {
                 // If tracked, copy updated values from the incoming entity to the tracked entity
@@ -110,7 +110,7 @@ namespace Server.Repository
             else
             {
                 // If using a different shipping address, handle its tracking status
-                var trackedShippingAddress = this.dbContext.Set<Address>().Local.FirstOrDefault(a => a.Id == buyerEntity.ShippingAddress.Id && a.Id != 0);
+                var trackedShippingAddress = this.dbContext.Set<Address>().Local.FirstOrDefault(address => address.Id == buyerEntity.ShippingAddress.Id && address.Id != 0);
                 if (trackedShippingAddress != null)
                 {
                     this.dbContext.Entry(trackedShippingAddress).CurrentValues.SetValues(buyerEntity.ShippingAddress);
@@ -137,7 +137,7 @@ namespace Server.Repository
         /// <inheritdoc/>
         public async Task<BuyerWishlist> GetWishlist(int buyerId)
         {
-            List<BuyerWishlistItemsEntity> buyerWishlistItems = await this.dbContext.BuyersWishlistItems.Where(item => item.BuyerId == buyerId).ToListAsync();
+            List<BuyerWishlistItemsEntity> buyerWishlistItems = await this.dbContext.BuyersWishlistItems.Where(wishlistItem => wishlistItem.BuyerId == buyerId).ToListAsync();
             BuyerWishlist buyerWishlist = new BuyerWishlist();
             foreach (BuyerWishlistItemsEntity item in buyerWishlistItems)
             {
@@ -151,7 +151,7 @@ namespace Server.Repository
         public async Task<List<BuyerLinkage>> GetBuyerLinkages(int buyerId)
         {
             List<BuyerLinkageEntity> buyerLinkagesEntities = await this.dbContext.BuyerLinkages
-                .Where(linkage => linkage.RequestingBuyerId == buyerId || linkage.ReceivingBuyerId == buyerId).ToListAsync();
+                .Where(linkageEntity => linkageEntity.RequestingBuyerId == buyerId || linkageEntity.ReceivingBuyerId == buyerId).ToListAsync();
             List<BuyerLinkage> buyerLinkages = new List<BuyerLinkage>();
             foreach (BuyerLinkageEntity linkageEntity in buyerLinkagesEntities)
             {
@@ -210,7 +210,7 @@ namespace Server.Repository
         public async Task<List<Buyer>> FindBuyersWithShippingAddress(Address shippingAddress)
         {
             return await this.dbContext.Buyers
-                .Where(b => b.ShippingAddress.Id == shippingAddress.Id)
+                .Where(buyer => buyer.ShippingAddress.Id == shippingAddress.Id)
                 .ToListAsync();
         }
 
@@ -225,8 +225,8 @@ namespace Server.Repository
         public async Task<List<int>> GetFollowingUsersIds(int buyerId)
         {
             return await this.dbContext.Followings
-                .Where(f => f.BuyerId == buyerId)
-                .Select(f => f.SellerId)
+                .Where(following => following.BuyerId == buyerId)
+                .Select(following => following.SellerId)
                 .ToListAsync();
         }
 
@@ -239,7 +239,7 @@ namespace Server.Repository
             }
 
             return await this.dbContext.Sellers
-                .Where(s => followingUsersIds.Contains(s.Id))
+                .Where(seller => followingUsersIds.Contains(seller.Id))
                 .ToListAsync();
         }
 
@@ -252,19 +252,19 @@ namespace Server.Repository
         /// <inheritdoc/>
         public async Task<List<Product>> GetProductsFromSeller(int sellerId)
         {
-            return await this.dbContext.Products.Where(p => p.SellerId == sellerId).ToListAsync();
+            return await this.dbContext.Products.Where(product => product.SellerId == sellerId).ToListAsync();
         }
 
         /// <inheritdoc/>
         public async Task<bool> CheckIfBuyerExists(int buyerId)
         {
-            return await this.dbContext.Buyers.AnyAsync(b => b.Id == buyerId);
+            return await this.dbContext.Buyers.AnyAsync(buyer => buyer.Id == buyerId);
         }
 
         /// <inheritdoc/>
         public async Task<bool> IsFollowing(int buyerId, int sellerId)
         {
-            return await this.dbContext.Followings.AnyAsync(f => f.BuyerId == buyerId && f.SellerId == sellerId);
+            return await this.dbContext.Followings.AnyAsync(following => following.BuyerId == buyerId && following.SellerId == sellerId);
         }
 
         /// <inheritdoc/>
@@ -351,26 +351,5 @@ namespace Server.Repository
                 Status = buyerLinkageStatus,
             };
         }
-
-        /// <summary>
-        /// Persists an address to the database.
-        /// </summary>
-        /// <param name="address">The address to persist.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        // private async Task PersistAddress(Address address)
-        // {
-        //     if (this.dbContext.Addresses.Any(a => a.Id == address.Id))
-        //     {
-        //         // if the address is already in the database, update it
-        //         this.dbContext.Addresses.Update(address);
-        //     }
-        //     else
-        //     {
-        //         // if the address is not in the database, add it
-        //         this.dbContext.Addresses.Add(address);
-        //     }
-
-        //     await this.dbContext.SaveChangesAsync();
-        // }
     }
 }

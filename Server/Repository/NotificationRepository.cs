@@ -41,7 +41,7 @@ namespace Server.Repository
             List<Notification> notifications = new List<Notification>();
 
             // Get all OrderNotifications for the recipient
-            List<OrderNotificationEntity> notificationsDb = await this.dbContext.OrderNotifications.Where(n => n.RecipientID == recipientId).ToListAsync();
+            List<OrderNotificationEntity> notificationsDb = await this.dbContext.OrderNotifications.Where(notification => notification.RecipientID == recipientId).ToListAsync();
 
             // Convert each OrderNotification to a Notification
             foreach (OrderNotificationEntity notification in notificationsDb)

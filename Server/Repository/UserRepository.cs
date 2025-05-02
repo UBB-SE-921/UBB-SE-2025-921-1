@@ -64,7 +64,7 @@ namespace Server.Repository
         /// <returns>A <see cref="Task{User?}"/> representing the result of the asynchronous operation, with a result of the user if found, or null if not found.</returns>
         public async Task<User?> GetUserByUsername(string username)
         {
-            return await this.dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+            return await this.dbContext.Users.FirstOrDefaultAsync(user => user.Username == username);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Server.Repository
         /// <returns>A <see cref="Task{User?}"/> representing the result of the asynchronous operation. The task result contains the user if found or null if no user is found with the specified email address.</returns>
         public async Task<User?> GetUserByEmail(string email)
         {
-            return await this.dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await this.dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Server.Repository
         /// </returns>
         public async Task<bool> EmailExists(string email)
         {
-            return await this.dbContext.Users.AnyAsync(u => u.Email == email);
+            return await this.dbContext.Users.AnyAsync(user => user.Email == email);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Server.Repository
         /// </returns>
         public async Task<bool> UsernameExists(string username)
         {
-            return await this.dbContext.Users.AnyAsync(u => u.Username == username);
+            return await this.dbContext.Users.AnyAsync(user => user.Username == username);
         }
 
         /// <summary>
@@ -145,8 +145,8 @@ namespace Server.Repository
         public async Task<int> GetFailedLoginsCountByUserId(int userId)
         {
             return await this.dbContext.Users
-                .Where(u => u.UserId == userId)
-                .Select(u => u.FailedLogins)
+                .Where(user => user.UserId == userId)
+                .Select(user => user.FailedLogins)
                 .FirstOrDefaultAsync();
         }
 
@@ -159,7 +159,7 @@ namespace Server.Repository
         /// </returns>
         public async Task UpdateUserPhoneNumber(User user)
         {
-            User? foundUser = await this.dbContext.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId);
+            User? foundUser = await this.dbContext.Users.FirstOrDefaultAsync(foundUser => foundUser.UserId == user.UserId);
             if (foundUser != null)
             {
                 foundUser.PhoneNumber = user.PhoneNumber;
@@ -176,7 +176,7 @@ namespace Server.Repository
         /// </returns>
         public async Task LoadUserPhoneNumberAndEmailById(User user)
         {
-            User? foundUser = await this.dbContext.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId);
+            User? foundUser = await this.dbContext.Users.FirstOrDefaultAsync(foundUser => foundUser.UserId == user.UserId);
             if (foundUser != null)
             {
                 user.PhoneNumber = foundUser.PhoneNumber;

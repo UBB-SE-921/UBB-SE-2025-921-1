@@ -58,12 +58,12 @@ namespace Server.Repository
         public async Task<List<string>> GetNotifications(int sellerID, int maxNotifications)
         {
             List<SellerNotificationEntity> sellerNotificationsDb = await this.dbContext.SellerNotifications
-                .Where(sn => sn.SellerID == sellerID)
-                .OrderByDescending(sn => sn.NotificationID)
+                .Where(sellerNotification => sellerNotification.SellerID == sellerID)
+                .OrderByDescending(sellerNotification => sellerNotification.NotificationID)
                 .Take(maxNotifications)
                 .ToListAsync();
 
-            return sellerNotificationsDb.Select(sn => sn.NotificationMessage).ToList();
+            return sellerNotificationsDb.Select(sellerNotification => sellerNotification.NotificationMessage).ToList();
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Server.Repository
         /// <returns>A task that represents the asynchronous operation. The task result contains a list of products.</returns>
         public async Task<List<Product>> GetProducts(int sellerID)
         {
-            return await this.dbContext.Products.Where(p => p.SellerId == sellerID).ToListAsync();
+            return await this.dbContext.Products.Where(product => product.SellerId == sellerID).ToListAsync();
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Server.Repository
         /// <returns>A task that represents the asynchronous operation. The task result contains a list of reviews.</returns>
         public async Task<List<Review>> GetReviews(int sellerId)
         {
-            return await this.dbContext.Reviews.Where(r => r.SellerId == sellerId).ToListAsync();
+            return await this.dbContext.Reviews.Where(review => review.SellerId == sellerId).ToListAsync();
         }
 
         /// <summary>
@@ -131,8 +131,8 @@ namespace Server.Repository
         public async Task<int> GetLastFollowerCount(int sellerId)
         {
             SellerNotificationEntity? sellerNotificationDb = await this.dbContext.SellerNotifications
-                .Where(sn => sn.SellerID == sellerId)
-                .OrderByDescending(sn => sn.NotificationID)
+                .Where(sellerNotification => sellerNotification.SellerID == sellerId)
+                .OrderByDescending(sellerNotification => sellerNotification.NotificationID)
                 .FirstOrDefaultAsync(); // equivalent to SELECT TOP 1 ... FROM ... ORDER BY ... DESC
 
             return sellerNotificationDb?.NotificationFollowerCount ?? 0;
