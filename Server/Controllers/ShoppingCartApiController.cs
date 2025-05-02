@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SharedClassLibrary.Repository;
+using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Domain;
 
 namespace Server.Controllers

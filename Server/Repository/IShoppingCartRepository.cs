@@ -6,7 +6,7 @@
 
 using SharedClassLibrary.Domain;
 
-namespace SharedClassLibrary.Repository
+namespace SharedClassLibrary.IRepository
 {
     public interface IShoppingCartRepository
     {
