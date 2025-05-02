@@ -14,6 +14,9 @@ namespace Server.Repository
     using SharedClassLibrary.IRepository;
     using SharedClassLibrary.Shared;
 
+    /// <summary>
+    /// Represents a repository for managing products in the database.
+    /// </summary>
     public class ProductRepository : IProductRepository
     {
         private readonly MarketPlaceDbContext dbContext;
