@@ -13,7 +13,7 @@ namespace SharedClassLibrary.IRepository
         Task AddProductToCartAsync(int buyerId, int productId, int quantity);
         Task ClearCartAsync(int buyerId);
         Task<int> GetCartItemCountAsync(int buyerId);
-        Task<Dictionary<Product, int>> GetCartItemsAsync(int buyerId);
+        Task<List<Product>> GetCartItemsAsync(int buyerId);
         Task<int> GetProductQuantityAsync(int buyerId, int productId);
         Task<bool> IsProductInCartAsync(int buyerId, int productId);
         Task RemoveProductFromCartAsync(int buyerId, int productId);

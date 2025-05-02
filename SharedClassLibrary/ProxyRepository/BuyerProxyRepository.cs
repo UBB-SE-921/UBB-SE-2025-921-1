@@ -37,7 +37,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<bool> CheckIfBuyerExists(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/exists");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(CheckIfBuyerExists), response);
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
@@ -45,7 +45,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task CreateBuyer(Buyer buyerEntity)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/create", buyerEntity);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(CreateBuyer), response);
         }
 
         /// <inheritdoc />
@@ -57,7 +57,7 @@ namespace SharedClassLibrary.ProxyRepository
             string queryString = query.ToString() ?? string.Empty;
 
             var response = await this.httpClient.PostAsync($"{ApiBaseRoute}/linkages/create?{queryString}", null); // No body needed for this POST
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(CreateLinkageRequest), response);
         }
 
         /// <inheritdoc />
@@ -76,7 +76,7 @@ namespace SharedClassLibrary.ProxyRepository
                 return false;
             }
 
-            response.EnsureSuccessStatusCode(); // Throws for other errors
+            await this.ThrowOnError(nameof(DeleteLinkageRequest), response);
             return true; // Assume success if EnsureSuccessStatusCode doesn't throw
         }
 
@@ -84,7 +84,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<Buyer>> FindBuyersWithShippingAddress(Address shippingAddress)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/find-by-shipping-address", shippingAddress);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(FindBuyersWithShippingAddress), response);
             var buyers = await response.Content.ReadFromJsonAsync<List<Buyer>>();
             return buyers ?? new List<Buyer>();
         }
@@ -93,14 +93,14 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task FollowSeller(int buyerId, int sellerId)
         {
             var response = await this.httpClient.PostAsync($"{ApiBaseRoute}/{buyerId}/follow/{sellerId}", null); // No body
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(FollowSeller), response);
         }
 
         /// <inheritdoc />
         public async Task<List<Seller>> GetAllSellers()
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/sellers/all");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetAllSellers), response);
             var sellers = await response.Content.ReadFromJsonAsync<List<Seller>>();
             return sellers ?? new List<Seller>();
         }
@@ -109,7 +109,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<BuyerLinkage>> GetBuyerLinkages(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/linkages");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetBuyerLinkages), response);
             var linkages = await response.Content.ReadFromJsonAsync<List<BuyerLinkage>>();
             return linkages ?? new List<BuyerLinkage>();
         }
@@ -123,7 +123,7 @@ namespace SharedClassLibrary.ProxyRepository
             }
 
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/followed-sellers", followingUsersIds);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetFollowedSellers), response);
             var sellers = await response.Content.ReadFromJsonAsync<List<Seller>>();
             return sellers ?? new List<Seller>();
         }
@@ -132,7 +132,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<int>> GetFollowingUsersIds(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/following/ids");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetFollowingUsersIds), response);
             var ids = await response.Content.ReadFromJsonAsync<List<int>>();
             return ids ?? new List<int>();
         }
@@ -141,7 +141,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<Product>> GetProductsFromSeller(int sellerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/sellers/{sellerId}/products");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetProductsFromSeller), response);
             var products = await response.Content.ReadFromJsonAsync<List<Product>>();
             return products ?? new List<Product>();
         }
@@ -150,7 +150,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<int> GetTotalCount()
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/count");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetTotalCount), response);
             return await response.Content.ReadFromJsonAsync<int>();
         }
 
@@ -158,7 +158,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<BuyerWishlist> GetWishlist(int buyerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/wishlist");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetWishlist), response);
             var wishlist = await response.Content.ReadFromJsonAsync<BuyerWishlist>();
             return wishlist ?? new BuyerWishlist(); // Return empty wishlist if null
         }
@@ -167,7 +167,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<bool> IsFollowing(int buyerId, int sellerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/following/check/{sellerId}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(IsFollowing), response);
             return await response.Content.ReadFromJsonAsync<bool>();
         }
 
@@ -176,7 +176,7 @@ namespace SharedClassLibrary.ProxyRepository
         {
             int buyerId = buyerEntity.Id;
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{buyerId}/info");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(LoadBuyerInfo), response);
             var loadedBuyer = await response.Content.ReadFromJsonAsync<Buyer>();
             if (loadedBuyer == null)
             {
@@ -200,28 +200,28 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task RemoveWishilistItem(int buyerId, int productId)
         {
             var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{buyerId}/wishlist/remove/{productId}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(RemoveWishilistItem), response);
         }
 
         /// <inheritdoc />
         public async Task SaveInfo(Buyer buyerEntity)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/save", buyerEntity);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(SaveInfo), response);
         }
 
         /// <inheritdoc />
         public async Task UnfollowSeller(int buyerId, int sellerId)
         {
             var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{buyerId}/unfollow/{sellerId}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UnfollowSeller), response);
         }
 
         /// <inheritdoc />
         public async Task UpdateAfterPurchase(Buyer buyerEntity)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update-after-purchase", buyerEntity);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateAfterPurchase), response);
         }
 
         /// <inheritdoc />
@@ -233,7 +233,20 @@ namespace SharedClassLibrary.ProxyRepository
             string queryString = query.ToString() ?? string.Empty;
 
             var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/linkages/update?{queryString}", null); // No body needed for this PUT
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateLinkageRequest), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

@@ -32,7 +32,7 @@ namespace MarketPlace924.View
         public ShoppingCartView()
         {
             this.InitializeComponent();
-            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: 2);
+            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: UserSession.CurrentUserId ?? 0);
         }
     }
 }

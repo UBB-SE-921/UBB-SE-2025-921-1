@@ -43,21 +43,21 @@ namespace SharedClassLibrary.ProxyRepository
             string queryString = query.ToString() ?? string.Empty;
 
             var response = await this.httpClient.PostAsync($"{ApiBaseRoute}/{sellerId}/notifications/add?{queryString}", null); // No body
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(AddNewFollowerNotification), response);
         }
 
         /// <inheritdoc />
         public async Task AddSeller(Seller seller)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/add", seller);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(AddSeller), response);
         }
 
         /// <inheritdoc />
         public async Task<int> GetLastFollowerCount(int sellerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/last-follower-count");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetLastFollowerCount), response);
             return await response.Content.ReadFromJsonAsync<int>();
         }
 
@@ -69,7 +69,7 @@ namespace SharedClassLibrary.ProxyRepository
             string queryString = query.ToString() ?? string.Empty;
 
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/notifications?{queryString}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetNotifications), response);
             var notifications = await response.Content.ReadFromJsonAsync<List<string>>();
             return notifications ?? new List<string>();
         }
@@ -78,7 +78,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<Product>> GetProducts(int sellerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/products");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetProducts), response);
             var products = await response.Content.ReadFromJsonAsync<List<Product>>();
             return products ?? new List<Product>();
         }
@@ -87,7 +87,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<Review>> GetReviews(int sellerId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}/reviews");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetReviews), response);
             var reviews = await response.Content.ReadFromJsonAsync<List<Review>>();
             return reviews ?? new List<Review>();
         }
@@ -103,7 +103,7 @@ namespace SharedClassLibrary.ProxyRepository
                 return new Seller(user);
             }
 
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetSellerInfo), response);
             var seller = await response.Content.ReadFromJsonAsync<Seller>();
 
             if (seller == null)
@@ -118,7 +118,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task UpdateSeller(Seller seller)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/update", seller);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateSeller), response);
         }
 
         /// <inheritdoc />
@@ -129,7 +129,20 @@ namespace SharedClassLibrary.ProxyRepository
             string queryString = query.ToString() ?? string.Empty;
 
             var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/{sellerId}/trust-score?{queryString}", null); // No body
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateTrustScore), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

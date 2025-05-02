@@ -35,7 +35,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<int> AddOrderCheckpointAsync(OrderCheckpoint checkpoint)
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/checkpoints", checkpoint);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(AddOrderCheckpointAsync), response);
             int createdCheckpoint = await response.Content.ReadFromJsonAsync<int>();
             return createdCheckpoint;
         }
@@ -44,7 +44,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<int> AddTrackedOrderAsync(TrackedOrder order)
         {
             var response = await this.httpClient.PostAsJsonAsync(ApiBaseRoute, order);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(AddTrackedOrderAsync), response);
             int createdOrder = await response.Content.ReadFromJsonAsync<int>();
             return createdOrder;
         }
@@ -67,7 +67,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<OrderCheckpoint>> GetAllOrderCheckpointsAsync(int trackedOrderID)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{trackedOrderID}/checkpoints");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetAllOrderCheckpointsAsync), response);
             var checkpoints = await response.Content.ReadFromJsonAsync<List<OrderCheckpoint>>();
             return checkpoints ?? new List<OrderCheckpoint>();
         }
@@ -76,7 +76,7 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<List<TrackedOrder>> GetAllTrackedOrdersAsync()
         {
             var response = await this.httpClient.GetAsync(ApiBaseRoute);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetAllTrackedOrdersAsync), response);
             var orders = await response.Content.ReadFromJsonAsync<List<TrackedOrder>>();
             return orders ?? new List<TrackedOrder>();
         }
@@ -91,7 +91,7 @@ namespace SharedClassLibrary.ProxyRepository
                 throw new Exception($"No OrderCheckpoint with id: {checkpointID}");
             }
 
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetOrderCheckpointByIdAsync), response);
             var checkpoint = await response.Content.ReadFromJsonAsync<OrderCheckpoint>();
             return checkpoint ?? throw new Exception($"Failed to deserialize OrderCheckpoint with id: {checkpointID}");
         }
@@ -106,7 +106,7 @@ namespace SharedClassLibrary.ProxyRepository
                 throw new Exception($"No TrackedOrder with id: {trackOrderID}");
             }
 
-            response.EnsureSuccessStatusCode(); // Handle other errors
+            await this.ThrowOnError(nameof(GetTrackedOrderByIdAsync), response);
             var order = await response.Content.ReadFromJsonAsync<TrackedOrder>();
             return order ?? throw new Exception($"Failed to deserialize TrackedOrder with id: {trackOrderID}");
         }
@@ -124,7 +124,7 @@ namespace SharedClassLibrary.ProxyRepository
             };
 
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/checkpoints/{checkpointID}", updateRequest);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateOrderCheckpointAsync), response);
         }
 
         /// <inheritdoc />
@@ -138,7 +138,20 @@ namespace SharedClassLibrary.ProxyRepository
             };
 
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{trackedOrderID}", updateRequest);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateTrackedOrderAsync), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

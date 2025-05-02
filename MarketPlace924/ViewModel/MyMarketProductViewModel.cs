@@ -28,7 +28,7 @@ namespace MarketPlace924.ViewModel
             this.Product = product;
             this.AddToCartCommand = new RelayCommand<Product>(async (product) =>
             {
-                var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: 2);
+                var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: UserSession.CurrentUserId ?? 0);
                 await shoppingCartViewModel.AddToCartAsync(product, 1);
             });
         }

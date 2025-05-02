@@ -227,6 +227,7 @@ namespace MarketPlace924.ViewModel
                 this.failedAttempts = 0;
                 if (user != null)
                 {
+                    UserSession.CurrentUserId = user.UserId;
                     await this.UserService.UpdateUserFailedLoginsCount(user, 0);
                     this.IsLoginEnabled = true;
                     await this.successCallback.OnLoginSuccess(user);

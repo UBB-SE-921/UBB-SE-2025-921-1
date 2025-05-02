@@ -32,14 +32,14 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task DeleteCardAsync(string cardNumber)
         {
             var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/{cardNumber}");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(DeleteCardAsync), response);
         }
 
         /// <inheritdoc />
         public async Task<double> GetCardBalanceAsync(string cardNumber)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{cardNumber}/balance");
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(GetCardBalanceAsync), response);
             var balance = await response.Content.ReadFromJsonAsync<double>();
             return balance;
         }
@@ -48,7 +48,20 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task UpdateCardBalanceAsync(string cardNumber, double balance)
         {
             var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/{cardNumber}/balance", balance);
-            response.EnsureSuccessStatusCode();
+            await this.ThrowOnError(nameof(UpdateCardBalanceAsync), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }

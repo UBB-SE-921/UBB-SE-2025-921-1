@@ -48,7 +48,7 @@ namespace MarketPlace924.ViewModel
         public ObservableCollection<Product> ProductList { get; set; }
         public List<Product> Products;
 
-        private Dictionary<Product, int> cartItems;
+        private List<Product> cartItems;
         private double cartTotal;
         private int buyerId;
 
@@ -78,8 +78,8 @@ namespace MarketPlace924.ViewModel
         /// <summary>
         /// Sets the cart items for checkout and converts them to Products.
         /// </summary>
-        /// <param name="cartItems">The dictionary of products and quantities.</param>
-        public void SetCartItems(Dictionary<Product, int> cartItems)
+        /// <param name="cartItems">The list of products and quantities.</param>
+        public void SetCartItems(List<Product> cartItems)
         {
             this.cartItems = cartItems;
 
@@ -88,7 +88,7 @@ namespace MarketPlace924.ViewModel
 
             foreach (var item in cartItems)
             {
-                this.Products.Add(item.Key);
+                this.Products.Add(item);
             }
 
             this.ProductList = new ObservableCollection<Product>(this.Products);
@@ -349,8 +349,8 @@ namespace MarketPlace924.ViewModel
                         {
                             try
                             {
-                                var product = item.Key;
-                                var quantity = item.Value;
+                                var product = item;
+                                var quantity = item.Stock;
 
                                 string productTypeStr = product.ProductType ?? "new"; // Default to "new" if not specified
                                 int productTypeInt;

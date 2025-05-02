@@ -41,14 +41,14 @@ namespace SharedClassLibrary.ProxyRepository
             }
 
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", notification);
-            response.EnsureSuccessStatusCode(); // Throw on error status.
+            await this.ThrowOnError(nameof(AddNotification), response);
         }
 
         /// <inheritdoc />
         public async Task<List<Notification>> GetNotificationsForUser(int recipientId)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{recipientId}");
-            response.EnsureSuccessStatusCode(); // Throw on error status.
+            await this.ThrowOnError(nameof(GetNotificationsForUser), response);
             var notifications = await response.Content.ReadFromJsonAsync<List<Notification>>();
             return notifications ?? new List<Notification>();
         }
@@ -57,7 +57,20 @@ namespace SharedClassLibrary.ProxyRepository
         public async void MarkAsRead(int notificationId)
         {
             var response = await this.httpClient.PutAsync($"{ApiBaseRoute}/{notificationId}/mark-read", null); // No body needed for this PUT.
-            response.EnsureSuccessStatusCode(); // Throw on error status.
+            await this.ThrowOnError(nameof(MarkAsRead), response);
+        }
+
+        private async Task ThrowOnError(string methodName, HttpResponseMessage response)
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(errorMessage))
+                {
+                    errorMessage = response.ReasonPhrase;
+                }
+                throw new Exception($"{methodName}: {errorMessage}");
+            }
         }
     }
 }
