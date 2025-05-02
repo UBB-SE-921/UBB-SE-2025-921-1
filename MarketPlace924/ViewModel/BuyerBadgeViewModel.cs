@@ -7,7 +7,7 @@ namespace MarketPlace924.ViewModel
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
 
     /// <summary>
     /// View model class for managing buyer badge data and notifications.

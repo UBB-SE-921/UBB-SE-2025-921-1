@@ -28,17 +28,17 @@ namespace Server.Repository
         }
 
         /// <inheritdoc/>
-        public async Task<float> GetWalletBalanceAsync(int userId)
+        public async Task<double> GetWalletBalanceAsync(int userId)
         {
-            DummyWalletEntity wallet = await this.dbContext.DummyWallets.FirstOrDefaultAsync(dw => dw.BuyerId == userId)
+            DummyWalletEntity wallet = await this.dbContext.DummyWallets.FirstOrDefaultAsync(dummyWallet => dummyWallet.BuyerId == userId)
                                     ?? throw new Exception($"GetWalletBalanceAsync: Wallet not found for buyer with ID: {userId}");
             return wallet.Balance;
         }
 
         /// <inheritdoc/>
-        public async Task UpdateWalletBalance(int userId, float newBalance)
+        public async Task UpdateWalletBalance(int userId, double newBalance)
         {
-            DummyWalletEntity wallet = await this.dbContext.DummyWallets.FirstOrDefaultAsync(dw => dw.BuyerId == userId)
+            DummyWalletEntity wallet = await this.dbContext.DummyWallets.FirstOrDefaultAsync(dummyWallet => dummyWallet.BuyerId == userId)
                                     ?? throw new Exception($"UpdateWalletBalance: Wallet not found for buyer with ID: {userId}");
 
             wallet.Balance = newBalance;

@@ -12,11 +12,12 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using MarketPlace924.ViewModel; 
-using MarketPlace924.Repository;
-using MarketPlace924.Service;
+using MarketPlace924.ViewModel;
+using SharedClassLibrary.ProxyRepository;
+using SharedClassLibrary.Service;
 
-namespace MarketPlace924.View { 
+namespace MarketPlace924.View
+{
     /// <summary>
     /// A page that displays the shopping cart.
     /// </summary>
@@ -27,7 +28,7 @@ namespace MarketPlace924.View {
         public MyCartView()
         {
             this.InitializeComponent();
-            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: 2);
+            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: UserSession.CurrentUserId ?? 0);
             this.DataContext = this.ViewModel;
 
             // Load cart items when the page is initialized
@@ -97,7 +98,6 @@ namespace MarketPlace924.View {
                 _ = dialog.ShowAsync();
             }
         }
-
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

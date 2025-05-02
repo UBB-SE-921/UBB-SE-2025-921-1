@@ -6,10 +6,10 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Repository;
+using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Shared;
-using MarketPlace924.Repository;
-using MarketPlace924.Service;
+using SharedClassLibrary.ProxyRepository;
+using SharedClassLibrary.Service;
 
 namespace MarketPlace924.ViewModel
 {

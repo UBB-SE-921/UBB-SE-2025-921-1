@@ -382,11 +382,11 @@ namespace Server.Controllers
                 var buyer = new Buyer { User = user };
                 await this.buyerRepository.LoadBuyerInfo(buyer);
 
-                // Check if buyer info was actually loaded
-                if (string.IsNullOrEmpty(buyer.FirstName))
-                {
-                    return this.NotFound($"Buyer info not found for ID: {buyerId}");
-                }
+                //// Check if buyer info was actually loaded
+                //if (string.IsNullOrEmpty(buyer.FirstName))
+                //{
+                //    return this.NotFound($"Buyer info not found for ID: {buyerId}");
+                //}
 
                 return this.Ok(buyer);
             }

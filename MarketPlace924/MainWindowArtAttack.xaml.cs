@@ -8,8 +8,8 @@ using MarketPlace924.View;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using QuestPDF.Infrastructure;
-using MarketPlace924.Repository; // Add this using directive
-using MarketPlace924.Service; // Add this using directive
+using SharedClassLibrary.ProxyRepository; // Add this using directive
+using SharedClassLibrary.Service; // Add this using directive
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

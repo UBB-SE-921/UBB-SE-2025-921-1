@@ -7,10 +7,10 @@ namespace MarketPlace924.ViewModel
     using System;
     using System.ComponentModel;
     using System.Windows.Input;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
     using CommunityToolkit.Mvvm.Input;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Repository;  
+    using SharedClassLibrary.ProxyRepository;
     /// <summary>
     /// View model class for managing buyer wishlist item data and operations.
     /// </summary>
@@ -31,7 +31,7 @@ namespace MarketPlace924.ViewModel
         {
             this.AddToCartCommand = new RelayCommand<Product>(async (product) =>
             {
-                var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: 2);
+                var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: UserSession.CurrentUserId ?? 0);
                 await shoppingCartViewModel.AddToCartAsync(product, 1);
             });
         }

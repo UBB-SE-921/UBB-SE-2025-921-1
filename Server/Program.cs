@@ -1,6 +1,6 @@
 using Server.DBConnection;
 using Microsoft.EntityFrameworkCore;
-using Server.Helper;
+using SharedClassLibrary.Helper;
 using Server.Repository;
 using SharedClassLibrary.IRepository;
 
@@ -8,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = AppConfig.GetConnectionString("MyLocalDb");
 
 // Add services to the container.
-builder.Services.AddDbContext<MarketPlaceDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
+    options.UseSqlServer(connectionString)
+        .EnableSensitiveDataLogging()
+);
 
 // Register all repositories
 builder.Services.AddScoped<DatabaseConnection>();
@@ -16,7 +19,7 @@ builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
 builder.Services.AddScoped<IContractRenewalRepository, ContractRenewalRepository>();
 builder.Services.AddScoped<IContractRepository, ContractRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-/// builder.Services.AddScoped<IOrderHistoryRepository, OrderHistoryRepository>(); // NOT IMPLEMENTED YET, will not implement because DummyProduct needs refactoring (not my job), request my help after this was done please -Alex
+/// builder.Services.AddScoped<IOrderHistoryRepository, OrderHistoryRepository>(); // NOT IMPLEMENTED YET, will not implement because Product needs refactoring (not my job), request my help after this was done please -Alex
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 builder.Services.AddScoped<IPDFRepository, PDFRepository>();
@@ -26,7 +29,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWaitListRepository, WaitListRepository>();
 builder.Services.AddScoped<IDummyCardRepository, DummyCardRepository>();
 builder.Services.AddScoped<IDummyWalletRepository, DummyWalletRepository>();
-/// builder.Services.AddScoped<IDummyProductRepository, DummyProductRepository>(); // NOT IMPLEMENTED YET, still has DummyProduct but I think it is manageable, only minor modifications need to be made -Alex
+/// builder.Services.AddScoped<IProductRepository, ProductRepository>(); // NOT IMPLEMENTED YET, still has Product but I think it is manageable, only minor modifications need to be made -Alex
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
 builder.Services.AddControllers();
 

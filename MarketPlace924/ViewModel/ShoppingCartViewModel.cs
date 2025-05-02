@@ -1,17 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using System;
-using MarketPlace924.Service;
-using MarketPlace924.ViewModel;
-using System.Windows.Input; 
-using CommunityToolkit.Mvvm.Input; 
 using System.Linq;
 using System.Collections.Generic;
-
+using System;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
+using SharedClassLibrary.Domain;
+using SharedClassLibrary.Service;
+using MarketPlace924.ViewModel;
 namespace MarketPlace924.ViewModel
-{ 
-
+{
     public class ShoppingCartViewModel : IShoppingCartViewModel
     {
         private readonly IShoppingCartService shoppingCartService;
@@ -45,20 +43,22 @@ namespace MarketPlace924.ViewModel
             {
                 total += item.TotalPrice;
             }
+
             return total;
         }
 
         /// <summary>
         /// Gets all the products in the cart with their quantities for checkout.
         /// </summary>
-        /// <returns>A dictionary containing products and their quantities.</returns>
-        public Dictionary<Product, int> GetProductsForCheckout()
+        /// <returns>A list containing products and their quantities.</returns>
+        public List<Product> GetProductsForCheckout()
         {
-            var products = new Dictionary<Product, int>();
+            var products = new List<Product>();
             foreach (var item in this.CartItems)
             {
-                products.Add(item.Product, item.Quantity);
+                products.Add(item.Product);
             }
+
             return products;
         }
 
@@ -70,10 +70,9 @@ namespace MarketPlace924.ViewModel
             foreach (var item in cartItemsFromDb)
             {
                 this.CartItems.Add(new CartItemViewModel(
-                    item.Key,
-                    item.Value,
-                    RemoveFromCartCommand
-                ));
+                    item,
+                    item.Stock,
+                    RemoveFromCartCommand));
             }
         }
 

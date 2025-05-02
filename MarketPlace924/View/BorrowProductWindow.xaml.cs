@@ -51,10 +51,10 @@ namespace MarketPlace924
         {
             try
             {
-                var product = await this.waitListViewModel.GetDummyProductByIdAsync(this.currentProductId);
+                var product = await this.waitListViewModel.GetProductByIdAsync(this.currentProductId);
                 if (product != null)
                 {
-                    string sellerName = await this.waitListViewModel.GetSellerNameAsync(product.SellerID);
+                    string sellerName = await this.waitListViewModel.GetSellerNameAsync(product.SellerId);
                     this.DisplayProduct(product, sellerName);
 
                     int currentUserId = this.GetCurrentUserId();
@@ -89,7 +89,7 @@ namespace MarketPlace924
         /// </summary>
         /// <param name="product">The product for which we want to display the details</param>
         /// <param name="sellerName">The name of the seller of that specific product</param>
-        private void DisplayProduct(DummyProduct product, string sellerName)
+        private void DisplayProduct(Product product, string sellerName)
         {
             this.txtProductName.Text = product.Name;
             this.txtPrice.Text = $"Price: ${product.Price}";

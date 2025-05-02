@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using MarketPlace924.Repository;
+using SharedClassLibrary.ProxyRepository;
 using Microsoft.Data.SqlClient;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
-using MarketPlace924.Helper;
+using SharedClassLibrary.Helper;
 
 [ExcludeFromCodeCoverage]
 public class WaitListNotifier

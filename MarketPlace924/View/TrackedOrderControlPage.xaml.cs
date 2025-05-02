@@ -31,29 +31,32 @@ namespace MarketPlace924.View
             {
                 DateTimePickers.Visibility = Visibility.Collapsed;
             }
+
             if (deliveryCalendarDatePicker != null)
             {
                 deliveryCalendarDatePicker.Visibility = Visibility.Collapsed;
             }
+
             if (confirmChangeEstimatedDeliveryDateButton != null)
             {
                 confirmChangeEstimatedDeliveryDateButton.Visibility = Visibility.Collapsed;
             }
+
             if (AddDetails != null)
             {
                 AddDetails.Visibility = Visibility.Collapsed;
             }
+
             if (UpdateDetails != null)
             {
                 UpdateDetails.Visibility = Visibility.Collapsed;
             }
-
         }
 
         /// <summary>
-        /// Shows an error dialog with the specified error message
+        /// Shows an error dialog with the specified error message.
         /// </summary>
-        /// <param name="message">The message to be displayed in the error dialog</param>
+        /// <param name="message">The message to be displayed in the error dialog.</param>
         /// <returns></returns>
         private async Task ShowErrorDialog(string message)
         {
@@ -68,9 +71,9 @@ namespace MarketPlace924.View
         }
 
         /// <summary>
-        /// Shows a success dialog with the specified message
+        /// Shows a success dialog with the specified message.
         /// </summary>
-        /// <param name="message">The message to be shown in the success dialog</param>
+        /// <param name="message">The message to be shown in the success dialog.</param>
         /// <returns></returns>
         private async Task ShowSuccessDialog(string message)
         {

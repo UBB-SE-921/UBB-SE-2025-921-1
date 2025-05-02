@@ -1,5 +1,7 @@
 ﻿namespace MarketPlace924.View
 {
+    using System;
+    using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.Shared;
     using MarketPlace924.ViewModel;
@@ -7,8 +9,6 @@
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Navigation;
-    using System;
-    using System.Threading.Tasks;
     using MarketPlace924.ViewModel;
 
     public sealed partial class BuyerProfileView : Page
@@ -21,7 +21,6 @@
             this.InitializeComponent();
 
             // Initialize contract and contractViewModel
-            
             contractViewModel = new ContractViewModel(Configuration.CONNECTION_STRING);
 
             // Initialize trackedOrderViewModel
@@ -89,6 +88,7 @@
             {
                 return;
             }
+
             if (inputID == -1)
             {
                 await ShowNoTrackedOrderDialogAsync("Please enter an integer!");
@@ -121,6 +121,7 @@
                 }
             }
         }
+
         private void BidProductButton_Clicked(object sender, RoutedEventArgs e)
         {
             BillingInfoWindow billingInfoWindow = new BillingInfoWindow();

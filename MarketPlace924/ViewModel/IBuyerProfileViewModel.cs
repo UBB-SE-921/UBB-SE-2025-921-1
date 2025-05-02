@@ -11,7 +11,7 @@ namespace MarketPlace924.ViewModel
     using System.Text;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
 
     /// <summary>
     /// Interface for managing buyer profile view model operations and linkage updates.
@@ -62,11 +62,6 @@ namespace MarketPlace924.ViewModel
         /// Gets or sets the buyer badge view model.
         /// </summary>
         IBuyerBadgeViewModel? BuyerBadge { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the profile is in creation mode.
-        /// </summary>
-        bool CreationMode { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the shipping address can be edited.

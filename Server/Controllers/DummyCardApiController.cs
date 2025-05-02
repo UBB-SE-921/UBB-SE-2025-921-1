@@ -54,9 +54,9 @@ namespace Server.Controllers
         /// <param name="cardNumber">The card number.</param>
         /// <returns>The card balance.</returns>
         [HttpGet("{cardNumber}/balance")]
-        [ProducesResponseType(typeof(float), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(double), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<float>> GetCardBalance(string cardNumber)
+        public async Task<ActionResult<double>> GetCardBalance(string cardNumber)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace Server.Controllers
         [HttpPut("{cardNumber}/balance")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateCardBalance(string cardNumber, [FromBody] float balance)
+        public async Task<IActionResult> UpdateCardBalance(string cardNumber, [FromBody] double balance)
         {
             try
             {

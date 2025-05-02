@@ -4,29 +4,32 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace MarketPlace924.Repository
+namespace Server.Repository
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Server.DataModels;
     using Server.DBConnection;
     using SharedClassLibrary.Domain;
-    using Microsoft.Data.SqlClient;
+    using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// Repository for managing shopping cart operations in the database.
     /// </summary>
-    class ShoppingCartRepository : IShoppingCartRepository
+    public class ShoppingCartRepository : IShoppingCartRepository
     {
-        private DatabaseConnection databaseConnection;
+        // private DatabaseConnection databaseConnection;
+        private readonly MarketPlaceDbContext dbContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ShoppingCartRepository"/> class.
         /// </summary>
-        /// <param name="databaseConnection">The database connection to be used by the repository.</param>
-        public ShoppingCartRepository(DatabaseConnection databaseConnection)
+        /// <param name="dbContext">The database context to be used by the repository.</param>
+        public ShoppingCartRepository(MarketPlaceDbContext dbContext)
         {
-            this.databaseConnection = databaseConnection;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -36,68 +39,30 @@ namespace MarketPlace924.Repository
         /// <param name="productId">The ID of the product to add to the cart. Must be a positive integer.</param>
         /// <param name="quantity">The quantity of the product to add. Must be greater than 0.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId, productId, or quantity is invalid.</exception>
+        /// <exception cref="Exception">Thrown when buyer or product is not found or the quantity is not greater than 0.</exception>
         public async Task AddProductToCartAsync(int buyerId, int productId, int quantity)
         {
-            if (buyerId <= 0)
+            bool buyerExists = await this.dbContext.Buyers.AnyAsync(buyer => buyer.Id == buyerId);
+            if (!buyerExists)
             {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
+                throw new Exception($"AddProductToCartAsync: Buyer not found for the buyer id: {buyerId}");
             }
 
-            if (productId <= 0)
+            bool productExists = await this.dbContext.Products.AnyAsync(product => product.ProductId == productId);
+            if (!productExists)
             {
-                throw new ArgumentException("Product ID must be a positive integer.", nameof(productId));
+                throw new Exception($"AddProductToCartAsync: Product not found for the product id: {productId}");
             }
 
             if (quantity <= 0)
             {
-                throw new ArgumentException("Quantity must be greater than 0.", nameof(quantity));
+                throw new Exception($"AddProductToCartAsync: Quantity must be greater than 0.");
             }
 
-            await this.databaseConnection.OpenConnection();
+            BuyerCartItemEntity buyerCartItem = new BuyerCartItemEntity(buyerId, productId, quantity);
 
-            var sqlConnection = this.databaseConnection.GetConnection();
-            var sqlCommand = sqlConnection.CreateCommand();
-
-            // First check if the item already exists in the cart
-            sqlCommand.CommandText = @"
-                SELECT COUNT(*) FROM BuyerCartItems 
-                WHERE BuyerId = @BuyerId AND ProductId = @ProductId";
-
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-            sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-
-            int exists = (int)await sqlCommand.ExecuteScalarAsync();
-
-            // Clear parameters for reuse
-            sqlCommand.Parameters.Clear();
-
-            if (exists > 0)
-            {
-                // Update the quantity
-                sqlCommand.CommandText = @"
-                    UPDATE BuyerCartItems 
-                    SET Quantity = Quantity + @Quantity 
-                    WHERE BuyerId = @BuyerId AND ProductId = @ProductId";
-
-                sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-                sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-                sqlCommand.Parameters.AddWithValue("@Quantity", quantity);
-            }
-            else
-            {
-                // Insert new item
-                sqlCommand.CommandText = @"
-                    INSERT INTO BuyerCartItems (BuyerId, ProductId, Quantity) 
-                    VALUES (@BuyerId, @ProductId, @Quantity)";
-
-                sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-                sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-                sqlCommand.Parameters.AddWithValue("@Quantity", quantity);
-            }
-
-            await sqlCommand.ExecuteNonQueryAsync();
-            this.databaseConnection.CloseConnection();
+            this.dbContext.BuyerCartItems.Add(buyerCartItem);
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -106,33 +71,13 @@ namespace MarketPlace924.Repository
         /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
         /// <param name="productId">The ID of the product to remove from the cart. Must be a positive integer.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId or productId is invalid.</exception>
+        /// <exception cref="Exception">Thrown when buyer cart item is not found.</exception>
         public async Task RemoveProductFromCartAsync(int buyerId, int productId)
         {
-            if (buyerId <= 0)
-            {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
-            }
-
-            if (productId <= 0)
-            {
-                throw new ArgumentException("Product ID must be a positive integer.", nameof(productId));
-            }
-
-            await this.databaseConnection.OpenConnection();
-
-            var sqlConnection = this.databaseConnection.GetConnection();
-            var sqlCommand = sqlConnection.CreateCommand();
-
-            sqlCommand.CommandText = @"
-                DELETE FROM BuyerCartItems 
-                WHERE BuyerId = @BuyerId AND ProductId = @ProductId";
-
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-            sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-
-            await sqlCommand.ExecuteNonQueryAsync();
-            this.databaseConnection.CloseConnection();
+            BuyerCartItemEntity? buyerCartItemToRemove = await this.dbContext.BuyerCartItems.FindAsync(buyerId, productId)
+                        ?? throw new Exception($"RemoveProductFromCartAsync: Buyer cart item not found for the buyer id: {buyerId} and product id: {productId}");
+            this.dbContext.BuyerCartItems.Remove(buyerCartItemToRemove);
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -142,88 +87,35 @@ namespace MarketPlace924.Repository
         /// <param name="productId">The ID of the product to update. Must be a positive integer.</param>
         /// <param name="quantity">The new quantity. Must be greater than 0.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId, productId, or quantity is invalid.</exception>
+        /// <exception cref="Exception">Thrown when buyer cart item to update is not found.</exception>
         public async Task UpdateProductQuantityAsync(int buyerId, int productId, int quantity)
         {
-            if (buyerId <= 0)
-            {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
-            }
-
-            if (productId <= 0)
-            {
-                throw new ArgumentException("Product ID must be a positive integer.", nameof(productId));
-            }
-
-            if (quantity <= 0)
-            {
-                throw new ArgumentException("Quantity must be greater than 0.", nameof(quantity));
-            }
-
-            await this.databaseConnection.OpenConnection();
-
-            var sqlConnection = this.databaseConnection.GetConnection();
-            var sqlCommand = sqlConnection.CreateCommand();
-
-            sqlCommand.CommandText = @"
-                UPDATE BuyerCartItems 
-                SET Quantity = @Quantity 
-                WHERE BuyerId = @BuyerId AND ProductId = @ProductId";
-
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-            sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-            sqlCommand.Parameters.AddWithValue("@Quantity", quantity);
-
-            await sqlCommand.ExecuteNonQueryAsync();
-            this.databaseConnection.CloseConnection();
+            BuyerCartItemEntity? buyerCartItemToUpdate = await this.dbContext.BuyerCartItems.FindAsync(buyerId, productId)
+                        ?? throw new Exception($"UpdateProductQuantityAsync: Buyer cart item not found for the buyer id: {buyerId} and product id: {productId}");
+            buyerCartItemToUpdate.Quantity = quantity;
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
         /// Gets all products in the user's shopping cart with their quantities.
         /// </summary>
         /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a dictionary with product objects as keys and quantities as values.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId is invalid.</exception>
-        public async Task<Dictionary<Product, int>> GetCartItemsAsync(int buyerId)
+        /// <returns>A task that represents the asynchronous operation. The task result contains a list with products.</returns>
+        /// <exception cref="Exception">Thrown when product is not found.</exception>
+        public async Task<List<Product>> GetCartItemsAsync(int buyerId)
         {
-            if (buyerId <= 0)
+            List<BuyerCartItemEntity> buyerCartItems = await this.dbContext.BuyerCartItems
+                .Where(buyerCartItem => buyerCartItem.BuyerId == buyerId).ToListAsync();
+
+            List<Product> products = new List<Product>();
+            foreach (BuyerCartItemEntity buyerCartItem in buyerCartItems)
             {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
+                Product product = await this.dbContext.Products.FindAsync(buyerCartItem.ProductId)
+                    ?? throw new Exception($"GetCartItemsAsync: Product not found for the product id: {buyerCartItem.ProductId}");
+                products.Add(product);
             }
 
-            var cartItems = new Dictionary<Product, int>();
-
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = @"
-                SELECT p.ProductID, p.ProductName, p.ProductDescription, p.ProductPrice, p.ProductType, p.SellerID, ci.Quantity
-                FROM BuyerCartItems ci
-                INNER JOIN Products p ON ci.ProductId = p.ProductID
-                WHERE ci.BuyerId = @BuyerId";
-
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-
-            using (var reader = await sqlCommand.ExecuteReaderAsync())
-            {
-                while (await reader.ReadAsync())
-                {
-                    var product = new Product(
-                        reader.GetInt32(reader.GetOrdinal("ProductID")),
-                        reader.GetString(reader.GetOrdinal("ProductName")),
-                        reader.GetString(reader.GetOrdinal("ProductDescription")),
-                        reader.GetDouble(reader.GetOrdinal("ProductPrice")),
-                        0, // Category - not present in your structure, using default
-                        reader.GetInt32(reader.GetOrdinal("SellerID"))
-                    );
-
-                    int quantity = reader.GetInt32(reader.GetOrdinal("Quantity"));
-                    cartItems.Add(product, quantity);
-                }
-            }
-
-            this.databaseConnection.CloseConnection();
-            return cartItems;
+            return products;
         }
 
         /// <summary>
@@ -231,24 +123,10 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId is invalid.</exception>
         public async Task ClearCartAsync(int buyerId)
         {
-            if (buyerId <= 0)
-            {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
-            }
-
-            await this.databaseConnection.OpenConnection();
-
-            var sqlConnection = this.databaseConnection.GetConnection();
-            var sqlCommand = sqlConnection.CreateCommand();
-
-            sqlCommand.CommandText = "DELETE FROM BuyerCartItems WHERE BuyerId = @BuyerId";
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-
-            await sqlCommand.ExecuteNonQueryAsync();
-            this.databaseConnection.CloseConnection();
+            this.dbContext.BuyerCartItems.RemoveRange(this.dbContext.BuyerCartItems.Where(buyerCartItem => buyerCartItem.BuyerId == buyerId));
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -256,34 +134,11 @@ namespace MarketPlace924.Repository
         /// </summary>
         /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the total number of items.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId is invalid.</exception>
         public async Task<int> GetCartItemCountAsync(int buyerId)
         {
-            if (buyerId <= 0)
-            {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
-            }
-
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = @"
-                SELECT SUM(Quantity)
-                FROM BuyerCartItemspa
-                WHERE BuyerId = @BuyerId";
-
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-
-            var result = await sqlCommand.ExecuteScalarAsync();
-            int totalItems = 0;
-
-            if (result != null && result != DBNull.Value)
-            {
-                totalItems = Convert.ToInt32(result);
-            }
-
-            this.databaseConnection.CloseConnection();
-            return totalItems;
+            List<BuyerCartItemEntity> buyerCartItems = await this.dbContext.BuyerCartItems
+                .Where(buyerCartItem => buyerCartItem.BuyerId == buyerId).ToListAsync();
+            return buyerCartItems.Sum(buyerCartItem => buyerCartItem.Quantity);
         }
 
         /// <summary>
@@ -292,40 +147,9 @@ namespace MarketPlace924.Repository
         /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
         /// <param name="productId">The ID of the product to check. Must be a positive integer.</param>
         /// <returns>A task that represents the asynchronous operation. The task result is true if the product is in the cart, otherwise false.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId or productId is invalid.</exception>
         public async Task<bool> IsProductInCartAsync(int buyerId, int productId)
         {
-            if (buyerId <= 0)
-            {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
-            }
-
-            if (productId <= 0)
-            {
-                throw new ArgumentException("Product ID must be a positive integer.", nameof(productId));
-            }
-
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = @"
-                SELECT COUNT(*)
-                FROM BuyerCartItems
-                WHERE BuyerId = @BuyerId AND ProductId = @ProductId";
-
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-            sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-
-            var result = await sqlCommand.ExecuteScalarAsync();
-            int count = 0;
-
-            if (result != null && result != DBNull.Value)
-            {
-                count = Convert.ToInt32(result);
-            }
-
-            this.databaseConnection.CloseConnection();
-            return count > 0;
+            return await this.dbContext.BuyerCartItems.AnyAsync(buyerCartItem => buyerCartItem.BuyerId == buyerId && buyerCartItem.ProductId == productId);
         }
 
         /// <summary>
@@ -334,40 +158,12 @@ namespace MarketPlace924.Repository
         /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
         /// <param name="productId">The ID of the product to check. Must be a positive integer.</param>
         /// <returns>A task that represents the asynchronous operation. The task result is the quantity of the product in the cart, or 0 if it's not in the cart.</returns>
-        /// <exception cref="ArgumentException">Thrown when buyerId or productId is invalid.</exception>
+        /// <exception cref="Exception">Thrown when buyer cart item is not found.</exception>
         public async Task<int> GetProductQuantityAsync(int buyerId, int productId)
         {
-            if (buyerId <= 0)
-            {
-                throw new ArgumentException("Buyer ID must be a positive integer.", nameof(buyerId));
-            }
-
-            if (productId <= 0)
-            {
-                throw new ArgumentException("Product ID must be a positive integer.", nameof(productId));
-            }
-
-            await this.databaseConnection.OpenConnection();
-            var sqlCommand = this.databaseConnection.GetConnection().CreateCommand();
-
-            sqlCommand.CommandText = @"
-                SELECT Quantity
-                FROM BuyerCartItems
-                WHERE BuyerId = @BuyerId AND ProductId = @ProductId";
-
-            sqlCommand.Parameters.AddWithValue("@BuyerId", buyerId);
-            sqlCommand.Parameters.AddWithValue("@ProductId", productId);
-
-            var result = await sqlCommand.ExecuteScalarAsync();
-            int quantity = 0;
-
-            if (result != null && result != DBNull.Value)
-            {
-                quantity = Convert.ToInt32(result);
-            }
-
-            this.databaseConnection.CloseConnection();
-            return quantity;
+            BuyerCartItemEntity? buyerCartItem = await this.dbContext.BuyerCartItems.FindAsync(buyerId, productId)
+                        ?? throw new Exception($"GetProductQuantityAsync: Buyer cart item not found for the buyer id: {buyerId} and product id: {productId}");
+            return buyerCartItem.Quantity;
         }
     }
 }

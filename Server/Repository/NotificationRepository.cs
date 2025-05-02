@@ -8,6 +8,7 @@ namespace Server.Repository
     using System.Collections.Generic;
     using System.Data;
     using System.Diagnostics.CodeAnalysis;
+    using Microsoft.EntityFrameworkCore;
     using Server.DataModels;
     using Server.DBConnection;
     using SharedClassLibrary.Domain;
@@ -35,12 +36,12 @@ namespace Server.Repository
         /// </summary>
         /// <param name="recipientId">Id of the recipient to for which to retrieve notifications.</param>
         /// <returns>List of notifications.</returns>
-        public List<Notification> GetNotificationsForUser(int recipientId)
+        public async Task<List<Notification>> GetNotificationsForUser(int recipientId)
         {
             List<Notification> notifications = new List<Notification>();
 
             // Get all OrderNotifications for the recipient
-            List<OrderNotificationEntity> notificationsDb = this.dbContext.OrderNotifications.Where(n => n.RecipientID == recipientId).ToList();
+            List<OrderNotificationEntity> notificationsDb = await this.dbContext.OrderNotifications.Where(notification => notification.RecipientID == recipientId).ToListAsync();
 
             // Convert each OrderNotification to a Notification
             foreach (OrderNotificationEntity notification in notificationsDb)
@@ -57,12 +58,12 @@ namespace Server.Repository
         /// </summary>
         /// <param name="notificationId">Notification ID of the notification to be marked as read.</param>
         /// <exception cref="ArgumentException">Thrown when the notification is not found.</exception>
-        public void MarkAsRead(int notificationId)
+        public async void MarkAsRead(int notificationId)
         {
-            OrderNotificationEntity notification = this.dbContext.OrderNotifications.Find(notificationId)
+            OrderNotificationEntity notification = await this.dbContext.OrderNotifications.FindAsync(notificationId)
                                                         ?? throw new ArgumentException("MarkAsRead: Notification not found");
             notification.IsRead = true;
-            this.dbContext.SaveChanges();
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Server.Repository
         /// </summary>
         /// <param name="notification">Notification to be added to the database.</param>
         /// <exception cref="ArgumentNullException">When the notification is null.</exception>
-        public void AddNotification(Notification notification)
+        public async void AddNotification(Notification notification)
         {
             ArgumentNullException.ThrowIfNull(notification);
 
@@ -79,7 +80,7 @@ namespace Server.Repository
 
             // Add the OrderNotificationEntity to the database
             this.dbContext.OrderNotifications.Add(orderNotification);
-            this.dbContext.SaveChanges();
+            await this.dbContext.SaveChangesAsync();
         }
 
         /// <summary>

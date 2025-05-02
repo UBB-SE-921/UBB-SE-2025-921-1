@@ -7,13 +7,13 @@
     {
         public int Id { get; set; }
 
-        public float Subtotal { get; set; }
+        public double Subtotal { get; set; }
 
-        public float WarrantyTax { get; set; }
+        public double WarrantyTax { get; set; }
 
-        public float DeliveryFee { get; set; }
+        public double DeliveryFee { get; set; }
 
-        public float FinalTotal { get; set; }
+        public double FinalTotal { get; set; }
 
         public required string FullName { get; set; }
 

@@ -4,9 +4,9 @@
 namespace MarketPlace924
 {
     using System.Threading.Tasks;
-    using MarketPlace924.Helper;
-    using MarketPlace924.Repository;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Helper;
+    using SharedClassLibrary.ProxyRepository;
+    using SharedClassLibrary.Service;
     using MarketPlace924.View;
     using MarketPlace924.View.Admin;
     using MarketPlace924.ViewModel;
@@ -49,6 +49,7 @@ namespace MarketPlace924
             this.analyticsService = new AnalyticsService(userRepo, buyerRepo);
 
             this.sellerService = new SellerService(sellerRepo);
+            this.shoppingCartService = new ShoppingCartService();
 
             this.LoginFrame.Navigate(typeof(LoginView), new LoginViewModel(this.userService, this));
         }
@@ -169,6 +170,7 @@ namespace MarketPlace924
                     break;
             }
         }
+
         /// <summary>
         /// Navigates to the My Cart view.
         /// </summary>

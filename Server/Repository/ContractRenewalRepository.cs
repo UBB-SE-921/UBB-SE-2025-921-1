@@ -51,7 +51,7 @@ namespace Server.Repository
         /// <returns>A task representing the asynchronous operation. The task result is true if the contract has been renewed; otherwise, false.</returns>
         public async Task<bool> HasContractBeenRenewedAsync(long contractId)
         {
-            return await this.dbContext.Contracts.AnyAsync(c => c.RenewedFromContractID == contractId);
+            return await this.dbContext.Contracts.AnyAsync(contract => contract.RenewedFromContractID == contractId);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Server.Repository
         /// <returns>A task representing the asynchronous operation. The task result is a list of all renewed contracts.</returns>
         public async Task<List<IContract>> GetRenewedContractsAsync()
         {
-            List<Contract> contracts = await this.dbContext.Contracts.Where(c => c.ContractStatus == "RENEWED").ToListAsync();
+            List<Contract> contracts = await this.dbContext.Contracts.Where(contract => contract.ContractStatus == "RENEWED").ToListAsync();
             return contracts.Cast<IContract>().ToList();
         }
     }

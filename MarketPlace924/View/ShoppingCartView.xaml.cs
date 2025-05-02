@@ -14,8 +14,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 
 using MarketPlace924.ViewModel; // For ShoppingCartViewModel
-using MarketPlace924.Repository;
-using MarketPlace924.Service; // For ShoppingCartRepository
+using SharedClassLibrary.ProxyRepository;
+using SharedClassLibrary.Service; // For ShoppingCartRepository
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -32,7 +32,7 @@ namespace MarketPlace924.View
         public ShoppingCartView()
         {
             this.InitializeComponent();
-            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: 2);
+            this.ViewModel = new ShoppingCartViewModel(new ShoppingCartService(), buyerId: UserSession.CurrentUserId ?? 0);
         }
     }
 }

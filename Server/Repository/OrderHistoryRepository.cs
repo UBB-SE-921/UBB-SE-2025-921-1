@@ -1,139 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Shared;
-using SharedClassLibrary.IRepository;
+// <copyright file="OrderHistoryRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace Server.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Server.DBConnection;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.IRepository;
+
     /// <summary>
     /// Provides database operations for order history management.
     /// </summary>
     public class OrderHistoryRepository : IOrderHistoryRepository
     {
-        private readonly string connectionString;
-        private readonly IDatabaseProvider databaseProvider;
+        // private readonly string connectionString;
+        // private readonly IDatabaseProvider databaseProvider;
+        private readonly MarketPlaceDbContext dbContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderHistoryRepository"/> class.
         /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        public OrderHistoryRepository(string connectionString)
-            : this(connectionString, new SqlDatabaseProvider())
+        /// <param name="dbContext">The database context.</param>
+        public OrderHistoryRepository(MarketPlaceDbContext dbContext)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OrderHistoryRepository"/> class with a specified database provider.
-        /// </summary>
-        /// <param name="connectionString">The database connection string.</param>
-        /// <param name="databaseProvider">The database provider to use.</param>
-        public OrderHistoryRepository(string connectionString, IDatabaseProvider databaseProvider)
-        {
-            this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-            this.databaseProvider = databaseProvider ?? throw new ArgumentNullException(nameof(databaseProvider));
+            this.dbContext = dbContext;
         }
 
         /// <inheritdoc/>
-        public async Task<int> CreateOrderHistoryAsync()
+        public async Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryId)
         {
-            int orderHistoryId = 0;
+            List<Product> products = new List<Product>();
 
-            using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
+            List<Order> orders = await this.dbContext.Orders.Where(order => order.OrderHistoryID == orderHistoryId).ToListAsync();
+
+            foreach (Order order in orders)
             {
-                using (IDbCommand command = connection.CreateCommand())
+                Product? product = await this.dbContext.Products.FindAsync(order.ProductID);
+
+                // here if for example a product is deleted but the order is still in the database, the product will be null
+                // and it will not be added to the list
+                // (could create a placeholder product in the future to display to the user the fact that the product is deleted)
+                if (product != null)
                 {
-                    command.CommandText = "INSERT INTO [OrderHistory] DEFAULT VALUES; SELECT SCOPE_IDENTITY();";
-                    command.CommandType = CommandType.Text;
-
-                    try
-                    {
-                        await connection.OpenAsync();
-
-                        // Execute the command and get the newly created ID
-                        var result = await command.ExecuteScalarAsync();
-                        if (result != null && result != DBNull.Value)
-                        {
-                            orderHistoryId = Convert.ToInt32(result);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        // For development, when database connection fails, return a dummy ID
-                        System.Diagnostics.Debug.WriteLine($"Database error: {ex.Message}");
-                        orderHistoryId = new Random().Next(10000, 99999); // Generate a random ID for testing
-                    }
+                    products.Add(product);
                 }
             }
 
-            return orderHistoryId;
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryId)
-        {
-            List<DummyProduct> dummyProducts = new List<DummyProduct>();
-
-            using (IDbConnection connection = databaseProvider.CreateConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                using (IDbCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = "GetProductsFromOrderHistory";
-                    command.CommandType = CommandType.StoredProcedure;
-
-                    IDbDataParameter orderHistoryParameter = command.CreateParameter();
-                    orderHistoryParameter.ParameterName = "@OrderHistory";
-                    orderHistoryParameter.Value = orderHistoryId;
-                    command.Parameters.Add(orderHistoryParameter);
-
-                    using (IDataReader dataReader = await command.ExecuteReaderAsync())
-                    {
-                        while (await dataReader.ReadAsync())
-                        {
-                            DummyProduct dummyProduct = new DummyProduct();
-
-                            dummyProduct.ID = dataReader.GetInt32(dataReader.GetOrdinal("productID"));
-                            dummyProduct.Name = dataReader.GetString(dataReader.GetOrdinal("name"));
-                            dummyProduct.Price = (float)dataReader.GetDouble(dataReader.GetOrdinal("price"));
-                            dummyProduct.ProductType = dataReader.GetString(dataReader.GetOrdinal("productType"));
-
-                            if (dataReader["SellerID"] == DBNull.Value)
-                            {
-                                dummyProduct.SellerID = 0;
-                            }
-                            else
-                            {
-                                dummyProduct.SellerID = dataReader.GetInt32(dataReader.GetOrdinal("SellerID"));
-                            }
-
-                            if (dataReader["startDate"] == DBNull.Value)
-                            {
-                                dummyProduct.StartDate = DateTime.MinValue;
-                            }
-                            else
-                            {
-                                dummyProduct.StartDate = dataReader.GetDateTime(dataReader.GetOrdinal("startDate"));
-                            }
-
-                            if (dataReader["endDate"] == DBNull.Value)
-                            {
-                                dummyProduct.EndDate = DateTime.MaxValue;
-                            }
-                            else
-                            {
-                                dummyProduct.EndDate = dataReader.GetDateTime(dataReader.GetOrdinal("endDate"));
-                            }
-
-                            dummyProducts.Add(dummyProduct);
-                        }
-                    }
-                }
-            }
-
-            return dummyProducts;
+            return products;
         }
     }
-} 
+}

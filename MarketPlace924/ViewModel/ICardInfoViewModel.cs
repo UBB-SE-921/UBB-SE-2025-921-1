@@ -13,8 +13,8 @@ namespace MarketPlace924.ViewModel
         /// Asynchronously retrieves the dummy products associated with the specified order history ID.
         /// </summary>
         /// <param name="orderHistoryID">The unique identifier for the order history.</param>
-        /// <returns>A task that represents the asynchronous operation which returns a list of <see cref="DummyProduct"/> objects.</returns>
-        Task<List<DummyProduct>> GetDummyProductsFromOrderHistoryAsync(int orderHistoryID);
+        /// <returns>A task that represents the asynchronous operation which returns a list of <see cref="Product"/> objects.</returns>
+        Task<List<Product>> GetProductsFromOrderHistoryAsync(int orderHistoryID);
 
         /// <summary>
         /// Asynchronously processes the card payment.

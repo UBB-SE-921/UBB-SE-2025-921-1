@@ -14,8 +14,8 @@ namespace MarketPlace924.ViewModel
     using System.Threading.Tasks;
     using System.Windows.Input;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Helper;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Helper;
+    using SharedClassLibrary.Service;
     using Microsoft.UI.Xaml.Controls;
     using Windows.System;
     using Windows.UI.Notifications;
@@ -61,7 +61,7 @@ namespace MarketPlace924.ViewModel
             this.SellerProducts = new ObservableCollection<Product>();
             this.filteredProducts = new ObservableCollection<Product>();
 
-            this.FollowCommand = new MarketPlace924.Helper.RelayCommand(this.ToggleFollow);
+            this.FollowCommand = new RelayCommand(this.ToggleFollow);
 
             // Initialize the AddToCartCommand
             // Update the RelayCommand instantiation to use the correct type
@@ -91,7 +91,7 @@ namespace MarketPlace924.ViewModel
             try
             {
                 // Use the current buyer ID instead of a hardcoded value
-                var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartService(),this.buyer.Id);
+                var shoppingCartViewModel = new ShoppingCartViewModel(new ShoppingCartService(), this.buyer.Id);
 
                 await shoppingCartViewModel.AddToCartAsync(product, 1);
 

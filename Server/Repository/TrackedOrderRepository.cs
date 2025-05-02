@@ -91,7 +91,7 @@ namespace Server.Repository
         /// <returns>List of order checkpoints.</returns>
         public async Task<List<OrderCheckpoint>> GetAllOrderCheckpointsAsync(int trackedOrderID)
         {
-            return await this.dbContext.OrderCheckpoints.Where(c => c.TrackedOrderID == trackedOrderID).ToListAsync();
+            return await this.dbContext.OrderCheckpoints.Where(checkpoint => checkpoint.TrackedOrderID == trackedOrderID).ToListAsync();
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Server.Repository
         /// <exception cref="Exception">Thrown when the tracked order is not found.</exception>
         public async Task UpdateTrackedOrderAsync(int trackedOrderID, DateOnly estimatedDeliveryDate, OrderStatus currentStatus)
         {
-            TrackedOrder trackedOrder = await this.dbContext.TrackedOrders.FindAsync(trackedOrderID) 
+            TrackedOrder trackedOrder = await this.dbContext.TrackedOrders.FindAsync(trackedOrderID)
                                             ?? throw new Exception($"UpdateTrackedOrderAsync: No TrackedOrder with id: {trackedOrderID}");
             trackedOrder.CurrentStatus = currentStatus;
             trackedOrder.EstimatedDeliveryDate = estimatedDeliveryDate;

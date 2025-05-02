@@ -6,7 +6,7 @@ namespace MarketPlace924.ViewModel
     using System;
     using System.ComponentModel;
     using System.Windows.Input;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
 
     /// <summary>
     /// Interface for the login view model.

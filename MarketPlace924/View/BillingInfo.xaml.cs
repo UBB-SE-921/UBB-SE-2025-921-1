@@ -28,8 +28,8 @@ namespace MarketPlace924.View
         /// <summary>
         /// Sets the cart items for checkout.
         /// </summary>
-        /// <param name="cartItems">The dictionary of products and quantities.</param>
-        public void SetCartItems(Dictionary<Product, int> cartItems)
+        /// <param name="cartItems">The list of products and quantities.</param>
+        public void SetCartItems(List<Product> cartItems)
         {
             if (this.DataContext is BillingInfoViewModel viewModel)
             {
@@ -61,9 +61,8 @@ namespace MarketPlace924.View
             }
         }
 
-
         /// <summary>
-        /// Handles the click event for the finalize button
+        /// Handles the click event for the finalize button.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -76,7 +75,7 @@ namespace MarketPlace924.View
         }
 
         /// <summary>
-        /// Handles the click event for the cancel button
+        /// Handles the click event for the cancel button.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -86,7 +85,7 @@ namespace MarketPlace924.View
         }
 
         /// <summary>
-        /// Handles the click event for the end date
+        /// Handles the click event for the end date.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -97,13 +96,13 @@ namespace MarketPlace924.View
         }
 
         /// <summary>
-        /// Handles the click event for the tax date
+        /// Handles the click event for the tax date.
         /// </summary>
         /// <param name="sender"></param>
         /// <returns></returns>
         private async Task UpdateBorrowedProductTax(DatePicker sender)
         {
-            if (DataContext is BillingInfoViewModel viewModel && sender.DataContext is DummyProduct product)
+            if (DataContext is BillingInfoViewModel viewModel && sender.DataContext is Product product)
             {
                 await viewModel.ApplyBorrowedTax(product);
             }

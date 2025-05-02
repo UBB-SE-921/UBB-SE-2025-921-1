@@ -8,7 +8,7 @@ namespace Server.DBConnection
     using System;
     using System.Threading.Tasks;
     using Microsoft.Data.SqlClient;
-    using Server.Helper;
+    using SharedClassLibrary.Helper;
 
     /// <summary>
     /// Represents a database connection.

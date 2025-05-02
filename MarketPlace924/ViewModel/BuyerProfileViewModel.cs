@@ -7,11 +7,11 @@ namespace MarketPlace924.ViewModel
     using System;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
     using Microsoft.UI.Xaml.Controls;
-    using System.Globalization;
 
     /// <summary>
     /// View model class for managing buyer profile data and operations.
@@ -53,9 +53,6 @@ namespace MarketPlace924.ViewModel
         public IBuyerBadgeViewModel? BuyerBadge { get; set; }
 
         /// <inheritdoc/>
-        public bool CreationMode { get; set; }
-
-        /// <inheritdoc/>
         public bool ShippingAddressEnabled => !this.ShippingAddressDisabled;
 
         /// <inheritdoc/>
@@ -76,6 +73,7 @@ namespace MarketPlace924.ViewModel
 
                 this.ShippingAddress = new BuyerAddressViewModel(this.Buyer.ShippingAddress);
                 this.Buyer.UseSameAddress = value;
+                Debug.WriteLine($"Value of boolean tickbox is: {value}");
                 this.OnPropertyChanged(nameof(this.ShippingAddressEnabled));
                 this.OnPropertyChanged(nameof(this.ShippingAddressDisabled));
                 this.OnPropertyChanged(nameof(this.ShippingAddress));
@@ -87,16 +85,9 @@ namespace MarketPlace924.ViewModel
         {
             try
             {
-                if (this.CreationMode)
-                {
-                    await this.BuyerService.CreateBuyer(this.Buyer!);
-                }
-                else
-                {
-                    await this.BuyerService.SaveInfo(this.Buyer!);
-                }
-
+                await this.BuyerService.SaveInfo(this.Buyer!);
                 await this.LoadBuyerProfile();
+                await this.ShowDialog("Success", "Profile saved successfully");
             }
             catch (Exception ex)
             {
@@ -159,17 +150,6 @@ namespace MarketPlace924.ViewModel
         {
             this.Buyer = await this.BuyerService.GetBuyerByUser(this.User);
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            this.CreationMode = this.Buyer.FirstName == null;
-
-            if (this.CreationMode)
-            {
-                this.Buyer.BillingAddress = new Address();
-                this.Buyer.ShippingAddress = this.Buyer.BillingAddress;
-                this.Buyer.UseSameAddress = true;
-            }
-
-            this.OnPropertyChanged(nameof(this.CreationMode));
             this.BillingAddress = new BuyerAddressViewModel(this.Buyer.BillingAddress);
             this.ShippingAddress = new BuyerAddressViewModel(this.Buyer.ShippingAddress);
             this.FamilySync = new BuyerFamilySyncViewModel(this.BuyerService, this.Buyer, this);
