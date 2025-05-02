@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace SharedClassLibrary.Repository
+namespace SharedClassLibrary.ProxyRepository
 {
     using System;
     using System.Net.Http;

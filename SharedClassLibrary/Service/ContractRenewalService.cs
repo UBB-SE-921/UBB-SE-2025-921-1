@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using SharedClassLibrary.Repository; // Added using for Repository namespace
+using SharedClassLibrary.ProxyRepository; // Added using for Repository namespace
 using SharedClassLibrary.IRepository;
 
 namespace SharedClassLibrary.Service

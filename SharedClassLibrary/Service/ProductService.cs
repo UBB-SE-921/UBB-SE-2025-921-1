@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
-using SharedClassLibrary.Repository;
+using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Helper;
 

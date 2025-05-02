@@ -10,7 +10,7 @@ using SharedClassLibrary.Service; // Added using for Service namespace
 using SharedClassLibrary.Shared;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using SharedClassLibrary.Repository;
+using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Helper;
 
 namespace MarketPlace924.ViewModel

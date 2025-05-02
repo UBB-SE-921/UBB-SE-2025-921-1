@@ -1,4 +1,4 @@
-﻿namespace SharedClassLibrary.Repository
+﻿namespace SharedClassLibrary.ProxyRepository
 {
     using System;
     using System.Collections.Generic;

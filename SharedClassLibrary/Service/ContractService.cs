@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using SharedClassLibrary.Repository; // Add this using directive
+using SharedClassLibrary.ProxyRepository; // Add this using directive
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Helper;
 

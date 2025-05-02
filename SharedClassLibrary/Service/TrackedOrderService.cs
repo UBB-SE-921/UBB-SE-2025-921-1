@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using SharedClassLibrary.Repository;
+using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Shared;
 using Microsoft.Data.SqlClient; // Assuming Configuration and SqlDatabaseProvider are here
 using SharedClassLibrary.IRepository;

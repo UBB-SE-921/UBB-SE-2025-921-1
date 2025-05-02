@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using SharedClassLibrary.Repository;
+using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Helper;

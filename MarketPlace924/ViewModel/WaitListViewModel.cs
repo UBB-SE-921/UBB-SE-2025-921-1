@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
 using Microsoft.Data.SqlClient;
-using SharedClassLibrary.Repository;
+using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Helper;
 
 namespace MarketPlace924.Services

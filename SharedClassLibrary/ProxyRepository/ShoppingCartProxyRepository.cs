@@ -8,7 +8,7 @@ using SharedClassLibrary.IRepository;
 using System.Net.Http;
 using System.Net.Http.Json;
 
-namespace SharedClassLibrary.Repository
+namespace SharedClassLibrary.ProxyRepository
 {
     internal class ShoppingCartProxyRepository : IShoppingCartRepository
     {
