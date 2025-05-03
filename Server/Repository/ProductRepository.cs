@@ -4,15 +4,15 @@
 
 namespace Server.Repository
 {
-    using System;
-    using System.Data;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading.Tasks;
+using System;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Server.DBConnection;
-    using SharedClassLibrary.Domain;
-    using SharedClassLibrary.IRepository;
-    using SharedClassLibrary.Shared;
+using SharedClassLibrary.Domain;
+using SharedClassLibrary.IRepository;
+using SharedClassLibrary.Shared;
 
     /// <summary>
     /// Represents a repository for managing products in the database.
@@ -57,6 +57,8 @@ namespace Server.Repository
 
             await this.dbContext.Products.AddAsync(product);
             await this.dbContext.SaveChangesAsync();
+                }
+            }
         }
 
         /// <summary>
@@ -110,9 +112,9 @@ namespace Server.Repository
         public async Task<string> GetSellerNameAsync(int? sellerId)
         {
             if (sellerId == null)
-            {
+                    {
                 throw new Exception($"GetSellerNameAsync: Seller ID is null");
-            }
+                    }
 
             Seller? seller = await this.dbContext.Sellers.FindAsync(sellerId)
                     ?? throw new Exception($"GetSellerNameAsync: Seller not found for the seller id: {sellerId}");
