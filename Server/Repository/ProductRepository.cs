@@ -8,8 +8,8 @@ using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Server.DBConnection;
+using Microsoft.EntityFrameworkCore;
+using Server.DBConnection;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Shared;
@@ -57,8 +57,6 @@ using SharedClassLibrary.Shared;
 
             await this.dbContext.Products.AddAsync(product);
             await this.dbContext.SaveChangesAsync();
-                }
-            }
         }
 
         /// <summary>

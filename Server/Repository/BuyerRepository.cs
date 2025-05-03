@@ -84,25 +84,6 @@ namespace Server.Repository
             // --- Address Handling ---
 
             // 1. Handle Billing Address: Check if it's already tracked locally
-            var trackedBillingAddress = this.dbContext.Set<Address>().Local.FirstOrDefault(a => a.Id == buyerEntity.BillingAddress.Id && a.Id != 0);
-            if (trackedBillingAddress != null)
-            {
-                // If tracked, copy updated values from the incoming entity to the tracked entity
-                this.dbContext.Entry(trackedBillingAddress).CurrentValues.SetValues(buyerEntity.BillingAddress);
-
-                // **Crucially, update the buyerEntity to point to the tracked instance**
-                buyerEntity.BillingAddress = trackedBillingAddress;
-            }
-            else
-            {
-                // If not tracked locally, tell EF Core to handle this instance.
-                // Update will mark it as Added (if Id=0) or Modified (if Id!=0 and detached).
-                this.dbContext.Update(buyerEntity.BillingAddress);
-            }
-
-            // --- Address Handling ---
-
-            // 1. Handle Billing Address: Check if it's already tracked locally
             var trackedBillingAddress = this.dbContext.Set<Address>().Local.FirstOrDefault(address => address.Id == buyerEntity.BillingAddress.Id && address.Id != 0);
             if (trackedBillingAddress != null)
             {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
-using Server.Helper;
+using SharedClassLibrary.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
