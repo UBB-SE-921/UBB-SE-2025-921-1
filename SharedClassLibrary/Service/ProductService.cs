@@ -4,10 +4,7 @@ using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.ProxyRepository;
-using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Helper;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SharedClassLibrary.Service
 {
@@ -17,49 +14,6 @@ namespace SharedClassLibrary.Service
     public class ProductService : IProductService
     {
         private readonly IProductRepository productRepository;
-
-        // This is a placeholder implementation for GetProductByIdAsync and GetSellerNameAsync
-        // In a real implementation, this would be stored in the database
-        private static readonly List<Product> Products = new()
-        {
-            new Product
-            {
-                ProductId = 1,
-                Name = "Digital Camera",
-                Price = 299.99,
-                SellerId = 101,
-                ProductType = "borrowed",
-                StartDate = DateTime.Now.AddDays(-5),
-                EndDate = DateTime.Now.AddDays(10)
-            },
-            new Product
-            {
-                ProductId = 2,
-                Name = "Gaming Laptop",
-                Price = 1299.99,
-                SellerId = 102,
-                ProductType = "borrowed",
-                StartDate = DateTime.MinValue,
-                EndDate = DateTime.MinValue
-            },
-            new Product
-            {
-                ProductId = 3,
-                Name = "Professional Camera",
-                Price = 899.99,
-                SellerId = 103,
-                ProductType = "borrowed",
-                StartDate = DateTime.Now.AddDays(5),
-                EndDate = DateTime.MinValue
-            }
-        };
-
-        private static readonly Dictionary<int, string> Sellers = new()
-        {
-            { 101, "John Doe" },
-            { 102, "Jane Smith" },
-            { 103, "Alice Johnson" }
-        };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductService"/> class with a specified database provider.
@@ -107,21 +61,17 @@ namespace SharedClassLibrary.Service
         }
 
         /// <inheritdoc/>
-        public Task<Product> GetProductByIdAsync(int productId)
+        public async Task<Product> GetProductByIdAsync(int productId)
         {
-            var product = Products.FirstOrDefault(p => p.ProductId == productId);
-            return Task.FromResult(product);
+            // Use the repository to fetch the product from the database
+            return await productRepository.GetProductByIdAsync(productId);
         }
 
         /// <inheritdoc/>
-        public Task<string> GetSellerNameAsync(int sellerId)
+        public async Task<string> GetSellerNameAsync(int sellerId)
         {
-            if (Sellers.TryGetValue(sellerId, out var sellerName))
-            {
-                return Task.FromResult(sellerName);
-            }
-
-            return Task.FromResult($"Seller {sellerId}");
+            // Use the repository to fetch the seller name from the database
+            return await productRepository.GetSellerNameAsync(sellerId);
         }
     }
 }
