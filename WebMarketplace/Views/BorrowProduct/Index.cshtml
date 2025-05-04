@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "Borrowable Products";
+}
+
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Available Products for Borrowing</h1>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="p-6">
+            <p class="mb-4 text-gray-600">
+                Browse our selection of products available for borrowing. Click on a product to view details
+                and join the waitlist if it's currently unavailable.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                <!-- Product 1 -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Digital Camera</h3>
+                        <p class="text-gray-600 text-sm mb-2">High-quality digital camera</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-900">$299.99</span>
+                            <a href="/BorrowProduct/Details/1" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md text-sm transition">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm0 2a1 1 0 00-1 1v6a1 1 0 001 1h10a1 1 0 001-1V7a1 1 0 00-1-1H5z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Gaming Laptop</h3>
+                        <p class="text-gray-600 text-sm mb-2">High-performance gaming laptop</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-900">$1,299.99</span>
+                            <a href="/BorrowProduct/Details/2" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md text-sm transition">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                        <svg class="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Professional Camera</h3>
+                        <p class="text-gray-600 text-sm mb-2">Professional-grade camera equipment</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-900">$899.99</span>
+                            <a href="/BorrowProduct/Details/3" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md text-sm transition">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

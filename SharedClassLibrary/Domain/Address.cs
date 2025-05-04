@@ -4,11 +4,14 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace SharedClassLibrary.Domain;
 
 /// <summary>
 /// Represents a physical address.
 /// </summary>
+[Table("BuyerAddress")]
 public class Address
 {
     /// <summary>
