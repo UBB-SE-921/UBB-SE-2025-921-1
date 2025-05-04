@@ -30,21 +30,21 @@ builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
 
 // Register web services
 builder.Services.AddScoped<WebIProductService, WebProductService>();
-builder.Services.AddScoped<SharedClassLibrary.Service.Web.IWaitlistService, SharedClassLibrary.Service.Web.WaitlistService>();
-builder.Services.AddScoped<SharedClassLibrary.Service.Web.INotificationService, SharedClassLibrary.Service.Web.NotificationService>();
+builder.Services.AddScoped<SharedClassLibrary.Service.IWaitlistService, SharedClassLibrary.Service.WaitlistService>();
+builder.Services.AddScoped<SharedClassLibrary.Service.INotificationService, SharedClassLibrary.Service.NotificationService>();
 
 // Ensure singleton registration of notification service for consistent state
 builder.Services.Remove(builder.Services.FirstOrDefault(
-    d => d.ServiceType == typeof(SharedClassLibrary.Service.Web.INotificationService)));
-builder.Services.AddSingleton<SharedClassLibrary.Service.Web.INotificationService, SharedClassLibrary.Service.Web.NotificationService>();
+    d => d.ServiceType == typeof(SharedClassLibrary.Service.INotificationService)));
+builder.Services.AddSingleton<SharedClassLibrary.Service.INotificationService, SharedClassLibrary.Service.NotificationService>();
 
 // Register backward compatibility adapters
 builder.Services.AddScoped<WebMarketplace.Services.IProductService>(sp =>
     new ProductServiceAdapter(sp.GetRequiredService<WebIProductService>()));
 builder.Services.AddScoped<WebMarketplace.Services.IWaitlistService>(sp =>
-    new WaitlistServiceAdapter(sp.GetRequiredService<SharedClassLibrary.Service.Web.IWaitlistService>()));
+    new WaitlistServiceAdapter(sp.GetRequiredService<SharedClassLibrary.Service.IWaitlistService>()));
 builder.Services.AddScoped<WebMarketplace.Services.INotificationService>(sp =>
-    new NotificationServiceAdapter(sp.GetRequiredService<SharedClassLibrary.Service.Web.INotificationService>()));
+    new NotificationServiceAdapter(sp.GetRequiredService<SharedClassLibrary.Service.INotificationService>()));
 
 var connectionString = AppConfig.GetConnectionString("MyLocalDb");
 builder.Services.AddDbContext<MarketPlaceDbContext>(options =>

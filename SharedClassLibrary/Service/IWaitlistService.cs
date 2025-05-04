@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace SharedClassLibrary.Service.Web
+namespace SharedClassLibrary.Service
 {
     /// <summary>
     /// Service for managing product waitlists

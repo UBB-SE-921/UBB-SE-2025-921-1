@@ -47,7 +47,7 @@ namespace WebMarketplace.Services
         public bool IsRead { get; set; }
 
         // Conversion from SharedClassLibrary model
-        public static implicit operator NotificationModel(SharedClassLibrary.Service.Web.NotificationModel model)
+        public static implicit operator NotificationModel(SharedClassLibrary.Service.NotificationModel model)
         {
             return new NotificationModel
             {
@@ -59,9 +59,9 @@ namespace WebMarketplace.Services
         }
 
         // Conversion to SharedClassLibrary model
-        public static implicit operator SharedClassLibrary.Service.Web.NotificationModel(NotificationModel model)
+        public static implicit operator SharedClassLibrary.Service.NotificationModel(NotificationModel model)
         {
-            return new SharedClassLibrary.Service.Web.NotificationModel
+            return new SharedClassLibrary.Service.NotificationModel
             {
                 Id = model.Id,
                 Message = model.Message,
@@ -94,9 +94,9 @@ namespace WebMarketplace.Services
     /// </summary>
     public class WaitlistServiceAdapter : IWaitlistService
     {
-        private readonly SharedClassLibrary.Service.Web.IWaitlistService _service;
+        private readonly SharedClassLibrary.Service.IWaitlistService _service;
 
-        public WaitlistServiceAdapter(SharedClassLibrary.Service.Web.IWaitlistService service)
+        public WaitlistServiceAdapter(SharedClassLibrary.Service.IWaitlistService service)
         {
             _service = service;
         }
@@ -112,9 +112,9 @@ namespace WebMarketplace.Services
     /// </summary>
     public class NotificationServiceAdapter : INotificationService
     {
-        private readonly SharedClassLibrary.Service.Web.INotificationService _service;
+        private readonly SharedClassLibrary.Service.INotificationService _service;
 
-        public NotificationServiceAdapter(SharedClassLibrary.Service.Web.INotificationService service)
+        public NotificationServiceAdapter(SharedClassLibrary.Service.INotificationService service)
         {
             _service = service;
         }
