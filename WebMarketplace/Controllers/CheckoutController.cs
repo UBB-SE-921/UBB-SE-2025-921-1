@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using WebMarketplace.Models;
-using SharedIProductService = SharedClassLibrary.Service.IProductService;
 
 namespace WebMarketplace.Controllers
 {
@@ -14,14 +13,14 @@ namespace WebMarketplace.Controllers
         private readonly IOrderHistoryService _orderHistoryService;
         private readonly IOrderSummaryService _orderSummaryService;
         private readonly IOrderService _orderService;
-        private readonly SharedIProductService _productService;
+        private readonly IProductService _productService;
         private readonly IDummyWalletService _dummyWalletService;
 
         public CheckoutController(
             IOrderHistoryService orderHistoryService,
             IOrderSummaryService orderSummaryService,
             IOrderService orderService,
-            SharedIProductService productService,
+            IProductService productService,
             IDummyWalletService dummyWalletService)
         {
             _orderHistoryService = orderHistoryService;

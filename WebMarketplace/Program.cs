@@ -2,10 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
 using SharedClassLibrary.Helper;
 using SharedClassLibrary.Service;
-using SharedClassLibrary.Service.Web;
-using WebMarketplace.Services;
-using SharedIProductService = SharedClassLibrary.Service.IProductService;
-using WebIProductService = SharedClassLibrary.Service.Web.IWebProductService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,26 +21,17 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<IOrderHistoryService, OrderHistoryService>();
 builder.Services.AddScoped<IOrderSummaryService, OrderSummaryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<SharedIProductService, ProductService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
 
-// Register web services
-builder.Services.AddScoped<WebIProductService, WebProductService>();
-builder.Services.AddScoped<SharedClassLibrary.Service.IWaitlistService, SharedClassLibrary.Service.WaitlistService>();
-builder.Services.AddScoped<SharedClassLibrary.Service.INotificationService, SharedClassLibrary.Service.NotificationService>();
+// Register remaining services
+builder.Services.AddScoped<IWaitlistService, WaitlistService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // Ensure singleton registration of notification service for consistent state
 builder.Services.Remove(builder.Services.FirstOrDefault(
-    d => d.ServiceType == typeof(SharedClassLibrary.Service.INotificationService)));
-builder.Services.AddSingleton<SharedClassLibrary.Service.INotificationService, SharedClassLibrary.Service.NotificationService>();
-
-// Register backward compatibility adapters
-builder.Services.AddScoped<WebMarketplace.Services.IProductService>(sp =>
-    new ProductServiceAdapter(sp.GetRequiredService<WebIProductService>()));
-builder.Services.AddScoped<WebMarketplace.Services.IWaitlistService>(sp =>
-    new WaitlistServiceAdapter(sp.GetRequiredService<SharedClassLibrary.Service.IWaitlistService>()));
-builder.Services.AddScoped<WebMarketplace.Services.INotificationService>(sp =>
-    new NotificationServiceAdapter(sp.GetRequiredService<SharedClassLibrary.Service.INotificationService>()));
+    d => d.ServiceType == typeof(INotificationService)));
+builder.Services.AddSingleton<INotificationService, NotificationService>();
 
 var connectionString = AppConfig.GetConnectionString("MyLocalDb");
 builder.Services.AddDbContext<MarketPlaceDbContext>(options =>

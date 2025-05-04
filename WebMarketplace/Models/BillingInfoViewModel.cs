@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-// using WebMarketplace.Services;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.Service;
-using SharedIProductService = SharedClassLibrary.Service.IProductService;
 
 namespace WebMarketplace.Models
 {
@@ -14,7 +12,7 @@ namespace WebMarketplace.Models
         private readonly IOrderHistoryService _orderHistoryService;
         private readonly IOrderSummaryService _orderSummaryService;
         private readonly IOrderService _orderService;
-        private readonly SharedIProductService _productService;
+        private readonly IProductService _productService;
         private readonly IDummyWalletService _dummyWalletService;
 
         public int OrderHistoryID { get; set; }
@@ -67,7 +65,7 @@ namespace WebMarketplace.Models
             _orderService = new OrderService();
             _orderSummaryService = new OrderSummaryService();
             _dummyWalletService = new DummyWalletService();
-            _productService = new SharedClassLibrary.Service.ProductService();
+            _productService = new ProductService();
             
             ProductList = new List<Product>();
             StartDate = DateTime.Today;

@@ -3,11 +3,8 @@ using System;
 using System.Threading.Tasks;
 using WebMarketplace.Models;
 using SharedClassLibrary.Service;
-using SharedClassLibrary.Service.Web;
-using SharedClassLibrary.Domain;
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using WebIProductService = SharedClassLibrary.Service.Web.IWebProductService;
 
 namespace WebMarketplace.Controllers
 {
@@ -17,7 +14,7 @@ namespace WebMarketplace.Controllers
     public class BorrowProductController : Controller
     {
         private readonly IWaitlistService _waitlistService;
-        private readonly WebIProductService _productService;
+        private readonly IProductService _productService;
         private readonly INotificationService _notificationService;
         private readonly ILogger<BorrowProductController> _logger;
 
@@ -30,7 +27,7 @@ namespace WebMarketplace.Controllers
         /// <param name="logger">The logger</param>
         public BorrowProductController(
             IWaitlistService waitlistService,
-            WebIProductService productService,
+            IProductService productService,
             INotificationService notificationService,
             ILogger<BorrowProductController> logger)
         {
