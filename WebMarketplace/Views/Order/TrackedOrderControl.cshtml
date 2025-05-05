@@ -1,0 +1,218 @@
+@model SharedClassLibrary.Domain.TrackedOrder
+@inject SharedClassLibrary.Service.ITrackedOrderService TrackedOrderService
+@{
+    ViewData["Title"] = "Track Order Control";
+    var checkpoints = await TrackedOrderService.GetAllOrderCheckpointsAsync(Model.TrackedOrderID);
+}
+
+<div class="container mt-4">
+    <h2>Track Order Control #@Model.TrackedOrderID</h2>
+
+    <div class="row">
+        <!-- Order Details and Checkpoints -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Order Details</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Order ID:</dt>
+                        <dd class="col-sm-8">@Model.OrderID</dd>
+
+                        <dt class="col-sm-4">Current Status:</dt>
+                        <dd class="col-sm-8">@Model.CurrentStatus</dd>
+
+                        <dt class="col-sm-4">Estimated Delivery:</dt>
+                        <dd class="col-sm-8">@Model.EstimatedDeliveryDate.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-4">Delivery Address:</dt>
+                        <dd class="col-sm-8">@Model.DeliveryAddress</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>Tracking History</h4>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        @foreach (var checkpoint in checkpoints.OrderByDescending(c => c.Timestamp))
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h5 class="mb-1">@checkpoint.Status</h5>
+                                    <p class="mb-1">@checkpoint.Description</p>
+                                    <small class="text-muted">
+                                        @checkpoint.Timestamp.ToString("dd/MM/yyyy HH:mm")
+                                        @if (!string.IsNullOrEmpty(checkpoint.Location))
+                                        {
+                                            <span> - @checkpoint.Location</span>
+                                        }
+                                    </small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Control Panel</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Revert to Last Checkpoint -->
+                    <div class="mb-4">
+                        <button id="revertButton" class="btn btn-warning mb-2">Revert to Last Checkpoint</button>
+                    </div>
+
+                    <!-- Change Estimated Delivery Date -->
+                    <div class="mb-4">
+                        <h5>Change Estimated Delivery Date</h5>
+                        <div class="input-group mb-2">
+                            <input type="date" id="deliveryDate" class="form-control" />
+                            <button id="updateDeliveryDate" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+
+                    <!-- Add New Checkpoint -->
+                    <div class="mb-4">
+                        <h5>Add New Checkpoint</h5>
+                        <form id="addCheckpointForm">
+                            <div class="mb-2">
+                                <input type="text" class="form-control" id="location" placeholder="Location (Optional)" />
+                            </div>
+                            <div class="mb-2">
+                                <input type="text" class="form-control" id="description" placeholder="Description" required />
+                            </div>
+                            <div class="mb-2">
+                                <select class="form-select" id="status" required>
+                                    <option value="">Select Status</option>
+                                    <option value="PROCESSING">Processing</option>
+                                    <option value="SHIPPED">Shipped</option>
+                                    <option value="IN_WAREHOUSE">In Warehouse</option>
+                                    <option value="IN_TRANSIT">In Transit</option>
+                                    <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                                    <option value="DELIVERED">Delivered</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success">Add Checkpoint</button>
+                        </form>
+                    </div>
+
+                    <!-- Update Current Checkpoint -->
+                    <div class="mb-4">
+                        <h5>Update Current Checkpoint</h5>
+                        <form id="updateCheckpointForm">
+                            <div class="mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="timestampOption" id="manualTimestamp" checked>
+                                    <label class="form-check-label" for="manualTimestamp">
+                                        Manually Select Timestamp
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="timestampOption" id="autoTimestamp">
+                                    <label class="form-check-label" for="autoTimestamp">
+                                        Use Current Date and Time
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="manualTimestampFields" class="mb-2">
+                                <input type="datetime-local" class="form-control" id="timestamp" />
+                            </div>
+                            <div class="mb-2">
+                                <input type="text" class="form-control" id="updateLocation" placeholder="Location (Optional)" />
+                            </div>
+                            <div class="mb-2">
+                                <input type="text" class="form-control" id="updateDescription" placeholder="Description" required />
+                            </div>
+                            <div class="mb-2">
+                                <select class="form-select" id="updateStatus" required>
+                                    <option value="">Select Status</option>
+                                    <option value="PROCESSING">Processing</option>
+                                    <option value="SHIPPED">Shipped</option>
+                                    <option value="IN_WAREHOUSE">In Warehouse</option>
+                                    <option value="IN_TRANSIT">In Transit</option>
+                                    <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                                    <option value="DELIVERED">Delivered</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Checkpoint</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 20px;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        background-color: #007bff;
+        border-radius: 50%;
+    }
+
+    .timeline-content {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border-left: 3px solid #007bff;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Toggle manual timestamp fields
+            $('input[name="timestampOption"]').change(function() {
+                if ($('#manualTimestamp').is(':checked')) {
+                    $('#manualTimestampFields').show();
+                } else {
+                    $('#manualTimestampFields').hide();
+                }
+            });
+
+            // Handle form submissions
+            $('#addCheckpointForm').on('submit', function(e) {
+                e.preventDefault();
+                // Add AJAX call to submit new checkpoint
+            });
+
+            $('#updateCheckpointForm').on('submit', function(e) {
+                e.preventDefault();
+                // Add AJAX call to update checkpoint
+            });
+
+            $('#revertButton').on('click', function() {
+                // Add AJAX call to revert to last checkpoint
+            });
+
+            $('#updateDeliveryDate').on('click', function() {
+                // Add AJAX call to update delivery date
+            });
+        });
+    </script>
+} 

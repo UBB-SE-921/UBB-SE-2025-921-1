@@ -1,0 +1,95 @@
+@model IEnumerable<SharedClassLibrary.Domain.OrderDisplayInfo>
+@{
+    ViewData["Title"] = "Order History";
+}
+
+<div class="container mt-4">
+    <h2>Order History</h2>
+    
+    <!-- Filter Controls -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search products..." />
+        </div>
+        <div class="col-md-4">
+            <select id="timePeriodSelect" class="form-select">
+                <option value="Last 3 Months">Last 3 Months</option>
+                <option value="Last 6 Months">Last 6 Months</option>
+                <option value="This Year">This Year</option>
+                <option value="All Orders">All Orders</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button id="refreshButton" class="btn btn-primary">Refresh</button>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th>Order Date</th>
+                    <th>Payment Method</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderSummaryID</td>
+                        <td>@order.ProductName</td>
+                        <td>@order.ProductCategory</td>
+                        <td>@order.OrderDate</td>
+                        <td>@order.PaymentMethod</td>
+                        <td>
+                            <a href="@Url.Action("TrackOrder", "Order", new { orderId = order.OrderSummaryID })" 
+                               class="btn btn-info btn-sm">Track Order</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#searchInput').on('input', function() {
+                filterOrders();
+            });
+
+            $('#timePeriodSelect').on('change', function() {
+                filterOrders();
+            });
+
+            $('#refreshButton').on('click', function() {
+                location.reload();
+            });
+
+            function filterOrders() {
+                var searchText = $('#searchInput').val().toLowerCase();
+                var timePeriod = $('#timePeriodSelect').val();
+                
+                // Here you would typically make an AJAX call to the server
+                // to get filtered results based on searchText and timePeriod
+                // For now, we'll just do client-side filtering
+                $('tbody tr').each(function() {
+                    var productName = $(this).find('td:eq(1)').text().toLowerCase();
+                    var productType = $(this).find('td:eq(2)').text().toLowerCase();
+                    
+                    if (productName.includes(searchText) || productType.includes(searchText)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+    </script>
+} 

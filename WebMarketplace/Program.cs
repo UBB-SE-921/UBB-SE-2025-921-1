@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
 using SharedClassLibrary.Helper;
+using SharedClassLibrary.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,10 @@ builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
     options.UseSqlServer(connectionString)
         .EnableSensitiveDataLogging()
 );
+
+// Register services
+builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 var app = builder.Build();
 
