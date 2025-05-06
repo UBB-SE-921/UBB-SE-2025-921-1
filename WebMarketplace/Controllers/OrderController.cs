@@ -3,6 +3,7 @@ using SharedClassLibrary.Domain;
 using SharedClassLibrary.Service;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace WebMarketplace.Controllers
 {
@@ -11,12 +12,14 @@ namespace WebMarketplace.Controllers
         private readonly ITrackedOrderService _trackedOrderService;
         private readonly IOrderService _orderService;
         private readonly ILogger<OrderController> _logger;
+        private readonly IOrderSummaryService _orderSummaryService;
 
-        public OrderController(ITrackedOrderService trackedOrderService, IOrderService orderService, ILogger<OrderController> logger)
+        public OrderController(ITrackedOrderService trackedOrderService, IOrderService orderService, ILogger<OrderController> logger, IOrderSummaryService orderSummaryService)
         {
             _trackedOrderService = trackedOrderService;
             _orderService = orderService;
             _logger = logger;
+            _orderSummaryService = orderSummaryService;
         }
 
         // GET: Order/Test
@@ -32,10 +35,16 @@ namespace WebMarketplace.Controllers
             return View(orders);
         }
 
-        // GET: Order/TrackOrder/{orderId}?admin={true/false}
+        // GET: Order/Track
+        public IActionResult Track()
+        {
+            return View("TrackOrder");
+        }
+
+        // GET: Order/TrackOrder/{orderId}?hasControl={true|false}
         [HttpGet]
         [Route("Order/TrackOrder/{orderId:int}")]
-        public async Task<IActionResult> TrackOrder(int orderId, bool admin = false)
+        public async Task<IActionResult> TrackOrder(int orderId, bool hasControl = false)
         {
             _logger.LogInformation($"TrackOrder action called with orderId: {orderId}");
             
@@ -46,7 +55,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            if (admin)
+            if (hasControl)
             {
                 _logger.LogInformation($"Rendering TrackedOrderControl view for orderId: {orderId}");
                 return View("TrackedOrderControl", trackedOrder);
@@ -133,6 +142,42 @@ namespace WebMarketplace.Controllers
             catch
             {
                 return Json(new { success = false, message = "Error updating checkpoint" });
+            }
+        }
+
+        // GET: Order/GetOrderDetails
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetails(int orderId)
+        {
+            try
+            {
+                var summary = await _orderSummaryService.GetOrderSummaryByIdAsync(orderId);
+                if (summary == null)
+                {
+                    return Json(new { success = false, message = "Order summary not found" });
+                }
+                return Json(new {
+                    success = true,
+                    summary = new {
+                        id = summary.ID,
+                        subtotal = summary.Subtotal,
+                        warrantyTax = summary.WarrantyTax,
+                        deliveryFee = summary.DeliveryFee,
+                        finalTotal = summary.FinalTotal,
+                        fullName = summary.FullName,
+                        email = summary.Email,
+                        phoneNumber = summary.PhoneNumber,
+                        address = summary.Address,
+                        postalCode = summary.PostalCode,
+                        additionalInfo = summary.AdditionalInfo,
+                        contractDetails = summary.ContractDetails
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting order summary details");
+                return Json(new { success = false, message = "Error retrieving order summary details" });
             }
         }
     }

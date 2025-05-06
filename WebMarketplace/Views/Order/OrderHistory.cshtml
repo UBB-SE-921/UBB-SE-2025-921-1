@@ -3,92 +3,162 @@
     ViewData["Title"] = "Order History";
 }
 
-<div class="container mt-4">
-    <h2>Order History</h2>
-    
-    <!-- Filter Controls -->
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search products..." />
-        </div>
-        <div class="col-md-4">
-            <select id="timePeriodSelect" class="form-select">
-                <option value="Last 3 Months">Last 3 Months</option>
-                <option value="Last 6 Months">Last 6 Months</option>
-                <option value="This Year">This Year</option>
-                <option value="All Orders">All Orders</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <button id="refreshButton" class="btn btn-primary">Refresh</button>
-        </div>
-    </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Order History</h2>
 
-    <!-- Orders Table -->
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Product Name</th>
-                    <th>Product Type</th>
-                    <th>Order Date</th>
-                    <th>Payment Method</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in Model)
-                {
-                    <tr>
-                        <td>@order.OrderSummaryID</td>
-                        <td>@order.ProductName</td>
-                        <td>@order.ProductCategory</td>
-                        <td>@order.OrderDate</td>
-                        <td>@order.PaymentMethod</td>
-                        <td>
-                            <a href="@Url.Action("TrackOrder", "Order", new { orderId = order.OrderSummaryID })" 
-                               class="btn btn-info btn-sm">Track Order</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            @foreach (var order in Model)
+            {
+                <li class="px-6 py-4 hover:bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">
+                                Order #@order.OrderSummaryID
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                Product: @order.ProductName
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                Category: @order.ProductCategory
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                Date: @order.OrderDate
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                Payment: @order.PaymentMethod
+                            </p>
+                        </div>
+                        <div class="ml-4 flex-shrink-0">
+                            <button onclick="showOrderDetails(@order.OrderSummaryID)" 
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div id="orderDetailsModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-900">Order Details</h3>
+                    <button onclick="closeOrderDetailsModal()" class="text-gray-400 hover:text-gray-500">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="px-6 py-4" id="orderDetailsContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            $('#searchInput').on('input', function() {
-                filterOrders();
-            });
+        function showOrderDetails(orderId) {
+            // Show loading state
+            document.getElementById('orderDetailsContent').innerHTML = '<div class="flex justify-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>';
+            document.getElementById('orderDetailsModal').classList.remove('hidden');
 
-            $('#timePeriodSelect').on('change', function() {
-                filterOrders();
-            });
-
-            $('#refreshButton').on('click', function() {
-                location.reload();
-            });
-
-            function filterOrders() {
-                var searchText = $('#searchInput').val().toLowerCase();
-                var timePeriod = $('#timePeriodSelect').val();
-                
-                // Here you would typically make an AJAX call to the server
-                // to get filtered results based on searchText and timePeriod
-                // For now, we'll just do client-side filtering
-                $('tbody tr').each(function() {
-                    var productName = $(this).find('td:eq(1)').text().toLowerCase();
-                    var productType = $(this).find('td:eq(2)').text().toLowerCase();
-                    
-                    if (productName.includes(searchText) || productType.includes(searchText)) {
-                        $(this).show();
+            $.ajax({
+                url: '@Url.Action("GetOrderDetails", "Order")',
+                type: 'GET',
+                data: { orderId: orderId },
+                success: function(response) {
+                    if (response.success) {
+                        const summary = response.summary;
+                        let content = `
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Order Summary ID</p>
+                                        <p class="mt-1 text-sm text-gray-900">${summary.id}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Subtotal</p>
+                                        <p class="mt-1 text-sm text-gray-900">$${summary.subtotal.toFixed(2)}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Warranty Tax</p>
+                                        <p class="mt-1 text-sm text-gray-900">$${summary.warrantyTax.toFixed(2)}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Delivery Fee</p>
+                                        <p class="mt-1 text-sm text-gray-900">$${summary.deliveryFee.toFixed(2)}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500">Final Total</p>
+                                        <p class="mt-1 text-sm text-gray-900">$${summary.finalTotal.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                                <div class="border-t border-gray-200 pt-4">
+                                    <h4 class="text-lg font-medium text-gray-900 mb-4">Customer Info</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">Full Name</p>
+                                            <p class="mt-1 text-sm text-gray-900">${summary.fullName || ''}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">Email</p>
+                                            <p class="mt-1 text-sm text-gray-900">${summary.email || ''}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">Phone Number</p>
+                                            <p class="mt-1 text-sm text-gray-900">${summary.phoneNumber || ''}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">Address</p>
+                                            <p class="mt-1 text-sm text-gray-900">${summary.address || ''}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">Postal Code</p>
+                                            <p class="mt-1 text-sm text-gray-900">${summary.postalCode || ''}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="border-t border-gray-200 pt-4">
+                                    <h4 class="text-lg font-medium text-gray-900 mb-4">Additional Info</h4>
+                                    <div>
+                                        <p class="text-sm text-gray-900">${summary.additionalInfo || ''}</p>
+                                    </div>
+                                </div>
+                                <div class="border-t border-gray-200 pt-4">
+                                    <h4 class="text-lg font-medium text-gray-900 mb-4">Contract Details</h4>
+                                    <div>
+                                        <p class="text-sm text-gray-900">${summary.contractDetails || ''}</p>
+                                    </div>
+                                </div>
+                            </div>`;
+                        document.getElementById('orderDetailsContent').innerHTML = content;
                     } else {
-                        $(this).hide();
+                        document.getElementById('orderDetailsContent').innerHTML = '<div class="text-red-600">Error: ' + response.message + '</div>';
                     }
-                });
+                },
+                error: function(xhr, status, error) {
+                    document.getElementById('orderDetailsContent').innerHTML = '<div class="text-red-600">Error loading order details: ' + error + '</div>';
+                }
+            });
+        }
+
+        function closeOrderDetailsModal() {
+            document.getElementById('orderDetailsModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('orderDetailsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeOrderDetailsModal();
             }
         });
     </script>
