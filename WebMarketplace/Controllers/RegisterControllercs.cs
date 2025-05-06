@@ -68,7 +68,7 @@ namespace WebMarketplace.Controllers
 
             // Save the user in the database
             _logger.LogInformation($"Registering user: {model.Username}, Email: {model.Email}, Role: {model.Role}");    
-            var createdUser = await _userService.RegisterUser(model.Username, model.Email, model.Password, model.Telephone, role);
+            var createdUser = await _userService.RegisterUser(model.Username, model.Password, model.Email, model.Telephone, role);
 
             // Check if the user was successfully created
             if (createdUser)
