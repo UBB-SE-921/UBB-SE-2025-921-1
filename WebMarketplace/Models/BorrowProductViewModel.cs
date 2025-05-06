@@ -43,12 +43,21 @@ namespace WebMarketplace.Models
         /// </summary>
         public DateTimeOffset? StartDate 
         { 
-            get => _startDate; 
+            get => _startDate.HasValue ? new DateTimeOffset(_startDate.Value, TimeSpan.Zero) : null; 
             set
             {
-                if (value is DateTimeOffset dateTimeOffset)
+                if (value.HasValue)
                 {
-                    _startDate = dateTimeOffset.DateTime;
+                    try
+                    {
+                        // Use UTC to avoid issues with offsets
+                        _startDate = value.Value.UtcDateTime;
+                    }
+                    catch
+                    {
+                        // Fallback to a safe default if conversion fails
+                        _startDate = DateTime.UtcNow;
+                    }
                 }
                 else
                 {
@@ -63,12 +72,21 @@ namespace WebMarketplace.Models
         /// </summary>
         public DateTimeOffset? EndDate 
         { 
-            get => _endDate; 
+            get => _endDate.HasValue ? new DateTimeOffset(_endDate.Value, TimeSpan.Zero) : null; 
             set
             {
-                if (value is DateTimeOffset dateTimeOffset)
+                if (value.HasValue)
                 {
-                    _endDate = dateTimeOffset.DateTime;
+                    try
+                    {
+                        // Use UTC to avoid issues with offsets
+                        _endDate = value.Value.UtcDateTime;
+                    }
+                    catch
+                    {
+                        // Fallback to a safe default if conversion fails
+                        _endDate = DateTime.UtcNow.AddDays(30); // Default to 30 days from now
+                    }
                 }
                 else
                 {
@@ -80,7 +98,7 @@ namespace WebMarketplace.Models
         /// <summary>
         /// Gets a value indicating whether the product is available
         /// </summary>
-        public bool IsAvailable => !EndDate.HasValue || EndDate.Value == DateTime.MinValue;
+        public bool IsAvailable => !EndDate.HasValue || (_endDate.HasValue && _endDate.Value == DateTime.MinValue);
 
         /// <summary>
         /// Gets or sets a value indicating whether the current user is on the waitlist
@@ -106,18 +124,25 @@ namespace WebMarketplace.Models
             {
                 if (IsAvailable)
                 {
-                    if (!StartDate.HasValue || StartDate.Value == DateTime.MinValue)
+                    if (!_startDate.HasValue || _startDate.Value == DateTime.MinValue)
                     {
                         return "Availability: Now";
                     }
                     else
                     {
-                        return $"Available after: {StartDate.Value:yyyy-MM-dd}";
+                        return $"Available after: {_startDate.Value:yyyy-MM-dd}";
                     }
                 }
                 else
                 {
-                    return $"Unavailable until: {EndDate.Value:yyyy-MM-dd}";
+                    if (_endDate.HasValue)
+                    {
+                        return $"Unavailable until: {_endDate.Value:yyyy-MM-dd}";
+                    }
+                    else
+                    {
+                        return "Availability status unknown";
+                    }
                 }
             }
         }
