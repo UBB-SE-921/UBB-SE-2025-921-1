@@ -148,6 +148,11 @@ namespace Server.DBConnection
         /// On model creating.
         /// </summary>
         /// <param name="modelBuilder">The model builder.</param>
+        /// 
+
+        public DbSet<BuyerBadge> BuyerBadge { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

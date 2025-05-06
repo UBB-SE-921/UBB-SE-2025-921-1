@@ -1,0 +1,31 @@
+﻿@model WebMarketplace.Models.BuyerBadgeViewModel
+
+@{
+    ViewData["Title"] = "Create Buyer Badge";
+}
+
+<h1>Create Buyer Badge</h1>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="BadgeName" class="control-label"></label>
+        <input asp-for="BadgeName" class="form-control" />
+        <span asp-validation-for="BadgeName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Discount" class="control-label"></label>
+        <input asp-for="Discount" class="form-control" />
+        <span asp-validation-for="Discount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Progress" class="control-label"></label>
+        <input asp-for="Progress" class="form-control" />
+        <span asp-validation-for="Progress" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageSource" class="control-label"></label>
+        <input asp-for="ImageSource" class="form-control" />
+        <span asp-validation-for="ImageSource" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
