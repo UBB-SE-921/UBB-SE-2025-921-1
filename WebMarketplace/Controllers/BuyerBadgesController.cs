@@ -1,35 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebMarketplace.Models;
-using Server.DBConnection;
 
 namespace WebMarketplace.Controllers
 {
     public class BuyerBadgesController : Controller
     {
-        private readonly MarketPlaceDbContext _context;
-
-        public BuyerBadgesController(MarketPlaceDbContext context)
+        // Mock data source for BuyerBadgeViewModel
+        private static List<BuyerBadgeViewModel> _buyerBadges = new List<BuyerBadgeViewModel>
         {
-            _context = context;
-        }
+            new BuyerBadgeViewModel { Id = 1, BadgeName = "Bronze", Discount = 5, Progress = 20, ImageSource = "/images/bronze.png" },
+            new BuyerBadgeViewModel { Id = 2, BadgeName = "Silver", Discount = 10, Progress = 50, ImageSource = "/images/silver.png" },
+            new BuyerBadgeViewModel { Id = 3, BadgeName = "Gold", Discount = 15, Progress = 80, ImageSource = "/images/gold.png" }
+        };
 
         // GET: BuyerBadges
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.BuyerBadges.ToListAsync());
+            return View(_buyerBadges);
         }
 
         // GET: BuyerBadges/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var buyerBadge = await _context.BuyerBadges
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
             if (buyerBadge == null)
             {
                 return NotFound();
@@ -47,76 +45,71 @@ namespace WebMarketplace.Controllers
         // POST: BuyerBadges/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,BadgeName,Discount,Progress,ImageSource")] BuyerBadges buyerBadge)
+        public IActionResult Create([Bind("Id,BadgeName,Discount,Progress,ImageSource")] BuyerBadgeViewModel buyerBadgeViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(buyerBadge);
-                await _context.SaveChangesAsync();
+                buyerBadgeViewModel.Id = _buyerBadges.Max(b => b.Id) + 1; // Generate a new ID
+                _buyerBadges.Add(buyerBadgeViewModel);
                 return RedirectToAction(nameof(Index));
             }
-            return View(buyerBadge);
+            return View(buyerBadgeViewModel);
         }
 
         // GET: BuyerBadges/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var buyerBadge = await _context.BuyerBadges.FindAsync(id);
+            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
             if (buyerBadge == null)
             {
                 return NotFound();
             }
+
             return View(buyerBadge);
         }
 
         // POST: BuyerBadges/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BadgeName,Discount,Progress,ImageSource")] BuyerBadge buyerBadge)
+        public IActionResult Edit(int id, [Bind("Id,BadgeName,Discount,Progress,ImageSource")] BuyerBadgeViewModel buyerBadgeViewModel)
         {
-            if (id != buyerBadge.Id)
+            if (id != buyerBadgeViewModel.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
+                if (buyerBadge == null)
                 {
-                    _context.Update(buyerBadge);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BuyerBadgeExists(buyerBadge.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                buyerBadge.BadgeName = buyerBadgeViewModel.BadgeName;
+                buyerBadge.Discount = buyerBadgeViewModel.Discount;
+                buyerBadge.Progress = buyerBadgeViewModel.Progress;
+                buyerBadge.ImageSource = buyerBadgeViewModel.ImageSource;
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(buyerBadge);
+            return View(buyerBadgeViewModel);
         }
 
         // GET: BuyerBadges/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var buyerBadge = await _context.BuyerBadges
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
             if (buyerBadge == null)
             {
                 return NotFound();
@@ -128,20 +121,14 @@ namespace WebMarketplace.Controllers
         // POST: BuyerBadges/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var buyerBadge = await _context.BuyerBadges.FindAsync(id);
+            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
             if (buyerBadge != null)
             {
-                _context.BuyerBadges.Remove(buyerBadge);
-                await _context.SaveChangesAsync();
+                _buyerBadges.Remove(buyerBadge);
             }
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool BuyerBadgeExists(int id)
-        {
-            return _context.BuyerBadgeViewModel.Any(e => e.Id == id);
         }
     }
 }
