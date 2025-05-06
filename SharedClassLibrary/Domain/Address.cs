@@ -11,7 +11,7 @@ namespace SharedClassLibrary.Domain;
 /// <summary>
 /// Represents a physical address.
 /// </summary>
-[Table("BuyerAddress")]
+[Table("Addresses")]
 public class Address
 {
     /// <summary>
