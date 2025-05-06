@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.Shared;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.ProxyRepository;
-using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Helper;
 
 namespace SharedClassLibrary.Service
@@ -15,7 +14,6 @@ namespace SharedClassLibrary.Service
     public class ProductService : IProductService
     {
         private readonly IProductRepository productRepository;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductService"/> class with a specified database provider.
@@ -60,6 +58,20 @@ namespace SharedClassLibrary.Service
                 }
             }
             await productRepository.UpdateProductAsync(id, name, price, sellerId, productType, startDate, endDate);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Product> GetProductByIdAsync(int productId)
+        {
+            // Use the repository to fetch the product from the database
+            return await productRepository.GetProductByIdAsync(productId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> GetSellerNameAsync(int sellerId)
+        {
+            // Use the repository to fetch the seller name from the database
+            return await productRepository.GetSellerNameAsync(sellerId);
         }
     }
 }
