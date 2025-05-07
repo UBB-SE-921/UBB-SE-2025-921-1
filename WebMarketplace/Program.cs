@@ -26,6 +26,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
 
+
+
 // Register user and buyer services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBuyerService, BuyerService>();
