@@ -48,6 +48,12 @@ namespace WebMarketplace.Controllers
                 return RedirectToAction("Index", "Register");
             }
 
+            if(model.Password != model.ConfirmPassword)
+            {
+                TempData["ErrorMessage"] = "Passwords do not match.";
+                return RedirectToAction("Index", "Register");
+            }
+
             // Check if the email already exists
             var existingUser = await _userService.GetUserByEmail(model.Email);
             if (existingUser != null)

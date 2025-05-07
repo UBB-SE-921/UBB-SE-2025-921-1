@@ -17,6 +17,11 @@
         /// </summary>
         public string Password { get; set; }
 
+        ///<summary>
+        ///Gets the confirm password string inserted by the user.
+        /// </summary>
+        public string ConfirmPassword { get; set; }
+
         /// <summary>
         /// Gets or sets the phone number of the user.
         ///</summary>
