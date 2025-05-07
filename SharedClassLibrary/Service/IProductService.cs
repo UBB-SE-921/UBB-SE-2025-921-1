@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
+using System.Collections.Generic;
 
 namespace SharedClassLibrary.Service
 {
@@ -35,5 +36,11 @@ namespace SharedClassLibrary.Service
         /// <param name="sellerId">The seller ID</param>
         /// <returns>The seller name</returns>
         Task<string> GetSellerNameAsync(int sellerId);
+
+        /// <summary>
+        /// Gets all products available for borrowing from the waitlist
+        /// </summary>
+        /// <returns>List of borrowable products</returns>
+        Task<List<Product>> GetBorrowableProductsAsync();
     }
 }

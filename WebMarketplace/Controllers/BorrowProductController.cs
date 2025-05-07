@@ -43,8 +43,9 @@ namespace WebMarketplace.Controllers
         /// <returns>The current user ID</returns>
         private int GetCurrentUserId()
         {
-            // This would be replaced with actual user authentication 
-            return 1;
+            // Use UserSession to get the current user ID if available
+            // otherwise fallback to a default value for development purposes
+            return UserSession.CurrentUserId ?? 1;
         }
 
         /// <summary>
@@ -82,9 +83,9 @@ namespace WebMarketplace.Controllers
                     SellerId = product.SellerId, // Both are int, no need to cast
                     SellerName = sellerName,
                     ProductType = product.ProductType,
-                    // DateTimeOffset will be properly handled by our property setters
-                    StartDate = product.StartDate,
-                    EndDate = product.EndDate,
+                    // Handle dates safely to prevent ArgumentOutOfRangeException
+                    StartDate = SafeConvertToDateTimeOffset(product.StartDate),
+                    EndDate = SafeConvertToDateTimeOffset(product.EndDate),
                     IsOnWaitlist = isOnWaitlist,
                     WaitlistPosition = position,
                     UnreadNotificationsCount = unreadNotificationsCount
@@ -101,13 +102,54 @@ namespace WebMarketplace.Controllers
         }
 
         /// <summary>
+        /// Safely converts a potentially problematic DateTimeOffset to a valid one or null
+        /// </summary>
+        /// <param name="originalDate">The original DateTimeOffset to convert</param>
+        /// <returns>A valid DateTimeOffset or null</returns>
+        private DateTimeOffset? SafeConvertToDateTimeOffset(DateTimeOffset? originalDate)
+        {
+            if (!originalDate.HasValue)
+            {
+                return null;
+            }
+
+            try
+            {
+                // Ensure the date is in a valid range for DateTimeOffset
+                var utcDate = originalDate.Value.UtcDateTime;
+                if (utcDate.Year < 1 || utcDate.Year > 9999)
+                {
+                    // If date is out of valid range, return null
+                    return null;
+                }
+                
+                // Use a safe conversion with zero offset
+                return new DateTimeOffset(utcDate, TimeSpan.Zero);
+            }
+            catch
+            {
+                // If any conversion errors occur, return null
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Shows an index of available products
         /// </summary>
         /// <returns>The index view</returns>
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // Provide some guidance to the user about available products
-            return View();
+            try
+            {
+                // Retrieve products of "borrowed" type from the database
+                var products = await _productService.GetBorrowableProductsAsync();
+                return View(products);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to load borrowable products");
+                return RedirectToAction("Error", "Home", new { message = $"Error loading products: {ex.Message}" });
+            }
         }
 
         /// <summary>

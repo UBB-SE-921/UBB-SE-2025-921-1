@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
+using System.Collections.Generic;
 
 namespace SharedClassLibrary.IRepository
 {
@@ -26,5 +27,11 @@ namespace SharedClassLibrary.IRepository
         Task DeleteProduct(int id);
         Task<string> GetSellerNameAsync(int? sellerId);
         Task<Product> GetProductByIdAsync(int productId);
+        
+        /// <summary>
+        /// Gets all borrowable products from the waitlist
+        /// </summary>
+        /// <returns>A list of products that are available for borrowing</returns>
+        Task<List<Product>> GetBorrowableProductsAsync();
     }
 } 
