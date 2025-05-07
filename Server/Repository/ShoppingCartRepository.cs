@@ -60,9 +60,30 @@ namespace Server.Repository
                 throw new Exception($"AddProductToCartAsync: Quantity must be greater than 0.");
             }
 
-            BuyerCartItemEntity buyerCartItem = new BuyerCartItemEntity(buyerId, productId, quantity);
+            //BuyerCartItemEntity buyerCartItem = new BuyerCartItemEntity(buyerId, productId, quantity);
 
-            this.dbContext.BuyerCartItems.Add(buyerCartItem);
+            //this.dbContext.BuyerCartItems.Add(buyerCartItem);
+            //await this.dbContext.SaveChangesAsync();
+
+            // MODIFIED SO ADD TO CART DOESN'T CRASH WHEN THE PRODUCT IS ALREADY IN THE CART,
+            // JUST INCREASE THE QUANTITY
+
+            // Check if the product is already in the cart
+            var existingCartItem = await this.dbContext.BuyerCartItems
+                .FirstOrDefaultAsync(item => item.BuyerId == buyerId && item.ProductId == productId);
+
+            if (existingCartItem != null)
+            {
+                // Update quantity if it already exists
+                existingCartItem.Quantity += quantity;
+            }
+            else
+            {
+                // Add new cart item if it doesn't exist
+                BuyerCartItemEntity buyerCartItem = new BuyerCartItemEntity(buyerId, productId, quantity);
+                this.dbContext.BuyerCartItems.Add(buyerCartItem);
+            }
+
             await this.dbContext.SaveChangesAsync();
         }
 
@@ -97,6 +118,35 @@ namespace Server.Repository
             await this.dbContext.SaveChangesAsync();
         }
 
+        // OLD METHOD
+
+        /// <summary>
+        /// Gets all products in the user's shopping cart with their quantities.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer. Must be a positive integer.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a list with products.</returns>
+        /// <exception cref="Exception">Thrown when product is not found.</exception>
+        //public async Task<List<Product>> GetCartItemsAsync(int buyerId)
+        //{
+        //    List<BuyerCartItemEntity> buyerCartItems = await this.dbContext.BuyerCartItems
+        //        .Where(buyerCartItem => buyerCartItem.BuyerId == buyerId).ToListAsync();
+
+        //    List<Product> products = new List<Product>();
+        //    foreach (BuyerCartItemEntity buyerCartItem in buyerCartItems)
+        //    {
+        //        Product product = await this.dbContext.Products.FindAsync(buyerCartItem.ProductId)
+        //            ?? throw new Exception($"GetCartItemsAsync: Product not found for the product id: {buyerCartItem.ProductId}");
+        //        products.Add(product);
+        //    }
+
+        //    return products;
+        //}
+
+
+
+        // MODIFIED THIS METHOD SO THE PRODUCTS RETURNED HAVE THE QUANTITY FROM THE CART NOT THEIR STOCK
+        // BEST SOLUTION WOULD BE TO USE THE BuyerCartItemEntity somehow... 
+
         /// <summary>
         /// Gets all products in the user's shopping cart with their quantities.
         /// </summary>
@@ -113,11 +163,28 @@ namespace Server.Repository
             {
                 Product product = await this.dbContext.Products.FindAsync(buyerCartItem.ProductId)
                     ?? throw new Exception($"GetCartItemsAsync: Product not found for the product id: {buyerCartItem.ProductId}");
-                products.Add(product);
+
+                // Create a new product with the quantity from the cart instead of the actual stock
+                Product productWithCartQuantity = new Product(
+                    product.ProductId,
+                    product.Name,
+                    product.Description,
+                    product.Price,
+                    buyerCartItem.Quantity,  // Use the cart quantity instead of actual stock
+                    product.SellerId
+                );
+
+                // Copy any additional properties that might be needed
+                productWithCartQuantity.ProductType = product.ProductType;
+                productWithCartQuantity.StartDate = product.StartDate;
+                productWithCartQuantity.EndDate = product.EndDate;
+
+                products.Add(productWithCartQuantity);
             }
 
             return products;
         }
+
 
         /// <summary>
         /// Clears all items from the user's shopping cart.
