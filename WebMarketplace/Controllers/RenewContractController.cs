@@ -9,16 +9,13 @@ using System.Threading.Tasks;
 
 namespace WebMarketplace.Controllers
 {
+    // [Authorize]
     public class RenewContractController : Controller
     {
         private readonly IContractService _contractService;
         private readonly IPDFService _pdfService;
         private readonly IContractRenewalService _renewalService;
         private readonly INotificationContentService _notificationService;
-
-        // Default buyer and seller IDs
-        private const int DefaultBuyerId = 2;
-        private const int DefaultSellerId = 5; // Placeholder for actual seller ID
 
         public RenewContractController(
             IContractService contractService,
@@ -34,7 +31,7 @@ namespace WebMarketplace.Controllers
 
         public async Task<IActionResult> Index()
         {
-            int buyerId = GetBuyerId();
+            int buyerId = await GetCurrentBuyerId();
             var allContracts = await _contractService.GetContractsByBuyerAsync(buyerId);
             var activeContracts = new List<IContract>();
 
@@ -48,7 +45,6 @@ namespace WebMarketplace.Controllers
             }
 
             ViewBag.BuyerId = buyerId;
-            ViewBag.SellerId = DefaultSellerId;
             return View(activeContracts);
         }
 
@@ -59,6 +55,7 @@ namespace WebMarketplace.Controllers
             {
                 var contract = await _contractService.GetContractByIdAsync(contractId);
                 var details = await _contractService.GetProductDetailsByContractIdAsync(contractId);
+                int sellerId = await GetSellerIdByContractId(contractId);
 
                 bool isRenewalPeriodValid = false;
 
@@ -79,6 +76,7 @@ namespace WebMarketplace.Controllers
                     endDate = details?.EndDate?.ToString("MM/dd/yyyy"),
                     price = details?.price,
                     name = details?.name,
+                    sellerId = sellerId,
                     renewalAllowed = !isAlreadyRenewed && isRenewalPeriodValid,
                     status = isRenewalPeriodValid ? "Available for renewal" : "Not available for renewal",
                     contractContent = contract?.ContractContent
@@ -155,16 +153,10 @@ namespace WebMarketplace.Controllers
                     PredefinedContractID = contract.PredefinedContractID,
                     PDFID = newPdfId,
                     RenewedFromContractID = contract.ContractID,
-                    AdditionalTerms = contract.AdditionalTerms ?? "Standard renewal terms apply" // FIX: Copy from original or set default
+                    AdditionalTerms = contract.AdditionalTerms ?? "Standard renewal terms apply"
                 };
 
                 await _renewalService.AddRenewedContractAsync(updatedContract);
-
-                // Send notifications
-                var now = DateTime.Now;
-                _notificationService.AddNotification(new ContractRenewalRequestNotification(sellerId, now, (int)contract.ContractID));
-                _notificationService.AddNotification(new ContractRenewalAnswerNotification(buyerId, now, (int)contract.ContractID, true));
-                _notificationService.AddNotification(new ContractRenewalWaitlistNotification(999, now, productId));
 
                 return Json(new { success = true, message = "Contract renewed successfully!" });
             }
@@ -174,12 +166,38 @@ namespace WebMarketplace.Controllers
             }
         }
 
-        // HARDCODED, NEED TO BE REPLACED WITH REAL USER ID
-        private int GetBuyerId()
+        private async Task<int> GetCurrentBuyerId()
         {
-            // In a real application, you would get this from the current user's claims
-            // Here we're using a default value for testing
-            return DefaultBuyerId;
+            // In a real application with authentication:
+            // 1. Get the authenticated user's ID from claims
+            // string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // 2. Query the database to find the buyer ID associated with this user
+
+            // For now, we'll query the first contract and get its buyer
+            var contracts = await _contractService.GetAllContractsAsync();
+            if (contracts != null && contracts.Count > 0)
+            {
+                var firstContract = contracts[0];
+                var buyerDetails = await _contractService.GetContractBuyerAsync(firstContract.ContractID);
+                return buyerDetails.BuyerID;
+            }
+
+            // Fallback if no contracts exist
+            return 2;
+        }
+
+        private async Task<int> GetSellerIdByContractId(long contractId)
+        {
+            try
+            {
+                var sellerDetails = await _contractService.GetContractSellerAsync(contractId);
+                return sellerDetails.SellerID;
+            }
+            catch (Exception)
+            {
+                // Fallback if seller cannot be determined
+                return 5;
+            }
         }
     }
 }

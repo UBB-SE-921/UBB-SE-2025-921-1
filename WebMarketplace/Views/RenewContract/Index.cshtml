@@ -1,16 +1,16 @@
 ﻿@model List<SharedClassLibrary.Domain.IContract>
 @{
     ViewData["Title"] = "Renew Contract";
-    var buyerId = ViewBag.BuyerId;
-    var sellerId = ViewBag.SellerId;
 }
 
-<div class="container mx-auto py-8 bg-white">
-    <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">Renew Contract</h1>
+<div class="container mx-auto px-8 py-8 max-w-6xl">
+    <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">Renew Contract</h1>
+    <!-- Full-width blue underline below title -->
+    <hr class="h-1 bg-blue-600 border-0 mb-8" />
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Contract Selection Area -->
-        <div class="col-span-1 bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-6 h-full">
             <h2 class="text-xl font-bold text-blue-700 mb-4">CONTRACT SELECTION</h2>
 
             <div class="mb-4">
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Renewal Request Form Area -->
-        <div class="col-span-2 bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-6 h-full">
             <h2 class="text-xl font-bold text-blue-700 mb-4">RENEWAL REQUEST FORM</h2>
 
             <div id="renewalForm" class="hidden">
@@ -73,11 +73,10 @@
 @section Scripts {
         <script>
             $(document).ready(function() {
-                // Store the buyer and seller IDs
-                const buyerId = @buyerId;
-                const sellerId = @sellerId;
                 let selectedContractId = null;
                 let productId = null;
+                let buyerId = null;
+                let sellerId = null;
 
                 // Handle contract selection
                 $("#contractSelector").change(function() {
@@ -99,12 +98,19 @@
                         data: { contractId: contractId },
                         success: function(response) {
                             if (response.success) {
+                                // Store the sellerId from the response
+                                sellerId = response.sellerId;
+                                buyerId = @Html.Raw(Json.Serialize(ViewBag.BuyerId)); // Get from ViewBag
+
                                 // Update contract details panel
                                 $("#startDateText").text(`Start Date: ${response.startDate || 'N/A'}`);
                                 $("#endDateText").text(`End Date: ${response.endDate || 'N/A'}`);
 
-                                // Set status text with color based on availability
-                                const statusText = `Status: ${response.status}`;
+                                // Set status text with color based on renewal allowed status - FIXED TO BE CONSISTENT
+                                const statusText = response.renewalAllowed ? 
+                                    "Status: Available for renewal" : 
+                                    "Status: Not available for renewal";
+
                                 $("#statusText").text(statusText)
                                     .removeClass("text-green-600 text-red-600")
                                     .addClass(response.renewalAllowed ? "text-green-600" : "text-red-600");
@@ -124,7 +130,7 @@
                                         .text("This contract is not eligible for renewal at this time");
                                 }
 
-                                // Set product ID from the contract (using OrderID as placeholder)
+                                // Set product ID from the contract
                                 productId = response.productId || selectedContractId;
                             } else {
                                 showModal("Error", response.message || "Failed to load contract details");
@@ -147,6 +153,11 @@
 
                     if (!selectedContractId) {
                         showModal("Validation Error", "Please select a contract");
+                        return;
+                    }
+
+                    if (!sellerId) {
+                        showModal("Validation Error", "Contract seller information is missing");
                         return;
                     }
 
