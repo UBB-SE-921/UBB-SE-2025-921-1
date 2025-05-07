@@ -201,6 +201,32 @@ namespace SharedClassLibrary.Service
         }
 
         /// <summary>
+        /// Gets the price of a specific product.
+        /// </summary>
+        /// <param name="productId">The ID of the product.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the price of the product.</returns>
+        /// <exception cref="ArgumentException">Thrown if the product ID is invalid.</exception>
+        /// <exception cref="Exception">Thrown when the product is not found.</exception>
+        public async Task<double> GetProductPriceAsync(int buyerId, int productId)
+        {
+            if (productId <= 0)
+            {
+                throw new ArgumentException("Product ID must be a positive integer.", nameof(productId));
+            }
+
+            // Try to find the product in cart items first (if it's already in someone's cart)
+            var products = await this.shoppingCartRepository.GetCartItemsAsync(buyerId);
+            var product = products.FirstOrDefault(p => p.ProductId == productId);
+
+            if (product == null)
+            {
+                throw new Exception($"Product not found for the ID: {productId}");
+            }
+
+            return product.Price;
+        }
+
+        /// <summary>
         /// Gets the total price of all items in the buyer's shopping cart.
         /// </summary>
         /// <param name="buyerId">The ID of the buyer.</param>
