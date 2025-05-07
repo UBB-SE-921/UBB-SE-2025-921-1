@@ -13,6 +13,8 @@ namespace SharedClassLibrary.Service
     using SharedClassLibrary.Helper;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.ProxyRepository;
+
 
     /// <summary>
     /// Provides operations related to user management.
@@ -28,9 +30,9 @@ namespace SharedClassLibrary.Service
         /// Initializes a new instance of the <see cref="UserService"/> class.
         /// </summary>
         /// <param name="userRepository">The user repository to be used by the service.</param>
-        public UserService(IUserRepository userRepository)
+        public UserService()
         {
-            this.userRepository = userRepository;
+            this.userRepository = new UserProxyRepository(AppConfig.GetBaseApiUrl());
             this.userValidator = new UserValidator();
         }
 

@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
 using SharedClassLibrary.Helper;
 using SharedClassLibrary.Service;
+using SharedClassLibrary.IRepository;
+using SharedClassLibrary.ProxyRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,13 @@ builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
 // Register remaining services
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
+//Alexandra needs
+builder.Services.AddScoped<IUserService, UserService>();
+var apiBaseUrl = builder.Configuration.GetValue<string>("BaseApiUrl");
+builder.Services.AddScoped<IUserRepository>(provider =>
+    new UserProxyRepository(apiBaseUrl));
+
 
 // Ensure singleton registration of notification service for consistent state
 builder.Services.Remove(builder.Services.FirstOrDefault(

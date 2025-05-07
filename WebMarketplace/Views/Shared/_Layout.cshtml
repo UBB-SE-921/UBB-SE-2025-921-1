@@ -28,6 +28,18 @@
                     <div class="flex items-center">
                         <partial name="_CartButton" />
                         <partial name="_NotificationsButton" />
+
+                        <!-- Login Button -->
+                        <a asp-area="" asp-controller="Login" asp-action="Index"
+                            class="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
+                            Login
+                        </a>
+
+                        <!--Register-->
+                        <a asp-area="" asp-controller="Register" asp-action="Index"
+                           class="ml-2 bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full text-sm font-semibold transition">
+                            Register
+                        </a>
                     </div>
                 </div>
             </div>

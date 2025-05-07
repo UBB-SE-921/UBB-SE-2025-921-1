@@ -1,0 +1,115 @@
+﻿@model WebMarketplace.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="flex justify-center items-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+        <h2 class="text-2xl font-semibold text-center text-blue-600 mb-6">Create a New Account</h2>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+                <div class="text-red-600 text-sm text-center mb-4 font-medium">@TempData["ErrorMessage"]</div>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+                <div class="text-green-600 text-sm text-center mb-4 font-medium">@TempData["SuccessMessage"]</div>
+        }
+
+        <!-- Registration Form -->
+        <form asp-action="Register" asp-controller="Register" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+
+            <!-- Username -->
+            <div>
+                <label asp-for="Username" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Username" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="Username" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label asp-for="Email" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Email" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <label asp-for="Password" class="block text-sm font-medium text-gray-700"></label>
+                <div class="relative">
+                    <input asp-for="Password" type="password" id="password" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a7 7 0 00-7 7 7 7 0 007 7 7 7 0 007-7 7 7 0 00-7-7zm0 12a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!--Confirm Password-->
+            <div>
+                <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700"></label>
+                <div class="relative">
+                    <input asp-for="ConfirmPassword" type="password" id="password" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a7 7 0 00-7 7 7 7 0 007 7 7 7 0 007-7 7 7 0 00-7-7zm0 12a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Phone Number -->
+            <div>
+                <label asp-for="Telephone" class="block text-sm font-medium text-gray-700"></label>
+                <input asp-for="Telephone" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="Telephone" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Role Dropdown -->
+            <div>
+                <label for="Role" class="block text-sm font-medium text-gray-700">Select Role</label>
+                <select asp-for="Role" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    @foreach (var role in ViewBag.Roles as List<SelectListItem>)
+                    {
+                            <option value="@role.Value">@role.Text</option>
+                    }
+                </select>
+                <span asp-validation-for="Role" class="text-red-500 text-sm"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Register
+                </button>
+            </div>
+        </form>
+
+        <!-- Login Link -->
+        <div class="mt-4 text-center">
+            <span class="text-sm text-gray-600">Already have an account?</span>
+            <a href="/login" class="text-blue-600 hover:text-blue-700 font-semibold">Login here</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordField = document.getElementById('password');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+
+            // Optional: Change the icon based on visibility
+            this.querySelector('svg').classList.toggle('text-gray-500');
+            this.querySelector('svg').classList.toggle('text-blue-500');
+        });
+    </script>
+}
