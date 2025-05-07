@@ -43,7 +43,7 @@ namespace MarketPlace924
 
             // Initialize Services
             this.userService = new UserService(userRepo);
-            this.buyerService = new BuyerService(buyerRepo, userRepo);
+            this.buyerService = new BuyerService(buyerRepo, userRepo, sellerRepo);
 
             this.adminService = new AdminService(userRepo);
             this.analyticsService = new AnalyticsService(userRepo, buyerRepo);
