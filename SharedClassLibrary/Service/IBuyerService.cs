@@ -179,5 +179,13 @@ namespace SharedClassLibrary.Service
         /// <param name="buyer">The buyer for whom to calculate the progress.</param>
         /// <returns>An integer representing the badge progress percentage (1-100).</returns>
         int GetBadgeProgress(Buyer buyer);
+
+        /// <summary>
+        /// Gets the wishlist items with product details for a specific buyer.
+        /// </summary>
+        /// <param name="buyerId">The ID of the buyer.</param>
+        /// <returns>A task containing a list of wishlist items with product details.</returns>
+        
+
     }
 }
