@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
+using Server.Repository;
 using SharedClassLibrary.Helper;
+using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Service;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +41,10 @@ builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
     options.UseSqlServer(connectionString)
         .EnableSensitiveDataLogging()
 );
+
+// Register ShoppingCart services
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
 var app = builder.Build();
 

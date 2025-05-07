@@ -65,6 +65,8 @@ namespace SharedClassLibrary.Service
         /// <returns>A task that represents the asynchronous operation. The task result contains a list with products and quantities.</returns>
         Task<List<Product>> GetCartItemsAsync(int buyerId);
 
+        Task<double> GetProductPriceAsync(int buyerId, int productId);
+
         /// <summary>
         /// Gets the total price of all items in the buyer's shopping cart.
         /// </summary>
