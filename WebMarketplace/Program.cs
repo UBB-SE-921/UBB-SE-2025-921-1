@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
 using SharedClassLibrary.Helper;
 using SharedClassLibrary.Service;
+using SharedClassLibrary.IRepository; // Add this if needed for repository implementations
+using SharedClassLibrary.ProxyRepository; // Add this if needed for proxy repository implementations
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,16 @@ builder.Services.AddScoped<IOrderSummaryService, OrderSummaryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
+
+// Register user and buyer services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBuyerService, BuyerService>();
+
+// Register repositories if needed
+builder.Services.AddScoped<IUserRepository, UserProxyRepository>(sp => 
+    new UserProxyRepository(AppConfig.GetBaseApiUrl()));
+builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp => 
+    new BuyerProxyRepository(AppConfig.GetBaseApiUrl()));
 
 // Register remaining services
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
