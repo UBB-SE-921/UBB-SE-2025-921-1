@@ -133,5 +133,19 @@ using SharedClassLibrary.Shared;
 
             return product;
         }
+
+        /// <summary>
+        /// Gets all borrowable products from the waitlist
+        /// </summary>
+        /// <returns>A list of products that are available for borrowing</returns>
+        public async Task<List<Product>> GetBorrowableProductsAsync()
+        {
+            // Get the products with these IDs
+            var products = await this.dbContext.Products
+                .Where(p => (p.ProductType.ToLower() == "borrowed" || p.ProductType.ToLower() == "borrowable"))
+                .ToListAsync();
+
+            return products;
+        }
     }
 }

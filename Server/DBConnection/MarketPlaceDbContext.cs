@@ -5,6 +5,7 @@
 namespace Server.DBConnection
 {
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
     using Server.DataModels;
     using SharedClassLibrary.Domain;
 
@@ -569,5 +570,12 @@ namespace Server.DBConnection
                     .IsRequired();
             });
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+            .ConfigureWarnings(warnings =>
+                warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+        }
+
     }
 }
