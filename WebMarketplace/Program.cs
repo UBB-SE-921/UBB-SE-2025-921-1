@@ -4,7 +4,6 @@ using Server.Repository;
 using SharedClassLibrary.Helper;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Service;
-using SharedClassLibrary.IRepository; // Add this if needed for repository implementations
 using SharedClassLibrary.ProxyRepository; // Add this if needed for proxy repository implementations
 
 

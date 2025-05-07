@@ -88,7 +88,17 @@ namespace SharedClassLibrary.ProxyRepository
         public async Task<User?> GetUserByEmail(string email)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/email/{email}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null; // No user found with the given email
+            }
             await this.ThrowOnError(nameof(GetUserByEmail), response);
+
+            // Check if the response content is empty
+            if (response.Content.Headers.ContentLength == 0)
+            {
+                return null; // No content means no user
+            }
 
             var user = await response.Content.ReadFromJsonAsync<User>();
             return user;
