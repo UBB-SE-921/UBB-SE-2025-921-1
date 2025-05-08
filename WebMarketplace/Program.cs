@@ -6,6 +6,8 @@ using SharedClassLibrary.IRepository;
 using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Service;
 using System;
+using Microsoft.EntityFrameworkCore;
+using Server.DBConnection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,12 +33,29 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISellerService, SellerService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IContractRenewalService, ContractRenewalService>();
 builder.Services.AddScoped<IPDFService, PDFService>();
 builder.Services.AddScoped<INotificationContentService, NotificationContentService>();
+
+// Register user and buyer services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBuyerService, BuyerService>();
+
+// Register repositories if needed
+builder.Services.AddScoped<IUserRepository, UserProxyRepository>(sp => 
+    new UserProxyRepository(AppConfig.GetBaseApiUrl()));
+builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp => 
+    new BuyerProxyRepository(AppConfig.GetBaseApiUrl()));
+
+// Register remaining services
+builder.Services.AddScoped<IWaitlistService, WaitlistService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Ensure singleton registration of notification service for consistent state
+builder.Services.Remove(builder.Services.FirstOrDefault(
+    d => d.ServiceType == typeof(INotificationService)));
 builder.Services.AddSingleton<INotificationService, NotificationService>();
 
 // Then, register repositories
@@ -59,6 +78,14 @@ builder.Services.AddSingleton<INotificationRepository>(provider => new Notificat
 //     options.UseSqlServer(connectionString)
 //         .EnableSensitiveDataLogging()
 // );
+
+// Register Order services
+builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+// Register ShoppingCart services
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
 var app = builder.Build();
 

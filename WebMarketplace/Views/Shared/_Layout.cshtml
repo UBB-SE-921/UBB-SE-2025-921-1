@@ -22,19 +22,36 @@
                             <div class="ml-10 flex items-baseline space-x-4">
                                 <a asp-area="" asp-controller="Home" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Home</a>
                                 <a asp-area="" asp-controller="BorrowProduct" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Borrow Products</a>
+                                <a asp-area="" asp-controller="Order" asp-action="OrderHistory" asp-route-userId="1" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Order History</a>
+                                <a asp-area="" asp-controller="Order" asp-action="Track" asp-route-hasControl="false" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track Orders (Buyer)</a>
+                                <a asp-area="" asp-controller="Order" asp-action="Track" asp-route-hasControl="true" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track Orders (Seller)</a>
+                                <a asp-area="" asp-controller="BuyerProfile" asp-action="Index"  class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Profile</a>
                                 <a asp-area="" asp-controller="Home" asp-action="Privacy" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Privacy</a>
+                                <a asp-area="" asp-controller="BuyerWishlist" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Wishlist</a>
+
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <partial name="_CartButton" />
                         <partial name="_NotificationsButton" />
+                        <!-- Login Button -->
+                        <a asp-area="" asp-controller="Login" asp-action="Index"
+                            class="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
+                            Login
+                        </a>
+
+                        <!--Register-->
+                        <a asp-area="" asp-controller="Register" asp-action="Index"
+                           class="ml-2 bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full text-sm font-semibold transition">
+                            Register
+                        </a>
                     </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container mx-auto px-4 py-8">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
