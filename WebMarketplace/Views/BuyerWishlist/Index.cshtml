@@ -36,7 +36,7 @@
             {
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
-                        
+
                         <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                             <span class="text-muted">Product Image</span>
                         </div>
@@ -45,14 +45,18 @@
                             <p class="card-text text-success">$@item.Price.ToString("F2")</p>
                             <p class="card-text">@item.Description</p>
                         </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="btn btn-info">
-                                View Details
-                            </a>
+                        <div class="card-footer d-flex justify-between">
+                            <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    Add to Cart
+                                </button>
+                            </form>
                             <form asp-controller="BuyerWishlist" asp-action="RemoveFromWishlist" method="post">
                                 <input type="hidden" name="productId" value="@item.ProductId" />
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="bi bi-trash"></i> Remove
+                                <button type="submit" class="px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    Remove
                                 </button>
                             </form>
                         </div>
