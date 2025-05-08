@@ -85,7 +85,6 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Register ShoppingCart services
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
-builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
 var app = builder.Build();
 
