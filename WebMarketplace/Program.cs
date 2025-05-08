@@ -9,6 +9,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -53,6 +54,10 @@ builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp =>
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
+// Register seller services
+builder.Services.AddScoped<ISellerService, SellerService>();
+builder.Services.AddSingleton<ISellerRepository>(provider => new SellerProxyRepository(baseApiUrl));
+
 // Ensure singleton registration of notification service for consistent state
 builder.Services.Remove(builder.Services.FirstOrDefault(
     d => d.ServiceType == typeof(INotificationService)));
@@ -85,7 +90,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Register ShoppingCart services
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
-builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+//builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
 var app = builder.Build();
 
