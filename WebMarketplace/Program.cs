@@ -62,6 +62,9 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
+//Notification Services
+builder.Services.AddScoped<INotificationContentService, NotificationContentService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
