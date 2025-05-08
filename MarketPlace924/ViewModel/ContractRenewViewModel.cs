@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using SharedClassLibrary.Domain;
-using SharedClassLibrary.Service; // Added using for Service namespace
-using SharedClassLibrary.Shared;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using SharedClassLibrary.ProxyRepository;
-using SharedClassLibrary.Helper;
-
-namespace MarketPlace924.ViewModel
+﻿namespace MarketPlace924.ViewModel
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using SharedClassLibrary.Domain;
+    using SharedClassLibrary.ProxyRepository;
+    using SharedClassLibrary.Service;
+    using SharedClassLibrary.Shared;
+    using QuestPDF.Fluent;
+    using QuestPDF.Helpers;
+    using SharedClassLibrary.Helper;
+
     public class ContractRenewViewModel : IContractRenewViewModel
     {
         // Changed repository interfaces to service interfaces
@@ -26,6 +26,7 @@ namespace MarketPlace924.ViewModel
         private readonly IDateTimeProvider dateTimeProvider;
 
         public List<IContract> BuyerContracts { get; private set; }
+
         public IContract SelectedContract { get; private set; } = null!;
 
         // Constructor with dependency injection for testing - updated parameter types

@@ -1,10 +1,13 @@
-using Microsoft.EntityFrameworkCore;
-using Server.DBConnection;
-using Server.Repository;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SharedClassLibrary.Helper;
 using SharedClassLibrary.IRepository;
+using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Service;
-
+using System;
+using Microsoft.EntityFrameworkCore;
+using Server.DBConnection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,12 +23,31 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Register the custom services
+// Get the base API URL for proxy repositories
+string baseApiUrl = AppConfig.GetBaseApiUrl();
+
+// First, register services
 builder.Services.AddScoped<IOrderHistoryService, OrderHistoryService>();
 builder.Services.AddScoped<IOrderSummaryService, OrderSummaryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<ISellerService, SellerService>();
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IContractRenewalService, ContractRenewalService>();
+builder.Services.AddScoped<IPDFService, PDFService>();
+builder.Services.AddScoped<INotificationContentService, NotificationContentService>();
+
+// Register user and buyer services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBuyerService, BuyerService>();
+
+// Register repositories if needed
+builder.Services.AddScoped<IUserRepository, UserProxyRepository>(sp => 
+    new UserProxyRepository(AppConfig.GetBaseApiUrl()));
+builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp => 
+    new BuyerProxyRepository(AppConfig.GetBaseApiUrl()));
 
 // Register remaining services
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
@@ -36,11 +58,26 @@ builder.Services.Remove(builder.Services.FirstOrDefault(
     d => d.ServiceType == typeof(INotificationService)));
 builder.Services.AddSingleton<INotificationService, NotificationService>();
 
-var connectionString = AppConfig.GetConnectionString("MyLocalDb");
-builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
-    options.UseSqlServer(connectionString)
-        .EnableSensitiveDataLogging()
-);
+// Then, register repositories
+builder.Services.AddSingleton<IUserRepository>(provider => new UserProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<ISellerRepository>(provider => new SellerProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IShoppingCartRepository>(provider => new ShoppingCartProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IOrderRepository>(provider => new OrderProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IOrderHistoryRepository>(provider => new OrderHistoryProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IOrderSummaryRepository>(provider => new OrderSummaryProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IProductRepository>(provider => new ProductProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IContractRepository>(provider => new ContractProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IContractRenewalRepository>(provider => new ContractRenewalProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<IPDFRepository>(provider => new PDFProxyRepository(baseApiUrl));
+builder.Services.AddSingleton<INotificationRepository>(provider => new NotificationProxyRepository(baseApiUrl));
+
+// IMPORTANT: Remove database context - this should not be used with proxy repositories
+// REMOVE THESE LINES:
+// var connectionString = AppConfig.GetConnectionString("MyLocalDb");
+// builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
+//     options.UseSqlServer(connectionString)
+//         .EnableSensitiveDataLogging()
+// );
 
 // Register Order services
 builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
@@ -56,12 +93,11 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 else
 {
-    app.UseDeveloperExceptionPage(); // Add this for detailed error pages in development
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();

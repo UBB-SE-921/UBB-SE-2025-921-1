@@ -10,7 +10,7 @@ using System.Net.Http.Json;
 
 namespace SharedClassLibrary.ProxyRepository
 {
-    internal class ShoppingCartProxyRepository : IShoppingCartRepository
+    public class ShoppingCartProxyRepository : IShoppingCartRepository
     {
         private const string ApiBaseRoute = "api/shoppingcart";
         private readonly HttpClient httpClient;
