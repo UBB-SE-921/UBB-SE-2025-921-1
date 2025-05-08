@@ -12,6 +12,7 @@
     using System.Formats.Asn1;
     using static System.Formats.Asn1.AsnWriter;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     [Collection("DatabaseCollection")]
     public class SellerRepositoryTests : IDisposable
@@ -75,6 +76,19 @@
             await command.ExecuteNonQueryAsync();
         }
 
+        public async Task<Seller> GetSellerByIdAsync(int sellerId)
+        {
+            var seller = await this.dbContext.Sellers
+                .Include(s => s.User) // Ensure the related User entity is loaded
+                .FirstOrDefaultAsync(s => s.Id == sellerId);
+
+            if (seller == null)
+            {
+                throw new KeyNotFoundException($"Seller with ID {sellerId} not found.");
+            }
+
+            return seller;
+        }
         private async Task AddProduct(int sellerId, string name, string description, double price, int stock)
         {
             using var connection = new SqlConnection(_fixture.TestConnectionString);

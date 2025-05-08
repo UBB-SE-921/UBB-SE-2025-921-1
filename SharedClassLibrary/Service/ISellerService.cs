@@ -16,6 +16,13 @@ namespace SharedClassLibrary.Service
     public interface ISellerService
     {
         /// <summary>
+        /// Retrieves a seller by their ID.
+        /// </summary>
+        /// <param name="sellerId">The ID of the seller.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the seller.</returns>
+        Task<Seller> GetSellerByIdAsync(int sellerId);
+
+        /// <summary>
         /// Retrieves seller information based on the provided user.
         /// </summary>
         /// <param name="user">The user associated with the seller.</param>

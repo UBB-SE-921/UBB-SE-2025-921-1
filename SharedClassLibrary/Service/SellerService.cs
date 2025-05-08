@@ -89,6 +89,11 @@ namespace SharedClassLibrary.Service
             return reviewScore;
         }
 
+        /// <inheritdoc/>
+        public async Task<Seller> GetSellerByIdAsync(int sellerId)
+        {
+            return await this.sellerRepository.GetSellerByIdAsync(sellerId);
+        }
         /// <summary>
         /// Retrieves the latest notifications for the specified seller.
         /// </summary>

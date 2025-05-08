@@ -50,6 +50,25 @@ namespace Server.Repository
         }
 
         /// <summary>
+        /// Gets a seller by their ID.
+        /// </summary>
+        /// <param name="sellerId">The ID of the seller.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the seller.</returns>
+        public async Task<Seller> GetSellerByIdAsync(int sellerId)
+        {
+            var seller = await this.dbContext.Sellers
+                .Include(s => s.User) 
+                .FirstOrDefaultAsync(s => s.Id == sellerId);
+
+            if (seller == null)
+            {
+                throw new KeyNotFoundException($"Seller with ID {sellerId} not found.");
+            }
+
+            return seller;
+        }
+
+        /// <summary>
         /// Gets the notifications for a given seller.
         /// </summary>
         /// <param name="sellerID">The ID of the seller whose notifications are to be retrieved.</param>

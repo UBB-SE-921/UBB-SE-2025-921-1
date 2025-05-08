@@ -25,6 +25,12 @@ namespace SharedClassLibrary.IRepository
         Task AddNewFollowerNotification(int sellerId, int currentFollowerCount, string message);
 
         /// <summary>
+        /// Gets a seller by their ID.
+        /// </summary>
+        /// <param name="sellerId">The ID of the seller.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the seller.</returns>
+        Task<Seller> GetSellerByIdAsync(int sellerId);
+        /// <summary>
         /// Adds a new seller.
         /// </summary>
         /// <param name="seller">The seller to be added.</param>

@@ -210,7 +210,7 @@ namespace WebMarketplace.Controllers
         {
             try
             {
-                int currentUserId = GetCurrentUserId();
+                int currentUserId    = GetCurrentUserId();
                 int position = await _waitlistService.GetUserWaitlistPosition(currentUserId, id);
                 
                 return Json(new { position });

@@ -1,0 +1,29 @@
+@model MyMarketProfileViewModel
+
+@{
+    ViewData["Title"] = "Seller Profile";
+}
+
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-gray-800">@Model.Seller.StoreName</h1>
+    <p class="text-gray-600">@Model.Seller.StoreDescription</p>
+
+    <h2 class="text-2xl font-semibold text-gray-800 mt-6">Products</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        @foreach (var product in Model.Products)
+        {
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <svg class="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-800">@product.Name</h3>
+                    <p class="text-gray-600 text-sm mb-2">@product.Description</p>
+                    <span class="font-bold text-gray-900">$@product.Price.ToString("F2")</span>
+                </div>
+            </div>
+        }
+    </div>
+</div>

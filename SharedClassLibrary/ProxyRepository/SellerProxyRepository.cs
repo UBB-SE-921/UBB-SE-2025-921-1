@@ -24,6 +24,25 @@ namespace SharedClassLibrary.ProxyRepository
         private const string ApiBaseRoute = "api/sellers";
         private readonly HttpClient httpClient;
 
+        public async Task<Seller> GetSellerByIdAsync(int sellerId)
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{sellerId}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                throw new KeyNotFoundException($"Seller with ID {sellerId} not found.");
+            }
+
+            await this.ThrowOnError(nameof(GetSellerByIdAsync), response);
+            var seller = await response.Content.ReadFromJsonAsync<Seller>();
+
+            if (seller == null)
+            {
+                throw new InvalidOperationException($"API returned null Seller info for Seller ID: {sellerId}");
+            }
+
+            return seller;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SellerProxyRepository"/> class.
         /// </summary>

@@ -26,6 +26,14 @@ builder.Services.AddScoped<IOrderSummaryService, OrderSummaryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
+builder.Services.AddScoped<ISellerService, SellerService>();
+
+// ===== Added Buyer & Seller services (order matters) =====
+builder.Services.AddScoped<IBuyerService, BuyerService>();
+builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ISellerRepository, SellerRepository>();
+// =========================================================
 
 // Register remaining services
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();

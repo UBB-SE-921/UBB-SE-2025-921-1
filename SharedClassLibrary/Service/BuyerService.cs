@@ -57,18 +57,21 @@ namespace SharedClassLibrary.Service
         private readonly IBuyerRepository buyerRepo;
         private readonly IUserRepository userRepo;
         private IUserValidator userValidator;
+        private readonly ISellerRepository sellerRepo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuyerService"/> class.
         /// </summary>
         /// <param name="buyerRepo">The repository used to access buyer data.</param>
         /// <param name="userRepo">The repository used to access user data.</param>
-        public BuyerService(IBuyerRepository buyerRepo, IUserRepository userRepo)
+        public BuyerService(IBuyerRepository buyerRepo, IUserRepository userRepo, ISellerRepository sellerRepo)
         {
             this.buyerRepo = buyerRepo;
             this.userRepo = userRepo;
             this.userValidator = new UserValidator();
+            this.sellerRepo = sellerRepo;
         }
+
 
         /// <inheritdoc/>
         public async Task<Buyer> GetBuyerByUser(User user)
@@ -282,6 +285,11 @@ namespace SharedClassLibrary.Service
                     buyer.Wishlist.Items.Remove(wishlistItemToRemove);
                 }
             }
+        }
+
+        public async Task<Seller> GetSellerByIdAsync(int sellerId)
+        {
+            return await this.sellerRepo.GetSellerByIdAsync(sellerId);
         }
 
         /// <inheritdoc/>

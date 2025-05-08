@@ -26,6 +26,7 @@ namespace Server.Controllers
             this.sellerRepository = sellerRepository;
         }
 
+
         /// <summary>
         /// Adds a new follower notification for a seller.
         /// </summary>

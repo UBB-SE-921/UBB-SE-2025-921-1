@@ -179,5 +179,11 @@ namespace SharedClassLibrary.Service
         /// <param name="buyer">The buyer for whom to calculate the progress.</param>
         /// <returns>An integer representing the badge progress percentage (1-100).</returns>
         int GetBadgeProgress(Buyer buyer);
+
+        /// <summary>
+        /// Gets the seller ID by the seller's user ID.
+        /// </summary>
+        Task<Seller> GetSellerByIdAsync(int sellerId);
+
     }
 }
