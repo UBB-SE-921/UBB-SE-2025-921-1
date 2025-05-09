@@ -45,7 +45,7 @@ builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
 builder.Services.AddScoped<IContractRenewalRepository, ContractRenewalRepository>();
 builder.Services.AddScoped<IContractRepository, ContractRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-/// builder.Services.AddScoped<IOrderHistoryRepository, OrderHistoryRepository>(); // NOT IMPLEMENTED YET, will not implement because Product needs refactoring (not my job), request my help after this was done please -Alex
+builder.Services.AddScoped<IOrderHistoryRepository, OrderHistoryRepository>(); // NOT IMPLEMENTED YET, will not implement because Product needs refactoring (not my job), request my help after this was done please -Alex
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderSummaryRepository, OrderSummaryRepository>();
 builder.Services.AddScoped<IPDFRepository, PDFRepository>();

@@ -9,6 +9,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -49,9 +50,25 @@ builder.Services.AddScoped<IUserRepository, UserProxyRepository>(sp =>
 builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp => 
     new BuyerProxyRepository(AppConfig.GetBaseApiUrl()));
 
+
+
+// Register user and buyer services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBuyerService, BuyerService>();
+
+// Register repositories if needed
+builder.Services.AddScoped<IUserRepository, UserProxyRepository>(sp => 
+    new UserProxyRepository(AppConfig.GetBaseApiUrl()));
+builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp => 
+    new BuyerProxyRepository(AppConfig.GetBaseApiUrl()));
+
 // Register remaining services
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Register seller services
+builder.Services.AddScoped<ISellerService, SellerService>();
+builder.Services.AddSingleton<ISellerRepository>(provider => new SellerProxyRepository(baseApiUrl));
 
 // Ensure singleton registration of notification service for consistent state
 builder.Services.Remove(builder.Services.FirstOrDefault(
