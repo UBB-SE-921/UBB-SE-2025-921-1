@@ -72,10 +72,6 @@ namespace SharedClassLibrary.Helper
                 .AddJsonFile(jsonFilePath, optional: true, reloadOnChange: true);
 
             Configuration = builder.Build();
-            
-            // Verify that we loaded the Jwt:Key
-            string jwtKey = Configuration["Jwt:Key"];
-            Debug.WriteLine($"JWT Key loaded: {!string.IsNullOrEmpty(jwtKey)}");
         }
     }
 }
