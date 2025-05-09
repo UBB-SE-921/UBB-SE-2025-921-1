@@ -161,7 +161,7 @@ namespace WebMarketplace.Controllers
         private string GetCurrentUserEmail()
         {
             // For demonstration purposes only - replace with your actual authentication system
-            return "Andrada@yahoo.com";
+            return "seller1@example.com";
         }
     }
 }
