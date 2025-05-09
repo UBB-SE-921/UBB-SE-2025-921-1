@@ -49,6 +49,18 @@ builder.Services.AddScoped<IUserRepository, UserProxyRepository>(sp =>
 builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp => 
     new BuyerProxyRepository(AppConfig.GetBaseApiUrl()));
 
+
+
+// Register user and buyer services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBuyerService, BuyerService>();
+
+// Register repositories if needed
+builder.Services.AddScoped<IUserRepository, UserProxyRepository>(sp => 
+    new UserProxyRepository(AppConfig.GetBaseApiUrl()));
+builder.Services.AddScoped<IBuyerRepository, BuyerProxyRepository>(sp => 
+    new BuyerProxyRepository(AppConfig.GetBaseApiUrl()));
+
 // Register remaining services
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();

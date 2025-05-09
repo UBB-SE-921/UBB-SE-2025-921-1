@@ -3,61 +3,38 @@
     ViewData["Title"] = "Your Wishlist";
 }
 
-<div class="container mt-4">
-    <h1 class="mb-4">Your Wishlist</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Your Wishlist</h1>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success">
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
             @TempData["SuccessMessage"]
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger">
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
             @TempData["ErrorMessage"]
         </div>
     }
 
     @if (Model.IsEmpty)
     {
-        <div class="alert alert-info">
+        <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6">
             Your wishlist is currently empty. Browse our products and add items to your wishlist!
         </div>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+        <a asp-controller="Home" asp-action="Index" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             Browse Products
         </a>
     }
     else
     {
-        <div class="row">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach (var item in Model.WishlistItems)
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        
-                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <span class="text-muted">Product Image</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">@item.Name</h5>
-                            <p class="card-text text-success">$@item.Price.ToString("F2")</p>
-                            <p class="card-text">@item.Description</p>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="btn btn-info">
-                                View Details
-                            </a>
-                            <form asp-controller="BuyerWishlist" asp-action="RemoveFromWishlist" method="post">
-                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="bi bi-trash"></i> Remove
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                <partial name="_WishlistItem" model="item" />
             }
         </div>
     }
