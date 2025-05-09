@@ -23,6 +23,8 @@ namespace WebMarketplace.Models
         private string _searchText = string.Empty;
         private bool _isSortedByPrice;
 
+        public SellerProfileViewModel() { }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SellerProfileViewModel"/> class.
         /// </summary>

@@ -17,7 +17,9 @@
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 border-b pb-6">
         <div class="flex items-center mb-4 lg:mb-0">
             <div class="h-16 w-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-2xl font-semibold">
-                @Model.Seller.StoreName.Substring(0, 1)
+                @(!string.IsNullOrEmpty(Model.Seller?.StoreName)
+                    ? Model.Seller.StoreName.Substring(0, 1)
+                    : "?")
             </div>
             <div class="ml-4">
                 <h1 class="text-2xl font-bold text-gray-900">@Model.Seller.StoreName</h1>
