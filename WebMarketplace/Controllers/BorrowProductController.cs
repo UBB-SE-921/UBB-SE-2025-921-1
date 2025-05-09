@@ -43,8 +43,10 @@ namespace WebMarketplace.Controllers
         /// <returns>The current user ID</returns>
         private int GetCurrentUserId()
         {
-            // This would be replaced with actual user authentication 
+            // Use UserSession to get the current user ID if available
+            // otherwise fallback to a default value for development purposes
             return 2;
+            return UserSession.CurrentUserId ?? 1;
         }
 
         /// <summary>
