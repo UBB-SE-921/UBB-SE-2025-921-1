@@ -3,6 +3,8 @@ using System;
 using System.Diagnostics;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Service;
+using System.Net;
+using SharedClassLibrary.Helper;
 
 namespace Server.Controllers
 {
@@ -33,6 +35,16 @@ namespace Server.Controllers
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddHours(1),
             });
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(new Uri(AppConfig.GetBaseApiUrl()), new Cookie("access_token", token));
+
+            var handler = new HttpClientHandler
+            {
+                CookieContainer = cookieContainer,
+            };
+
+            var httpClient = new HttpClient(handler);
 
             Debug.WriteLine("JwtToken created: " + token);
 
