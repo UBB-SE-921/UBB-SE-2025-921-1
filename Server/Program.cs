@@ -6,7 +6,8 @@ using SharedClassLibrary.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.OpenApi.Models; // Add this using statement
+using Microsoft.OpenApi.Models;
+using SharedClassLibrary.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = AppConfig.GetConnectionString("MyLocalDb");
@@ -28,7 +29,7 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
     };
 });
 
@@ -56,6 +57,7 @@ builder.Services.AddScoped<IDummyCardRepository, DummyCardRepository>();
 builder.Services.AddScoped<IDummyWalletRepository, DummyWalletRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 
 builder.Services.AddControllers();
 
@@ -73,7 +75,7 @@ builder.Services.AddSwaggerGen(option => // Modify the AddSwaggerGen configurati
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
-        BearerFormat = "JWT"
+        BearerFormat = "JWT",
     });
 
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -84,7 +86,7 @@ builder.Services.AddSwaggerGen(option => // Modify the AddSwaggerGen configurati
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id = "Bearer",
                 },
             },
             new string[] {}
@@ -98,7 +100,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Title v1");
+        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+        c.EnableDeepLinking();
+        c.DisplayRequestDuration();
+    });
 }
 
 app.UseHttpsRedirection();

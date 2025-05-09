@@ -49,19 +49,28 @@ namespace SharedClassLibrary.Helper
             return baseUrl;
         }
 
+        public static string GetJwtTokenKey()
+        {
+            return Configuration?["Jwt:Key"] ?? "NOT FOUND";
+        }
+
         /// <summary>
         /// Load the configuration.
         /// </summary>
         private static void LoadConfiguration()
         {
             Debug.WriteLine("LMAOOOOO");
-            string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+            string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
             Debug.WriteLine(jsonFilePath);
 
             var builder = new ConfigurationBuilder()
                 .AddJsonFile(jsonFilePath, optional: true, reloadOnChange: true);
 
             Configuration = builder.Build();
+            
+            // Verify that we loaded the Jwt:Key
+            string jwtKey = Configuration["Jwt:Key"];
+            Debug.WriteLine($"JWT Key loaded: {!string.IsNullOrEmpty(jwtKey)}");
         }
     }
 }

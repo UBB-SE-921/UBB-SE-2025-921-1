@@ -6,12 +6,14 @@ namespace Server.Controllers
 {
     using System;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.IRepository;
 
     /// <summary>
     /// API controller for managing dummy card data.
     /// </summary>
+    [Authorize]
     [Route("api/dummycards")]
     [ApiController]
     public class DummyCardApiController : ControllerBase
