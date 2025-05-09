@@ -44,7 +44,7 @@ namespace WebMarketplace.Controllers
         private int GetCurrentUserId()
         {
             // This would be replaced with actual user authentication 
-            return 1; // Mock user ID
+            return 2; // Mock user ID
         }
 
         /// <summary>
