@@ -5,18 +5,10 @@ namespace WebMarketplace.Controllers
 {
     public class BuyerFamilySyncController : Controller
     {
-        // Mock data source for BuyerFamilySyncViewModel
-        private static List<BuyerFamilySyncViewModel> _buyerFamilySyncs = new List<BuyerFamilySyncViewModel>
-        {
-            new BuyerFamilySyncViewModel { Id = 1, LinkedBuyerName = "John Doe", Status = "Confirmed" },
-            new BuyerFamilySyncViewModel { Id = 2, LinkedBuyerName = "Jane Smith", Status = "Pending" },
-            new BuyerFamilySyncViewModel { Id = 3, LinkedBuyerName = "Alice Johnson", Status = "Possible" }
-        };
-
         // GET: BuyerFamilySync
         public IActionResult Index()
         {
-            return View(_buyerFamilySyncs);
+            return View(); // No mock data
         }
 
         // GET: BuyerFamilySync/Details/5
@@ -27,13 +19,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerFamilySync = _buyerFamilySyncs.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySync == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerFamilySync);
+            return View(); // No mock data
         }
 
         // GET: BuyerFamilySync/Create
@@ -49,8 +35,6 @@ namespace WebMarketplace.Controllers
         {
             if (ModelState.IsValid)
             {
-                buyerFamilySyncViewModel.Id = _buyerFamilySyncs.Max(b => b.Id) + 1; // Generate a new ID
-                _buyerFamilySyncs.Add(buyerFamilySyncViewModel);
                 return RedirectToAction(nameof(Index));
             }
             return View(buyerFamilySyncViewModel);
@@ -64,13 +48,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerFamilySync = _buyerFamilySyncs.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySync == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerFamilySync);
+            return View(); // No mock data
         }
 
         // POST: BuyerFamilySync/Edit/5
@@ -85,15 +63,6 @@ namespace WebMarketplace.Controllers
 
             if (ModelState.IsValid)
             {
-                var buyerFamilySync = _buyerFamilySyncs.FirstOrDefault(b => b.Id == id);
-                if (buyerFamilySync == null)
-                {
-                    return NotFound();
-                }
-
-                buyerFamilySync.LinkedBuyerName = buyerFamilySyncViewModel.LinkedBuyerName;
-                buyerFamilySync.Status = buyerFamilySyncViewModel.Status;
-
                 return RedirectToAction(nameof(Index));
             }
             return View(buyerFamilySyncViewModel);
@@ -107,13 +76,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerFamilySync = _buyerFamilySyncs.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySync == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerFamilySync);
+            return View(); // No mock data
         }
 
         // POST: BuyerFamilySync/Delete/5
@@ -121,11 +84,6 @@ namespace WebMarketplace.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var buyerFamilySync = _buyerFamilySyncs.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySync != null)
-            {
-                _buyerFamilySyncs.Remove(buyerFamilySync);
-            }
             return RedirectToAction(nameof(Index));
         }
     }

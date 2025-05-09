@@ -1,23 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebMarketplace.Models;
-using Server.DBConnection;
+using SharedClassLibrary.Domain;
+using SharedClassLibrary.Service;
 
 namespace WebMarketplace.Controllers
 {
     public class BuyerAddressesController : Controller
     {
-        private readonly MarketPlaceDbContext _context;
+        private readonly IBuyerAddressService _buyerAddressService;
 
-        public BuyerAddressesController(MarketPlaceDbContext context)
+        public BuyerAddressesController(IBuyerAddressService buyerAddressService)
         {
-            _context = context;
+            _buyerAddressService = buyerAddressService;
         }
 
         // GET: BuyerAddresses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Addresses.ToListAsync());
+            var addresses = await _buyerAddressService.GetAllAddressesAsync();
+            return View(addresses);
         }
 
         // GET: BuyerAddresses/Details/5
@@ -28,14 +28,13 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerAddress = await _context.Addresses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (buyerAddress == null)
+            var address = await _buyerAddressService.GetAddressByIdAsync(id.Value);
+            if (address == null)
             {
                 return NotFound();
             }
 
-            return View(buyerAddress);
+            return View(address);
         }
 
         // GET: BuyerAddresses/Create
@@ -47,15 +46,14 @@ namespace WebMarketplace.Controllers
         // POST: BuyerAddresses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StreetLine,City,Country,PostalCode")] BuyerAddressViewModel buyerAddress)
+        public async Task<IActionResult> Create([Bind("Id,StreetLine,City,Country,PostalCode")] Address address)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(buyerAddress);
-                await _context.SaveChangesAsync();
+                await _buyerAddressService.AddAddressAsync(address);
                 return RedirectToAction(nameof(Index));
             }
-            return View(buyerAddress);
+            return View(address);
         }
 
         // GET: BuyerAddresses/Edit/5
@@ -66,20 +64,20 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerAddress = await _context.Addresses.FindAsync(id);
-            if (buyerAddress == null)
+            var address = await _buyerAddressService.GetAddressByIdAsync(id.Value);
+            if (address == null)
             {
                 return NotFound();
             }
-            return View(buyerAddress);
+            return View(address);
         }
 
         // POST: BuyerAddresses/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StreetLine,City,Country,PostalCode")] BuyerAddressViewModel buyerAddress)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,StreetLine,City,Country,PostalCode")] Address address)
         {
-            if (id != buyerAddress.Id)
+            if (id != address.Id)
             {
                 return NotFound();
             }
@@ -88,23 +86,15 @@ namespace WebMarketplace.Controllers
             {
                 try
                 {
-                    _context.Update(buyerAddress);
-                    await _context.SaveChangesAsync();
+                    await _buyerAddressService.UpdateAddressAsync(address);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (KeyNotFoundException)
                 {
-                    if (!BuyerAddressExists(buyerAddress.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(buyerAddress);
+            return View(address);
         }
 
         // GET: BuyerAddresses/Delete/5
@@ -115,14 +105,13 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerAddress = await _context.Addresses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (buyerAddress == null)
+            var address = await _buyerAddressService.GetAddressByIdAsync(id.Value);
+            if (address == null)
             {
                 return NotFound();
             }
 
-            return View(buyerAddress);
+            return View(address);
         }
 
         // POST: BuyerAddresses/Delete/5
@@ -130,18 +119,14 @@ namespace WebMarketplace.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var buyerAddress = await _context.Addresses.FindAsync(id);
-            if (buyerAddress != null)
+            var addressExists = await _buyerAddressService.AddressExistsAsync(id);
+            if (!addressExists)
             {
-                _context.Addresses.Remove(buyerAddress);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-            return RedirectToAction(nameof(Index));
-        }
 
-        private bool BuyerAddressExists(int id)
-        {
-            return _context.Addresses.Any(e => e.Id == id);
+            await _buyerAddressService.DeleteAddressAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

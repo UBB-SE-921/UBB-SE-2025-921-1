@@ -5,18 +5,10 @@ namespace WebMarketplace.Controllers
 {
     public class BuyerBadgesController : Controller
     {
-        // Mock data source for BuyerBadgeViewModel
-        private static List<BuyerBadgeViewModel> _buyerBadges = new List<BuyerBadgeViewModel>
-        {
-            new BuyerBadgeViewModel { Id = 1, BadgeName = "Bronze", Discount = 5, Progress = 20, ImageSource = "/images/bronze.png" },
-            new BuyerBadgeViewModel { Id = 2, BadgeName = "Silver", Discount = 10, Progress = 50, ImageSource = "/images/silver.png" },
-            new BuyerBadgeViewModel { Id = 3, BadgeName = "Gold", Discount = 15, Progress = 80, ImageSource = "/images/gold.png" }
-        };
-
         // GET: BuyerBadges
         public IActionResult Index()
         {
-            return View(_buyerBadges);
+            return View(); // No mock data
         }
 
         // GET: BuyerBadges/Details/5
@@ -27,13 +19,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
-            if (buyerBadge == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerBadge);
+            return View(); // No mock data
         }
 
         // GET: BuyerBadges/Create
@@ -49,8 +35,6 @@ namespace WebMarketplace.Controllers
         {
             if (ModelState.IsValid)
             {
-                buyerBadgeViewModel.Id = _buyerBadges.Max(b => b.Id) + 1; // Generate a new ID
-                _buyerBadges.Add(buyerBadgeViewModel);
                 return RedirectToAction(nameof(Index));
             }
             return View(buyerBadgeViewModel);
@@ -64,13 +48,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
-            if (buyerBadge == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerBadge);
+            return View(); // No mock data
         }
 
         // POST: BuyerBadges/Edit/5
@@ -85,17 +63,6 @@ namespace WebMarketplace.Controllers
 
             if (ModelState.IsValid)
             {
-                var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
-                if (buyerBadge == null)
-                {
-                    return NotFound();
-                }
-
-                buyerBadge.BadgeName = buyerBadgeViewModel.BadgeName;
-                buyerBadge.Discount = buyerBadgeViewModel.Discount;
-                buyerBadge.Progress = buyerBadgeViewModel.Progress;
-                buyerBadge.ImageSource = buyerBadgeViewModel.ImageSource;
-
                 return RedirectToAction(nameof(Index));
             }
             return View(buyerBadgeViewModel);
@@ -109,13 +76,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
-            if (buyerBadge == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerBadge);
+            return View(); // No mock data
         }
 
         // POST: BuyerBadges/Delete/5
@@ -123,11 +84,6 @@ namespace WebMarketplace.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var buyerBadge = _buyerBadges.FirstOrDefault(b => b.Id == id);
-            if (buyerBadge != null)
-            {
-                _buyerBadges.Remove(buyerBadge);
-            }
             return RedirectToAction(nameof(Index));
         }
     }

@@ -351,5 +351,71 @@ namespace Server.Repository
                 Status = buyerLinkageStatus,
             };
         }
+
+        /// <inheritdoc/>
+        public async Task<List<Address>> GetAllAddressesAsync()
+        {
+            return await this.dbContext.Addresses.ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<Address> GetAddressByIdAsync(int id)
+        {
+            var address = await this.dbContext.Addresses.FindAsync(id);
+            if (address == null)
+            {
+                throw new KeyNotFoundException($"Address with ID {id} not found.");
+            }
+            return address;
+        }
+
+        /// <inheritdoc/>
+        public async Task AddAddressAsync(Address address)
+        {
+            if (address == null)
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+
+            await this.dbContext.Addresses.AddAsync(address);
+            await this.dbContext.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateAddressAsync(Address address)
+        {
+            var existingAddress = await this.dbContext.Addresses.FindAsync(address.Id);
+            if (existingAddress == null)
+            {
+                throw new KeyNotFoundException($"Address with ID {address.Id} not found.");
+            }
+
+            existingAddress.StreetLine = address.StreetLine;
+            existingAddress.City = address.City;
+            existingAddress.Country = address.Country;
+            existingAddress.PostalCode = address.PostalCode;
+
+            this.dbContext.Addresses.Update(existingAddress);
+            await this.dbContext.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task DeleteAddressAsync(Address address)
+        {
+            var existingAddress = await this.dbContext.Addresses.FindAsync(address.Id);
+            if (existingAddress == null)
+            {
+                throw new KeyNotFoundException($"Address with ID {address.Id} not found.");
+            }
+
+            this.dbContext.Addresses.Remove(existingAddress);
+            await this.dbContext.SaveChangesAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> AddressExistsAsync(int id)
+        {
+            return await this.dbContext.Addresses.AnyAsync(a => a.Id == id);
+        }
     }
 }

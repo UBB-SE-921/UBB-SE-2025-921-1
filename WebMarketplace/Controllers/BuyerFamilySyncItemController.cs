@@ -1,22 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebMarketplace.Models;
 
+
 namespace WebMarketplace.Controllers
 {
     public class BuyerFamilySyncItemController : Controller
     {
-        // Mock data source for BuyerFamilySyncItemViewModel
-        private static List<BuyerFamilySyncItemViewModel> _buyerFamilySyncItems = new List<BuyerFamilySyncItemViewModel>
-        {
-            new BuyerFamilySyncItemViewModel { Id = 1, DisplayName = "John Doe", Status = "Confirmed" },
-            new BuyerFamilySyncItemViewModel { Id = 2, DisplayName = "Jane Smith", Status = "Pending" },
-            new BuyerFamilySyncItemViewModel { Id = 3, DisplayName = "Alice Johnson", Status = "Possible" }
-        };
-
         // GET: BuyerFamilySyncItem
         public IActionResult Index()
         {
-            return View(_buyerFamilySyncItems);
+            return View(); // No mock data
         }
 
         // GET: BuyerFamilySyncItem/Details/5
@@ -27,13 +20,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerFamilySyncItem = _buyerFamilySyncItems.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySyncItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerFamilySyncItem);
+            return View(); // No mock data
         }
 
         // GET: BuyerFamilySyncItem/Create
@@ -49,8 +36,6 @@ namespace WebMarketplace.Controllers
         {
             if (ModelState.IsValid)
             {
-                buyerFamilySyncItemViewModel.Id = _buyerFamilySyncItems.Max(b => b.Id) + 1; // Generate a new ID
-                _buyerFamilySyncItems.Add(buyerFamilySyncItemViewModel);
                 return RedirectToAction(nameof(Index));
             }
             return View(buyerFamilySyncItemViewModel);
@@ -64,13 +49,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerFamilySyncItem = _buyerFamilySyncItems.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySyncItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerFamilySyncItem);
+            return View(); // No mock data
         }
 
         // POST: BuyerFamilySyncItem/Edit/5
@@ -85,15 +64,6 @@ namespace WebMarketplace.Controllers
 
             if (ModelState.IsValid)
             {
-                var buyerFamilySyncItem = _buyerFamilySyncItems.FirstOrDefault(b => b.Id == id);
-                if (buyerFamilySyncItem == null)
-                {
-                    return NotFound();
-                }
-
-                buyerFamilySyncItem.DisplayName = buyerFamilySyncItemViewModel.DisplayName;
-                buyerFamilySyncItem.Status = buyerFamilySyncItemViewModel.Status;
-
                 return RedirectToAction(nameof(Index));
             }
             return View(buyerFamilySyncItemViewModel);
@@ -107,13 +77,7 @@ namespace WebMarketplace.Controllers
                 return NotFound();
             }
 
-            var buyerFamilySyncItem = _buyerFamilySyncItems.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySyncItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(buyerFamilySyncItem);
+            return View(); // No mock data
         }
 
         // POST: BuyerFamilySyncItem/Delete/5
@@ -121,11 +85,6 @@ namespace WebMarketplace.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var buyerFamilySyncItem = _buyerFamilySyncItems.FirstOrDefault(b => b.Id == id);
-            if (buyerFamilySyncItem != null)
-            {
-                _buyerFamilySyncItems.Remove(buyerFamilySyncItem);
-            }
             return RedirectToAction(nameof(Index));
         }
     }
