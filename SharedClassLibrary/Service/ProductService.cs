@@ -73,5 +73,12 @@ namespace SharedClassLibrary.Service
             // Use the repository to fetch the seller name from the database
             return await productRepository.GetSellerNameAsync(sellerId);
         }
+
+        /// <inheritdoc/>
+        public async Task<List<Product>> GetBorrowableProductsAsync()
+        {
+            // Use the repository to fetch borrowable products from the database
+            return await productRepository.GetBorrowableProductsAsync();
+        }
     }
 }

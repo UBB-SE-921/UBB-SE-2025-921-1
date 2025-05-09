@@ -29,7 +29,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWaitListRepository, WaitListRepository>();
 builder.Services.AddScoped<IDummyCardRepository, DummyCardRepository>();
 builder.Services.AddScoped<IDummyWalletRepository, DummyWalletRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>(); // NOT IMPLEMENTED YET, still has Product but I think it is manageable, only minor modifications need to be made -Alex
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
 builder.Services.AddControllers();

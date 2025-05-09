@@ -166,5 +166,25 @@ namespace Server.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving seller name for ID {sellerId}: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Gets all products that are available for borrowing from the waitlist
+        /// </summary>
+        /// <returns>A list of borrowable products</returns>
+        [HttpGet("borrowable")]
+        [ProducesResponseType(typeof(List<Product>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<List<Product>>> GetBorrowableProducts()
+        {
+            try
+            {
+                var products = await this.productRepository.GetBorrowableProductsAsync();
+                return this.Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving borrowable products: {ex.Message}");
+            }
+        }
     }
 }

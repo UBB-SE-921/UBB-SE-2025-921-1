@@ -100,7 +100,7 @@ namespace WebMarketplace.Controllers
                 try
                 {
                     user = new SharedClassLibrary.Domain.User(userId);
-                    _logger.LogInformation("Created user object with ID: {UserId}", user.UserId);
+                _logger.LogInformation("Created user object with ID: {UserId}", user.UserId);
                     debugInfo.AppendLine($"User object created: {user.UserId}");
                 }
                 catch (Exception ex)
@@ -116,11 +116,11 @@ namespace WebMarketplace.Controllers
                     buyer = await _buyerService.GetBuyerByUser(user);
                     debugInfo.AppendLine($"GetBuyerByUser completed: {(buyer == null ? "null buyer" : $"Buyer.Id={buyer.Id}")}");
 
-                    if (buyer == null)
-                    {
-                        _logger.LogWarning("Buyer not found for user ID {UserId}", userId);
+                if (buyer == null)
+                {
+                    _logger.LogWarning("Buyer not found for user ID {UserId}", userId);
                         return Content($"Buyer not found for user ID {userId}\n\nDebug info: {debugInfo}");
-                    }
+                }
                 }
                 catch (Exception ex)
                 {
@@ -132,7 +132,7 @@ namespace WebMarketplace.Controllers
                 try
                 {
                     debugInfo.AppendLine("About to load buyer wishlist...");
-                    await _buyerService.LoadBuyer(buyer, SharedClassLibrary.Service.BuyerDataSegments.Wishlist);
+                await _buyerService.LoadBuyer(buyer, SharedClassLibrary.Service.BuyerDataSegments.Wishlist);
                     debugInfo.AppendLine("LoadBuyer completed");
 
                     var itemCount = buyer.Wishlist?.Items?.Count ?? 0;
@@ -161,20 +161,20 @@ namespace WebMarketplace.Controllers
                 try
                 {
                     debugInfo.AppendLine("Starting conversion of wishlist items to products...");
-                    if (buyer.Wishlist?.Items != null)
+                if (buyer.Wishlist?.Items != null)
+                {
+                    foreach (var wishlistItem in buyer.Wishlist.Items)
                     {
-                        foreach (var wishlistItem in buyer.Wishlist.Items)
-                        {
                             try
                             {
                                 debugInfo.AppendLine($"Getting product for wishlist item: ProductId={wishlistItem.ProductId}");
-                                var product = await _productService.GetProductByIdAsync(wishlistItem.ProductId);
+                        var product = await _productService.GetProductByIdAsync(wishlistItem.ProductId);
 
-                                if (product != null)
-                                {
+                        if (product != null)
+                        {
                                     debugInfo.AppendLine($"Product found: {product.Name}, Adding to list");
-                                    products.Add(product);
-                                }
+                            products.Add(product);
+                        }
                                 else
                                 {
                                     debugInfo.AppendLine($"WARNING: Product {wishlistItem.ProductId} not found");
@@ -190,7 +190,7 @@ namespace WebMarketplace.Controllers
                         }
                     }
                     debugInfo.AppendLine($"Converted {products.Count} products");
-                }
+                    }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error converting wishlist items to products");
@@ -201,14 +201,14 @@ namespace WebMarketplace.Controllers
                 try
                 {
                     debugInfo.AppendLine("Creating view model...");
-                    var viewModel = new BuyerWishlistViewModel
-                    {
-                        BuyerId = buyer.Id,
-                        WishlistItems = products
-                    };
+                var viewModel = new BuyerWishlistViewModel
+                {
+                    BuyerId = buyer.Id,
+                    WishlistItems = products
+                };
                     debugInfo.AppendLine($"View model created with {products.Count} items");
 
-                    _logger.LogInformation("Wishlist loaded successfully in {ElapsedMs}ms", stopwatch.ElapsedMilliseconds);
+                _logger.LogInformation("Wishlist loaded successfully in {ElapsedMs}ms", stopwatch.ElapsedMilliseconds);
 
                     // Return simple debug view if requested
                     if (Request.Query.ContainsKey("debug"))
@@ -216,10 +216,10 @@ namespace WebMarketplace.Controllers
                         return Content(debugInfo.ToString());
                     }
 
-                    return View(viewModel);
-                }
-                catch (Exception ex)
-                {
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
                     _logger.LogError(ex, "Error creating view model");
                     return Content($"Error creating view model: {ex.Message}\n\nDebug info: {debugInfo}");
                 }
@@ -265,9 +265,9 @@ namespace WebMarketplace.Controllers
                     foreach (var item in buyer.Wishlist.Items)
                     {
                         sb.AppendLine($"<li>Product ID: {item.ProductId}</li>");
-                    }
+            }
                     sb.AppendLine("</ul>");
-                }
+        }
 
                 return Content(sb.ToString(), "text/html");
             }
@@ -290,7 +290,10 @@ namespace WebMarketplace.Controllers
                 _logger.LogInformation("Removing product {ProductId} from wishlist", productId);
 
                 int userId = GetCurrentUserId();
+
+                // Create a basic User object instead of fetching all users
                 var user = new SharedClassLibrary.Domain.User(userId);
+
                 var buyer = await _buyerService.GetBuyerByUser(user);
 
                 if (buyer == null)
@@ -326,7 +329,10 @@ namespace WebMarketplace.Controllers
                 _logger.LogInformation("Adding product {ProductId} to wishlist", productId);
 
                 int userId = GetCurrentUserId();
+
+                // Create a basic User object instead of fetching all users
                 var user = new SharedClassLibrary.Domain.User(userId);
+
                 var buyer = await _buyerService.GetBuyerByUser(user);
 
                 if (buyer == null)
