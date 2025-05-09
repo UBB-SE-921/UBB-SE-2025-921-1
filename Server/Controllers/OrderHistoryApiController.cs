@@ -7,6 +7,7 @@ namespace Server.Controllers
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.Domain;
@@ -15,6 +16,7 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing order history data.
     /// </summary>
+    [Authorize]
     [Route("api/orderhistory")]
     [ApiController]
     public class OrderHistoryApiController : ControllerBase
