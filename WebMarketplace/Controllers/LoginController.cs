@@ -81,8 +81,12 @@ namespace WebMarketplace.Controllers
 
             await _userService.ResetFailedLogins(model.Email);
             UserSession.CurrentUserId = user.UserId;
-
-            return RedirectToAction("Index", "Home");
+            if((int)user.Role==2)
+            {
+                return RedirectToAction("Index", "BuyerProfile");
+            }
+            
+            return RedirectToAction("Index", "SellerProfile");
         }
 
         [HttpGet]
