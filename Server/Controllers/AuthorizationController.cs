@@ -38,5 +38,13 @@ namespace Server.Controllers
 
             return this.Ok(new { token = token, message = "Login successful" });
         }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            this.Response.Cookies.Delete("access_token");
+
+            return this.Ok(new { message = "Logged out successfully" });
+        }
     }
 }

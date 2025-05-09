@@ -22,6 +22,7 @@ namespace SharedClassLibrary.Service
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             string jwtKey = AppConfig.GetJwtTokenKey();
+            string jwtIssuer = AppConfig.GetJwtTokenIssuer();
             
             Debug.WriteLine("JWT Key found: " + jwtKey);
             
@@ -35,6 +36,7 @@ namespace SharedClassLibrary.Service
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = jwtIssuer,
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key), 
                     SecurityAlgorithms.HmacSha256Signature)

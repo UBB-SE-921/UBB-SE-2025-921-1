@@ -54,6 +54,11 @@ namespace SharedClassLibrary.Helper
             return Configuration?["Jwt:Key"] ?? "NOT FOUND";
         }
 
+        public static string GetJwtTokenIssuer()
+        {
+            return Configuration?["Jwt:Issuer"] ?? "NOT FOUND";
+        }
+
         /// <summary>
         /// Load the configuration.
         /// </summary>
