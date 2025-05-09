@@ -10,6 +10,7 @@ namespace SharedClassLibrary.ProxyRepository
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
@@ -49,7 +50,15 @@ namespace SharedClassLibrary.ProxyRepository
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/user/{recipientId}");
             await this.ThrowOnError(nameof(GetNotificationsForUser), response);
-            var notifications = await response.Content.ReadFromJsonAsync<List<Notification>>();
+            //var notifications = await response.Content.ReadFromJsonAsync<List<Notification>>();
+
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new NotificationConverter());
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var notifications = await JsonSerializer.DeserializeAsync<List<Notification>>(stream, options);
+
+
             return notifications ?? new List<Notification>();
         }
 
