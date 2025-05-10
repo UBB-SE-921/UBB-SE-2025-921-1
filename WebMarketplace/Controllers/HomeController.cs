@@ -29,16 +29,16 @@ namespace WebMarketplace.Controllers
         public async Task<IActionResult> Index()
         {
             // Get the current logged-in user's ID
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
+            var userId = UserSession.CurrentUserId;
+            if (userId == null)
             {
-                return RedirectToAction("Login", "Account"); // Redirect to login if user is not authenticated
+                return RedirectToAction("Index", "Login"); // Redirect to login if user is not authenticated
             }
 
             try
             {
                 // Get the buyer info for the current user
-                var user = new User { UserId = userIdInt };
+                var user = new User { UserId = (int)userId };
                 var buyer = await _buyerService.GetBuyerByUser(user);
 
                 // Create the view model
@@ -177,7 +177,7 @@ namespace WebMarketplace.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Login");
             }
 
             try
@@ -218,7 +218,7 @@ namespace WebMarketplace.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Login");
             }
 
             try
@@ -273,7 +273,7 @@ namespace WebMarketplace.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Login");
             }
 
             try
@@ -314,7 +314,7 @@ namespace WebMarketplace.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Login");
             }
 
             try
@@ -369,7 +369,7 @@ namespace WebMarketplace.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Login");
             }
 
             try
