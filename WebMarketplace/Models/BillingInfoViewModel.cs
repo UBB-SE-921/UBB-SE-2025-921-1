@@ -42,7 +42,7 @@ namespace WebMarketplace.Models
 
         [Required(ErrorMessage = "Zip code is required")]
         [Display(Name = "Zip Code")]
-        [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = "Please enter a valid zip code")]
+        [RegularExpression(@"^[0-9]{6}$", ErrorMessage = "Please enter a valid zip code")]
         public string ZipCode { get; set; }
 
         [Display(Name = "Additional Information")]
