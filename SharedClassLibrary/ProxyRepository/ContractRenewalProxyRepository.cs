@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// Proxy repository class for managing contract renewal operations via REST API.
@@ -15,7 +16,7 @@
     public class ContractRenewalProxyRepository : IContractRenewalRepository
     {
         private const string ApiBaseRoute = "api/contract-renewals";
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContractRenewalProxyRepository"/> class.
@@ -23,8 +24,9 @@
         /// <param name="baseApiUrl">The base url of the API.</param>
         public ContractRenewalProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />

@@ -9,6 +9,7 @@ namespace SharedClassLibrary.ProxyRepository
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// Proxy repository class for managing dummy card operations via REST API.
@@ -16,7 +17,7 @@ namespace SharedClassLibrary.ProxyRepository
     public class DummyCardProxyRepository : IDummyCardRepository
     {
         private const string ApiBaseRoute = "api/dummycards";
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DummyCardProxyRepository"/> class.
@@ -24,8 +25,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base url of the API.</param>
         public DummyCardProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />
