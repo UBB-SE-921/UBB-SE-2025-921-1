@@ -83,6 +83,15 @@ namespace SharedClassLibrary.ProxyRepository
         }
 
         /// <inheritdoc />
+        public async Task<List<Product>> GetBorrowableProductsAsync()
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/borrowable");
+            await this.ThrowOnError(nameof(GetBorrowableProductsAsync), response);
+            var products = await response.Content.ReadFromJsonAsync<List<Product>>();
+            return products ?? new List<Product>();
+        }
+
+        /// <inheritdoc />
         public async Task UpdateProductAsync(int id, string name, double price, int sellerId, string productType, DateTime startDate, DateTime endDate)
         {
             var requestDto = new ProductRequest
