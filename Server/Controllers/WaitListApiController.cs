@@ -6,6 +6,7 @@ namespace Server.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
@@ -13,6 +14,7 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing waitlist data.
     /// </summary>
+    [Authorize]
     [Route("api/waitlist")]
     [ApiController]
     public class WaitListApiController : ControllerBase

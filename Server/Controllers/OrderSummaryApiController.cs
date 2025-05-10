@@ -4,6 +4,7 @@
 
 namespace Server.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.DataTransferObjects;
     using SharedClassLibrary.Domain;
@@ -12,6 +13,7 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing order summary data.
     /// </summary>
+    [Authorize]
     [Route("api/ordersummaries")]
     [ApiController]
     public class OrderSummaryApiController : ControllerBase

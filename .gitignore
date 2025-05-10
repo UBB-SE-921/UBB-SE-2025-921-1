@@ -1,10 +1,7 @@
 # Ignore the appsettings.json file
-MarketPlace924/appsettings.json
 MarketPlace924/MarketPlace924.slnLaunch.user
-Server/appsettings.json
-Server/appsettings.Development.json
-WebMarketplace/appsettings.json
-WebMarketplace/appsettings.Development.json
+**/appsettings.json
+**/appsettings.Development.json
 
 # Ignore Visual Studio specific files
 .vs/

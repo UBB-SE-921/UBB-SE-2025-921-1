@@ -7,6 +7,7 @@ namespace Server.Controllers // Assuming the controller is in the Server project
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.DataTransferObjects;
@@ -16,6 +17,7 @@ namespace Server.Controllers // Assuming the controller is in the Server project
     /// <summary>
     /// API controller for managing tracked order data.
     /// </summary>
+    [Authorize]
     [Route("api/trackedorders")]
     [ApiController]
     public class TrackedOrderApiController : ControllerBase
