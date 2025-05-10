@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using SharedClassLibrary.IRepository;
 using Moq;
 using Xunit;

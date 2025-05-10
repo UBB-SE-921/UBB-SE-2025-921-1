@@ -1,5 +1,5 @@
 ﻿using SharedClassLibrary.Domain;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using MarketPlace924.ViewModel;
 using Microsoft.UI.Xaml;
 using Moq;
