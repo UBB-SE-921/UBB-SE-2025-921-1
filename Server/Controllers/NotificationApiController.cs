@@ -73,19 +73,36 @@ namespace Server.Controllers
         [HttpGet("user/{recipientId}")]
         [ProducesResponseType(typeof(List<Notification>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public ActionResult<List<Notification>> GetNotificationsForUser(int recipientId)
+        public async Task<ActionResult<List<Notification>>> GetNotificationsForUser(int recipientId)
         {
             try
             {
-                var notifications = this.notificationRepository.GetNotificationsForUser(recipientId);
-                return this.Ok(notifications);
+                var notifications = await this.notificationRepository.GetNotificationsForUser(recipientId);
+
+                // Explicitly serialize the notifications and add the Category field to the JSON
+                var notificationsWithCategory = notifications.Select(notification => new
+                {
+                    notification.NotificationID,
+                    notification.RecipientID,
+                    notification.IsRead,
+                    notification.Timestamp,
+                    notification.Category,
+                    // Add properties specific to each subclass, e.g.:
+                    // Add ContractID for ContractRenewalRequestNotification
+                    ContractID = notification is ContractRenewalRequestNotification contractNotification
+                        ? contractNotification.ContractID
+                        : (int?)null,
+                    // Add other fields specific to other types of Notification
+                }).ToList();
+
+                // Return the notifications with the Category field included
+                return this.Ok(notificationsWithCategory);
             }
             catch (Exception ex)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while retrieving notifications for user {recipientId}: {ex.Message}");
             }
         }
-
         /// <summary>
         /// Marks a notification as read.
         /// </summary>

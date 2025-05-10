@@ -125,7 +125,7 @@ namespace WebMarketplace.Controllers
                 
                 // Use a safe conversion with zero offset
                 return new DateTimeOffset(utcDate, TimeSpan.Zero);
-            }
+        }
             catch
             {
                 // If any conversion errors occur, return null
@@ -146,7 +146,7 @@ namespace WebMarketplace.Controllers
                 return View(products);
             }
             catch (Exception ex)
-            {
+        {
                 _logger.LogError(ex, "Failed to load borrowable products");
                 return RedirectToAction("Error", "Home", new { message = $"Error loading products: {ex.Message}" });
             }

@@ -7,6 +7,7 @@
 namespace Server.Repository
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Server.DBConnection;
@@ -105,6 +106,7 @@ namespace Server.Repository
         /// <returns>A <see cref="Task{User?}"/> representing the result of the asynchronous operation. The task result contains the user if found or null if no user is found with the specified email address.</returns>
         public async Task<User?> GetUserByEmail(string email)
         {
+            Debug.WriteLine("MAMA \n MAMA \n MAMA \n MAMA \n");
             return await this.dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
         }
 

@@ -172,6 +172,9 @@ namespace SharedClassLibrary.Service
         /// The task result contains the user if found, or null if not found.</returns>
         public async Task<User?> GetUserByEmail(string email)
         {
+
+            Debug.WriteLine("GAYYY \n GAYAAA \n GAYAAA \n GAYAAA");
+
             return await this.userRepository.GetUserByEmail(email);
         }
 

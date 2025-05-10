@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Web",
+    "Projects": [
+      {
+        "Path": "..\\Server\\Server.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\WebMarketplace\\WebMarketplace.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
