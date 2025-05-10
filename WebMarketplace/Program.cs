@@ -105,6 +105,10 @@ builder.Services.AddSingleton<INotificationRepository>(provider => new Notificat
 builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+// Register Order services
+builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 // Register ShoppingCart services
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 

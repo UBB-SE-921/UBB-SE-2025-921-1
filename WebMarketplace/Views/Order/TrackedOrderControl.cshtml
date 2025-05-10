@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Track Order Control";
     var checkpoints = await TrackedOrderService.GetAllOrderCheckpointsAsync(Model.TrackedOrderID);
+    var currentCheckpoint = checkpoints.OrderByDescending(c => c.Timestamp).FirstOrDefault();
 }
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -92,6 +93,7 @@
                 <div>
                     <h4 class="text-lg font-medium text-gray-800 mb-2">Update Current Checkpoint</h4>
                     <form id="updateCheckpointForm" class="space-y-2">
+                        <input type="hidden" id="updateCheckpointId" value="@currentCheckpoint?.CheckpointID" />
                         <div class="flex items-center gap-4 mb-2">
                             <label class="inline-flex items-center">
                                 <input class="form-radio text-blue-600" type="radio" name="timestampOption" id="manualTimestamp" checked>
@@ -165,6 +167,7 @@
                 $.post('/Order/UpdateCheckpoint', {
                     trackedOrderId: @Model.TrackedOrderID,
                     checkpoint: {
+                        CheckpointID: $('#updateCheckpointId').val(),
                         Timestamp: timestamp,
                         Location: $('#updateLocation').val(),
                         Description: $('#updateDescription').val(),

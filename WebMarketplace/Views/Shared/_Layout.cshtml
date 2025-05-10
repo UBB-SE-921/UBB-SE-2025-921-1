@@ -28,6 +28,7 @@
                                 {
                                     <!-- Buttons for Buyers -->
                                     <a asp-controller="MyMarket" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Market</a>
+                                    <a asp-area="" asp-controller="BorrowProduct" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Borrow Products</a>
                                     <a asp-controller="BuyerProfile" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Profile</a>
                                     <a asp-controller="BuyerWishlist" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Wishlist</a>
                                     <a asp-area="" asp-controller="Order" asp-action="Track" asp-route-hasControl="false" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track </a>
@@ -70,8 +71,7 @@
                 </div>
             </div>
         </nav>
-    </header>
-    <div class="container mx-auto px-4 py-8 
+    <div class="container mx-auto px-4 py-8">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
