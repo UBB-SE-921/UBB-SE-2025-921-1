@@ -250,10 +250,15 @@ namespace WebMarketplace.Controllers
                 // Update buyer's billing address
                 buyer.BillingAddress = address;
 
-                // If buyer uses the same address for shipping, update that too
-                if (buyer.UseSameAddress)
+                // If the "Use Same Address" checkbox is checked, update the shipping address
+                if (addressViewModel.UseSameAddress)
                 {
                     buyer.ShippingAddress = address;
+                    buyer.UseSameAddress = true;
+                }
+                else
+                {
+                    buyer.UseSameAddress = false;
                 }
 
                 // Save buyer info
@@ -267,6 +272,7 @@ namespace WebMarketplace.Controllers
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
         }
+
 
         public async Task<IActionResult> EditShippingAddress(int id)
         {

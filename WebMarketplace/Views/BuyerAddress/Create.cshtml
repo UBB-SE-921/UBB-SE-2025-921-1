@@ -1,31 +1,30 @@
-﻿@model WebMarketplace.Models.BuyerAddressViewModel
+﻿@model BuyerAddressViewModel
 
-@{
-    ViewData["Title"] = "Create Buyer Address";
-}
-
-<h1 class="text-2xl font-bold mb-4">Create Buyer Address</h1>
-
-<form asp-action="Create" class="space-y-4">
+<h2>Edit Address</h2>
+<form asp-action="SaveAddress" method="post">
     <div>
-        <label asp-for="StreetLine" class="block text-sm font-medium text-gray-700"></label>
-        <input asp-for="StreetLine" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-        <span asp-validation-for="StreetLine" class="text-red-500 text-sm"></span>
+        <label for="StreetLine">Street Line:</label>
+        <input asp-for="StreetLine" id="StreetLine" />
+        <span asp-validation-for="StreetLine"></span>
     </div>
     <div>
-        <label asp-for="City" class="block text-sm font-medium text-gray-700"></label>
-        <input asp-for="City" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-        <span asp-validation-for="City" class="text-red-500 text-sm"></span>
+        <label for="City">City:</label>
+        <input asp-for="City" id="City" />
+        <span asp-validation-for="City"></span>
     </div>
     <div>
-        <label asp-for="Country" class="block text-sm font-medium text-gray-700"></label>
-        <input asp-for="Country" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-        <span asp-validation-for="Country" class="text-red-500 text-sm"></span>
+        <label for="Country">Country:</label>
+        <input asp-for="Country" id="Country" />
+        <span asp-validation-for="Country"></span>
     </div>
     <div>
-        <label asp-for="PostalCode" class="block text-sm font-medium text-gray-700"></label>
-        <input asp-for="PostalCode" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
-        <span asp-validation-for="PostalCode" class="text-red-500 text-sm"></span>
+        <label for="PostalCode">Postal Code:</label>
+        <input asp-for="PostalCode" id="PostalCode" />
+        <span asp-validation-for="PostalCode"></span>
     </div>
-    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+    <div>
+        <label for="UseSameAddress">Use Same Address for Shipping:</label>
+        <input asp-for="UseSameAddress" type="checkbox" id="UseSameAddress" />
+    </div>
+    <button type="submit">Save Address</button>
 </form>

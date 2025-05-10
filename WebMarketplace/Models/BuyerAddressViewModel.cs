@@ -21,6 +21,8 @@ namespace WebMarketplace.Models
         [Required(ErrorMessage = "Postal Code is required")]
         [StringLength(20)]
         public string PostalCode { get; set; }
+
+        public bool UseSameAddress { get; set; }
     }
 }
 
