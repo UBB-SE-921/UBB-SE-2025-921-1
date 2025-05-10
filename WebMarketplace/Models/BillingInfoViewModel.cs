@@ -14,7 +14,7 @@ namespace WebMarketplace.Models
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
         private readonly IDummyWalletService _dummyWalletService;
-
+        private readonly IShoppingCartService _shoppingCartService;
         public int OrderHistoryID { get; set; }
 
         public bool IsWalletEnabled { get; set; }
@@ -66,10 +66,11 @@ namespace WebMarketplace.Models
             _orderSummaryService = new OrderSummaryService();
             _dummyWalletService = new DummyWalletService();
             _productService = new ProductService();
-            
-            ProductList = new List<Product>();
+            _shoppingCartService = new ShoppingCartService();
+            ProductList = _shoppingCartService.GetCartItemsAsync(UserSession.CurrentUserId ?? 1).Result;
             StartDate = DateTime.Today;
             EndDate = DateTime.Today.AddMonths(1);
+            CalculateOrderTotal();
         }
 
         public BillingInfoViewModel(int orderHistoryID) : this()

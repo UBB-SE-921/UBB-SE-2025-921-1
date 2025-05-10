@@ -44,6 +44,10 @@ builder.Services.AddScoped<IContractRenewalService, ContractRenewalService>();
 builder.Services.AddScoped<IPDFService, PDFService>();
 builder.Services.AddScoped<INotificationContentService, NotificationContentService>();
 builder.Services.AddScoped<IBuyerAddressService, BuyerAddressService>();
+// Add services to DI container
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IPDFService, PDFService>();
+
 
 // Register user and buyer services
 builder.Services.AddScoped<IUserService, UserService>();

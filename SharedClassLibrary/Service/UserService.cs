@@ -389,5 +389,6 @@ namespace SharedClassLibrary.Service
         {
             return await this.userRepository.GetAllUsers();
         }
+
     }
 }
