@@ -19,14 +19,24 @@ namespace WebMarketplace.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Gets the current user ID (placeholder - would be replaced with actual authentication)
+        /// </summary>
+        /// <returns>The current user ID</returns>
+        private int GetCurrentUserId()
+        {
+            // This would be replaced with actual user authentication 
+            return UserSession.CurrentUserId ?? 1;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            string userEmail = GetCurrentUserEmail();
 
             try
             {
-                User user = await _userService.GetUserByEmail(userEmail);
+                var userId = GetCurrentUserId();
+                var user = new SharedClassLibrary.Domain.User(userId);
                 if (user == null)
                 {
                     return NotFound("User not found");
@@ -72,8 +82,8 @@ namespace WebMarketplace.Controllers
 
             try
             {
-                string userEmail = GetCurrentUserEmail();
-                User user = await _userService.GetUserByEmail(userEmail);
+                var userId = GetCurrentUserId();
+                var user = new SharedClassLibrary.Domain.User(userId);
 
                 if (user == null)
                 {
@@ -158,10 +168,5 @@ namespace WebMarketplace.Controllers
             return errorMessages;
         }
 
-        private string GetCurrentUserEmail()
-        {
-            // For demonstration purposes only - replace with your actual authentication system
-            return "Andrada@yahoo.com";
-        }
     }
 }

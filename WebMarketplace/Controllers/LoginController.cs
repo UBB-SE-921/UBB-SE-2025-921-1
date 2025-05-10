@@ -83,9 +83,10 @@ namespace WebMarketplace.Controllers
             UserSession.CurrentUserId = user.UserId;
             if((int)user.Role==2)
             {
+                UserSession.CurrentUserRole = "Buyer";
                 return RedirectToAction("Index", "BuyerProfile");
             }
-            
+            UserSession.CurrentUserRole = "Seller";
             return RedirectToAction("Index", "SellerProfile");
         }
 
