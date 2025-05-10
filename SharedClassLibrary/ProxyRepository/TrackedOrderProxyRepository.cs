@@ -12,6 +12,7 @@ namespace SharedClassLibrary.ProxyRepository
     using SharedClassLibrary.DataTransferObjects;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// Proxy repository for managing tracked order operations via a REST API.
@@ -19,7 +20,7 @@ namespace SharedClassLibrary.ProxyRepository
     public class TrackedOrderProxyRepository : ITrackedOrderRepository
     {
         private const string ApiBaseRoute = "api/trackedorders";
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackedOrderProxyRepository"/> class.
@@ -27,8 +28,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base URL of the API (e.g., "http://localhost:5000/").</param>
         public TrackedOrderProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />

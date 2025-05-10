@@ -13,6 +13,7 @@ namespace SharedClassLibrary.ProxyRepository
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// A repository implementation that acts as a proxy for user-related operations.
@@ -21,7 +22,7 @@ namespace SharedClassLibrary.ProxyRepository
     {
         private const string ApiBaseRoute = "api/users";
         private const string AuthorizationBaseRoute = "api/authorization";
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserProxyRepository"/> class.
@@ -29,8 +30,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base url of the API.</param>
         public UserProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />

@@ -11,6 +11,7 @@ namespace SharedClassLibrary.ProxyRepository
     using SharedClassLibrary.DataTransferObjects;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// Proxy repository class for managing order summary operations via REST API.
@@ -18,7 +19,7 @@ namespace SharedClassLibrary.ProxyRepository
     public class OrderSummaryProxyRepository : IOrderSummaryRepository
     {
         private const string ApiBaseRoute = "api/ordersummaries";
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderSummaryProxyRepository"/> class.
@@ -26,8 +27,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base url of the API.</param>
         public OrderSummaryProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />
