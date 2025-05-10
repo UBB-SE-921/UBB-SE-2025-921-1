@@ -87,6 +87,7 @@ namespace WebMarketplace.Controllers
                 return RedirectToAction("Index", "BuyerProfile");
             }
             UserSession.CurrentUserRole = "Seller";
+
             return RedirectToAction("Index", "SellerProfile");
         }
 
