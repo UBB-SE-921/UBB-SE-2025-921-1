@@ -9,7 +9,7 @@ using SharedClassLibrary.Helper;
 namespace Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/authorization")]
     public class AuthorizationController : ControllerBase
     {
         private readonly IUserRepository userRepository;
@@ -36,19 +36,11 @@ namespace Server.Controllers
                 Expires = DateTime.UtcNow.AddHours(1),
             });
 
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(new Uri(AppConfig.GetBaseApiUrl()), new Cookie("access_token", token));
-
-            var handler = new HttpClientHandler
-            {
-                CookieContainer = cookieContainer,
-            };
-
-            var httpClient = new HttpClient(handler);
+            AppConfig.AuthorizationToken = token;
 
             Debug.WriteLine("JwtToken created: " + token);
 
-            return this.Ok(new { token = token, message = "Login successful" });
+            return this.Ok(token);
         }
 
         [HttpPost("logout")]

@@ -20,6 +20,7 @@ namespace SharedClassLibrary.ProxyRepository
     public class UserProxyRepository : IUserRepository
     {
         private const string ApiBaseRoute = "api/users";
+        private const string AuthorizationBaseRoute = "api/authorization";
         private readonly HttpClient httpClient;
 
         /// <summary>
@@ -173,6 +174,13 @@ namespace SharedClassLibrary.ProxyRepository
                 }
                 throw new Exception($"{methodName}: {errorMessage}");
             }
+        }
+
+        public async Task<string> AuthorizationLogin()
+        {
+            var response = await this.httpClient.PostAsync($"{AuthorizationBaseRoute}/login", null);
+            var token = await response.Content.ReadAsStringAsync();
+            return token;
         }
     }
 }

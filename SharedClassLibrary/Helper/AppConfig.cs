@@ -25,6 +25,19 @@ namespace SharedClassLibrary.Helper
         /// </summary>
         public static IConfiguration? Configuration { get; private set; }
 
+        private static string authorizationToken = "NOT SET";
+
+        public static string AuthorizationToken {
+            get
+            {
+                return authorizationToken;
+            }
+            set
+            {
+                authorizationToken = value;
+            }
+        }
+
         /// <summary>
         /// Get the connection string
         /// !! Use throught the app like this: AppConfig.GetConnectionString("MyLocalDb");

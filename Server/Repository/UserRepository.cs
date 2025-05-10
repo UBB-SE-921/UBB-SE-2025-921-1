@@ -209,5 +209,10 @@ namespace Server.Repository
         {
             return await this.dbContext.Users.CountAsync();
         }
+
+        public Task<string> AuthorizationLogin()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

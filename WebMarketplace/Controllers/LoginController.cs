@@ -79,7 +79,7 @@ namespace WebMarketplace.Controllers
                 return RedirectToAction("Index");
             }
 
-            /// call Login in Authorization whatever
+            await this._userService.AuthorizationLogin();
 
             await _userService.ResetFailedLogins(model.Email);
             UserSession.CurrentUserId = user.UserId;
