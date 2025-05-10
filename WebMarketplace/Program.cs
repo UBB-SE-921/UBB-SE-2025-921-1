@@ -8,6 +8,10 @@ using SharedClassLibrary.Service;
 using System;
 using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
+using Server.Repository;
+using SharedClassLibrary.Helper;
+using SharedClassLibrary.IRepository;
+using SharedClassLibrary.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +43,7 @@ builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IContractRenewalService, ContractRenewalService>();
 builder.Services.AddScoped<IPDFService, PDFService>();
 builder.Services.AddScoped<INotificationContentService, NotificationContentService>();
+builder.Services.AddScoped<IBuyerAddressService, BuyerAddressService>();
 
 // Register user and buyer services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -100,6 +105,10 @@ builder.Services.AddSingleton<INotificationRepository>(provider => new Notificat
 builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+// Register Order services
+builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 // Register ShoppingCart services
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 
@@ -131,6 +140,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();

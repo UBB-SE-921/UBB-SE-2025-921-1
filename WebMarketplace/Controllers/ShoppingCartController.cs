@@ -111,7 +111,7 @@ namespace WebMarketplace.Controllers
             }
 
             // Redirect to checkout page
-            return RedirectToAction("Index", "Checkout");
+            return RedirectToAction("FinalizePurchase", "Checkout");
         }
 
         [HttpGet]
@@ -144,7 +144,7 @@ namespace WebMarketplace.Controllers
 
             //return userId;
 
-            return 2; // For testing purposes, return a hardcoded buyer ID
+           return UserSession.CurrentUserId ?? 1; // For testing purposes, return a hardcoded buyer ID
         }
     }
 }

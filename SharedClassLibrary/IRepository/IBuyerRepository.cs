@@ -162,5 +162,48 @@ namespace SharedClassLibrary.IRepository
         /// <param name="productId">The ID of the product to remove.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         Task RemoveWishilistItem(int buyerId, int productId);
+
+
+        /// <summary>
+        /// Retrieves all addresses from the database.
+        /// </summary>
+        /// <returns>A task containing a list of all addresses.</returns>
+        Task<List<Address>> GetAllAddressesAsync();
+
+        /// <summary>
+        /// Retrieves an address by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the address.</param>
+        /// <returns>A task containing the address.</returns>
+        Task<Address> GetAddressByIdAsync(int id);
+
+        /// <summary>
+        /// Adds a new address to the database.
+        /// </summary>
+        /// <param name="address">The address to add.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task AddAddressAsync(Address address);
+
+        /// <summary>
+        /// Updates an existing address in the database.
+        /// </summary>
+        /// <param name="address">The address to update.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task UpdateAddressAsync(Address address);
+
+        /// <summary>
+        /// Deletes an address from the database by its ID.
+        /// </summary>
+        /// <param name="address">The address to delete.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task DeleteAddressAsync(Address address);
+
+        /// <summary>
+        /// Checks if an address exists in the database by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the address.</param>
+        /// <returns>A task containing a boolean indicating whether the address exists.</returns>
+        Task<bool> AddressExistsAsync(int id);
+
     }
 }

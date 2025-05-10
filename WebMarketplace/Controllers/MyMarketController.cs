@@ -39,7 +39,6 @@ namespace WebMarketplace.Controllers
         private int GetCurrentUserId()
         {
             // For testing purposes until authentification is implemented
-            return 2;
             return UserSession.CurrentUserId ?? 1;
         }
 
