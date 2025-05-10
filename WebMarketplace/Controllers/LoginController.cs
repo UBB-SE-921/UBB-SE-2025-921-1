@@ -58,7 +58,7 @@ namespace WebMarketplace.Controllers
                 TempData["ErrorMessage"] = "Invalid email format.";
                 return RedirectToAction("Index");
             }
-
+            
             var user = await _userService.GetUserByEmail(model.Email);
             if (user == null)
             {
@@ -78,6 +78,8 @@ namespace WebMarketplace.Controllers
                 TempData["ErrorMessage"] = "Invalid credentials.";
                 return RedirectToAction("Index");
             }
+
+            /// call Login in Authorization whatever
 
             await _userService.ResetFailedLogins(model.Email);
             UserSession.CurrentUserId = user.UserId;

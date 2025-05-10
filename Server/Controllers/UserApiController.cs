@@ -33,6 +33,7 @@ namespace Server.Controllers
         /// </summary>
         /// <param name="email">The email address of the user.</param>
         /// <returns>An ActionResult containing the user if found, otherwise appropriate error status.</returns>
+        [AllowAnonymous]
         [HttpGet("email/{email}")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -140,6 +141,7 @@ namespace Server.Controllers
         /// </summary>
         /// <param name="user">The user object with updated information.</param>
         /// <returns>An ActionResult indicating success or failure.</returns>
+        [AllowAnonymous]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -167,6 +169,7 @@ namespace Server.Controllers
         /// </summary>
         /// <param name="email">The email address to check.</param>
         /// <returns>An ActionResult containing true if the email exists, false otherwise, or an error status.</returns>
+        [AllowAnonymous]
         [HttpGet("email-exists")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -241,6 +244,7 @@ namespace Server.Controllers
         /// </summary>
         /// <param name="userId">The ID of the user.</param>
         /// <returns>An ActionResult containing the failed login count, or an error status.</returns>
+        [AllowAnonymous]
         [HttpGet("failed-logins-count/{userId}")]
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
@@ -263,6 +267,7 @@ namespace Server.Controllers
         /// <param name="failedLoginsCount">The new failed login count.</param>
         /// <param name="user">The user object (only UserId is typically needed).</param>
         /// <returns>An ActionResult indicating success or failure.</returns>
+        [AllowAnonymous]
         [HttpPut("update-failed-logins/{failedLoginsCount}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
