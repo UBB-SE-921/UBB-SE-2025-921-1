@@ -1,6 +1,6 @@
 [
   {
-    "Name": "New Profile",
+    "Name": "Web",
     "Projects": [
       {
         "Path": "..\\Server\\Server.csproj",

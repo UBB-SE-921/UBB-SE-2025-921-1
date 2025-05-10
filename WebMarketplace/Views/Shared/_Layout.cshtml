@@ -1,14 +1,15 @@
 ﻿<!DOCTYPE html>
 <link href="~/css/output.css" rel="stylesheet" />
 <html lang="en">
+    @using SharedClassLibrary.Service
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WebMarketplace</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebMarketplace.styles.css" asp-append-version="true" />
+
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <header>
@@ -22,53 +23,70 @@
                         <div class="hidden md:block">
                             <div class="ml-10 flex items-baseline space-x-4">
                                 <a asp-area="" asp-controller="Home" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Home</a>
-                                <a asp-area="" asp-controller="BorrowProduct" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Borrow Products</a>
-                                <a asp-controller="MyMarket" asp-action="Index">My Market</a>
-                                <a asp-controller="SellerProfile" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Seller Profile</a>
-                                <a asp-area="" asp-controller="Order" asp-action="OrderHistory" asp-route-userId="1" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Order History</a>
-                                <a asp-area="" asp-controller="Order" asp-action="Track" asp-route-hasControl="false" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track Orders (Buyer)</a>
-                                <a asp-area="" asp-controller="Order" asp-action="Track" asp-route-hasControl="true" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track Orders (Seller)</a>
-                                <a asp-area="" asp-controller="BuyerProfile" asp-action="Index"  class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Profile</a>
-                                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Privacy</a>
-                                <a asp-area="" asp-controller="BuyerWishlist" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Wishlist</a>
-                                <a asp-area="" asp-controller="BuyerMockAddPurchase" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Add Purchase</a>
 
+                                @if (UserSession.CurrentUserRole == "Buyer")
+                                {
+                                    <!-- Buttons for Buyers -->
+                                    <a asp-controller="MyMarket" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Market</a>
+                                    <a asp-controller="BuyerProfile" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Profile</a>
+                                    <a asp-controller="BuyerWishlist" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">My Wishlist</a>
+                                    <a asp-area="" asp-controller="Order" asp-action="Track" asp-route-hasControl="false" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track </a>
+                                    <partial name="_CartButton" />
+
+                                }
+                                else if (UserSession.CurrentUserRole == "Seller")
+                                {
+                                    <!-- Buttons for Sellers -->
+                                    <a asp-controller="SellerProfile" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Seller Profile</a>
+                                    <a asp-controller="Order" asp-action="Track" asp-route-hasControl="true" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track Orders</a>
+                                    <a asp-controller="Product" asp-action="Create" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Add Product</a>
+                                }
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center">
-                        <partial name="_CartButton" />
-                        
-                        <!--Notification Button-->
-                        <div asp-area="" asp-controller="Notifications" asp-action="Index" class="ml-4 text-gray-300 hover:text-white">
-							<partial name="_NotificationsButton" />
-						</div>
-                        <!-- Login Button -->
-                        <a asp-area="" asp-controller="Login" asp-action="Index"
-                            class="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
-                            Login
-                        </a>
+                        @if (UserSession.CurrentUserId.HasValue)
+                        {
+                            <!-- Show logout button if logged in -->
+                                 <div asp-area="" asp-controller="Notifications" asp-action="Index" class="ml-4 text-gray-300 hover:text-white">
+                                <partial name="_NotificationsButton" />
+                            </div>
+                                <a asp-controller="Login" asp-action="Index" class="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
+                                Logout
+                            </a>
 
-                        <!--Register-->
-                        <a asp-area="" asp-controller="Register" asp-action="Index"
-                           class="ml-2 bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full text-sm font-semibold transition">
-                            Register
-                        </a>
+                        }
+                        else
+                        {
+                            <!-- Show login and register buttons if not logged in -->
+                            <a asp-controller="Login" asp-action="Index" class="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
+                                Login
+                            </a>
+                            <a asp-controller="Register" asp-action="Index" class="ml-2 bg-white text-blue-600 border border-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full text-sm font-semibold transition">
+                                Register
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-8 
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+@section Scripts {
+    <!-- Add any page-specific scripts here -->
+    <script>
+        console.log("Page-specific script loaded.");
+    </script>
+}
     <footer class="border-t border-gray-200 mt-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="text-center text-gray-500">
-                &copy; 2023 - WebMarketplace - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-gray-600 hover:text-gray-900">Privacy</a>
+                &copy; 2023 - WebMarketplace - <a asp-controller="Home" asp-action="Privacy" class="text-gray-600 hover:text-gray-900">Privacy</a>
             </div>
         </div>
     </footer>
