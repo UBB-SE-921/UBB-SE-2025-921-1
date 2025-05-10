@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Server.DBConnection;
+using Server.Repository;
 using SharedClassLibrary.Helper;
+using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,10 +25,18 @@ builder.Services.AddScoped<IOrderSummaryService, OrderSummaryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDummyWalletService, DummyWalletService>();
+builder.Services.AddScoped<IBuyerService, BuyerService>();
+builder.Services.AddScoped<IBuyerAddressService, BuyerAddressService>();
+
 
 // Register remaining services
 builder.Services.AddScoped<IWaitlistService, WaitlistService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+
+builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
 
 // Ensure singleton registration of notification service for consistent state
 builder.Services.Remove(builder.Services.FirstOrDefault(
@@ -34,6 +44,7 @@ builder.Services.Remove(builder.Services.FirstOrDefault(
 builder.Services.AddSingleton<INotificationService, NotificationService>();
 
 var connectionString = AppConfig.GetConnectionString("MyLocalDb");
+
 builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
     options.UseSqlServer(connectionString)
         .EnableSensitiveDataLogging()

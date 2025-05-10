@@ -1,58 +1,164 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebMarketplace.Models;
+using System.Security.Claims;
+using SharedClassLibrary.Domain;
+using Microsoft.Extensions.Logging;
+using SharedClassLibrary.Service;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebMarketplace.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IBuyerAddressService _buyerAddressService;
+        private readonly IBuyerService _buyerService;
 
-        // Mock data sources
-        private static List<BuyerFamilySyncItemViewModel> _buyerFamilySyncItems = new List<BuyerFamilySyncItemViewModel>
-        {
-            new BuyerFamilySyncItemViewModel { Id = 1, DisplayName = "John Doe", Status = "Confirmed" },
-            new BuyerFamilySyncItemViewModel { Id = 2, DisplayName = "Jane Smith", Status = "Pending" }
-        };
-
-        private static List<BuyerFamilySyncViewModel> _buyerFamilySyncs = new List<BuyerFamilySyncViewModel>
-        {
-            new BuyerFamilySyncViewModel { Id = 1, LinkedBuyerName = "Alice Johnson", Status = "Possible" }
-        };
-
-        private static List<BuyerBadgeViewModel> _buyerBadges = new List<BuyerBadgeViewModel>
-        {
-            new BuyerBadgeViewModel { Id = 1, BadgeName = "Gold", Discount = 15, Progress = 80, ImageSource = "/images/gold.png" }
-        };
-
-        private static List<BuyerAddressViewModel> _buyerAddresses = new List<BuyerAddressViewModel>
-        {
-            new BuyerAddressViewModel { Id = 1, StreetLine = "123 Main St", City = "New York", Country = "USA", PostalCode = "10001" }
-        };
-
-        private static List<BuyerAddressViewModel> _buyerShippingAddresses = new List<BuyerAddressViewModel>
-        {
-            new BuyerAddressViewModel { Id = 2, StreetLine = "456 Elm St", City = "Los Angeles", Country = "USA", PostalCode = "90001" }
-        };
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,
+                             IBuyerAddressService buyerAddressService,
+                             IBuyerService buyerService)
         {
             _logger = logger;
+            _buyerAddressService = buyerAddressService;
+            _buyerService = buyerService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // Combine all data into a single view model
-            var viewModel = new HomeViewModel
+            // Get the current logged-in user's ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
             {
-                BuyerFamilySyncItems = _buyerFamilySyncItems,
-                BuyerFamilySyncs = _buyerFamilySyncs,
-                BuyerBadges = _buyerBadges,
-                BuyerAddresses = _buyerAddresses,
-                BuyerShippingAddresses = _buyerShippingAddresses
-            };
+                return RedirectToAction("Login", "Account"); // Redirect to login if user is not authenticated
+            }
 
-            return View(viewModel);
+            try
+            {
+                // Get the buyer info for the current user
+                var user = new User { UserId = userIdInt };
+                var buyer = await _buyerService.GetBuyerByUser(user);
+
+                // Create the view model
+                var viewModel = new HomeViewModel();
+
+                // Get buyer addresses
+                viewModel.BuyerAddresses = new List<BuyerAddressViewModel>();
+                if (buyer.BillingAddress != null)
+                {
+                    viewModel.BuyerAddresses.Add(new BuyerAddressViewModel
+                    {
+                        Id = buyer.BillingAddress.Id,
+                        StreetLine = buyer.BillingAddress.StreetLine,
+                        City = buyer.BillingAddress.City,
+                        Country = buyer.BillingAddress.Country,
+                        PostalCode = buyer.BillingAddress.PostalCode
+                    });
+                }
+                else
+                {
+                    viewModel.BuyerAddresses.Add(new BuyerAddressViewModel
+                    {
+                        Id = 0,
+                        StreetLine = "",
+                        City = "",
+                        Country = "",
+                        PostalCode = ""
+                    });
+                }
+
+                // Get buyer shipping addresses
+                viewModel.BuyerShippingAddresses = new List<BuyerAddressViewModel>();
+                if (buyer.UseSameAddress)
+                {
+                    // If using same address, use the billing address as shipping
+                    if (buyer.BillingAddress != null)
+                    {
+                        viewModel.BuyerShippingAddresses.Add(new BuyerAddressViewModel
+                        {
+                            Id = buyer.BillingAddress.Id,
+                            StreetLine = buyer.BillingAddress.StreetLine,
+                            City = buyer.BillingAddress.City,
+                            Country = buyer.BillingAddress.Country,
+                            PostalCode = buyer.BillingAddress.PostalCode
+                        });
+                    }
+                }
+                else if (buyer.ShippingAddress != null)
+                {
+                    viewModel.BuyerShippingAddresses.Add(new BuyerAddressViewModel
+                    {
+                        Id = buyer.ShippingAddress.Id,
+                        StreetLine = buyer.ShippingAddress.StreetLine,
+                        City = buyer.ShippingAddress.City,
+                        Country = buyer.ShippingAddress.Country,
+                        PostalCode = buyer.ShippingAddress.PostalCode
+                    });
+                }
+                else
+                {
+                    viewModel.BuyerShippingAddresses.Add(new BuyerAddressViewModel
+                    {
+                        Id = 0,
+                        StreetLine = "",
+                        City = "",
+                        Country = "",
+                        PostalCode = ""
+                    });
+                }
+
+                // Get buyer family sync items from linkages
+                viewModel.BuyerFamilySyncItems = new List<BuyerFamilySyncItemViewModel>();
+                if (buyer.Linkages != null)
+                {
+                    foreach (var linkage in buyer.Linkages)
+                    {
+                        viewModel.BuyerFamilySyncItems.Add(new BuyerFamilySyncItemViewModel
+                        {
+                            Id = linkage.Buyer.Id,
+                            DisplayName = $"{linkage.Buyer.FirstName} {linkage.Buyer.LastName}",
+                            Status = linkage.Status.ToString()
+                        });
+                    }
+                }
+
+                // For BuyerFamilySyncs - we'll use the same linkages data but formatted differently
+                viewModel.BuyerFamilySyncs = new List<BuyerFamilySyncViewModel>();
+                if (buyer.Linkages != null)
+                {
+                    foreach (var linkage in buyer.Linkages)
+                    {
+                        viewModel.BuyerFamilySyncs.Add(new BuyerFamilySyncViewModel
+                        {
+                            Id = linkage.Buyer.Id,
+                            LinkedBuyerName = $"{linkage.Buyer.FirstName} {linkage.Buyer.LastName}",
+                            Status = linkage.Status.ToString()
+                        });
+                    }
+                }
+
+                // Get buyer badges info
+                viewModel.BuyerBadges = new List<BuyerBadgeViewModel>
+                {
+                    new BuyerBadgeViewModel
+                    {
+                        Id = buyer.Id,
+                        BadgeName = buyer.Badge.ToString(),
+                        Discount = buyer.Discount,
+                        Progress = _buyerService.GetBadgeProgress(buyer),
+                        ImageSource = $"/images/{buyer.Badge.ToString().ToLower()}.png"
+                    }
+                };
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching user data for user {UserId}", userId);
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
 
         public IActionResult Privacy()
@@ -66,58 +172,241 @@ namespace WebMarketplace.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult EditAddress()
+        public async Task<IActionResult> EditAddress(int id)
         {
-            // Load the current address data (mock data for now)
-            var address = _buyerAddresses.FirstOrDefault();
-            return PartialView("_EditAddress", address);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var address = await _buyerAddressService.GetAddressByIdAsync(id);
+                if (address == null)
+                {
+                    return NotFound();
+                }
+
+                var addressViewModel = new BuyerAddressViewModel
+                {
+                    Id = address.Id,
+                    StreetLine = address.StreetLine,
+                    City = address.City,
+                    Country = address.Country,
+                    PostalCode = address.PostalCode
+                };
+
+                return PartialView("_EditAddress", addressViewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching address data for ID {AddressId}", id);
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SaveAddress(BuyerAddressViewModel address)
+        public async Task<IActionResult> SaveAddress(BuyerAddressViewModel addressViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Save the modified address (mock saving for now)
-                var existingAddress = _buyerAddresses.FirstOrDefault(a => a.Id == address.Id);
-                if (existingAddress != null)
+                return PartialView("_EditAddress", addressViewModel);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                // Get the current buyer
+                var user = new User { UserId = userIdInt };
+                var buyer = await _buyerService.GetBuyerByUser(user);
+
+                // Convert view model to domain model
+                var address = new Address
                 {
-                    existingAddress.StreetLine = address.StreetLine;
-                    existingAddress.City = address.City;
-                    existingAddress.Country = address.Country;
-                    existingAddress.PostalCode = address.PostalCode;
+                    Id = addressViewModel.Id,
+                    StreetLine = addressViewModel.StreetLine,
+                    City = addressViewModel.City,
+                    Country = addressViewModel.Country,
+                    PostalCode = addressViewModel.PostalCode
+                };
+
+                // Update or create the address
+                if (address.Id > 0)
+                {
+                    await _buyerAddressService.UpdateAddressAsync(address);
                 }
+                else
+                {
+                    await _buyerAddressService.AddAddressAsync(address);
+                }
+
+                // Update buyer's billing address
+                buyer.BillingAddress = address;
+
+                // If buyer uses the same address for shipping, update that too
+                if (buyer.UseSameAddress)
+                {
+                    buyer.ShippingAddress = address;
+                }
+
+                // Save buyer info
+                await _buyerService.SaveInfo(buyer);
+
                 return RedirectToAction(nameof(Index));
             }
-            return PartialView("_EditAddress", address);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving address data for user {UserId}", userId);
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
 
-        public IActionResult EditShippingAddress()
+        public async Task<IActionResult> EditShippingAddress(int id)
         {
-            // Load the current shipping address data (mock data for now)
-            var shippingAddress = _buyerShippingAddresses.FirstOrDefault();
-            return PartialView("_EditShippingAddress", shippingAddress);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var address = await _buyerAddressService.GetAddressByIdAsync(id);
+                if (address == null)
+                {
+                    return NotFound();
+                }
+
+                var addressViewModel = new BuyerAddressViewModel
+                {
+                    Id = address.Id,
+                    StreetLine = address.StreetLine,
+                    City = address.City,
+                    Country = address.Country,
+                    PostalCode = address.PostalCode
+                };
+
+                return PartialView("_EditShippingAddress", addressViewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching shipping address data for ID {AddressId}", id);
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SaveShippingAddress(BuyerAddressViewModel shippingAddress)
+        public async Task<IActionResult> SaveShippingAddress(BuyerAddressViewModel shippingAddressViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Save the modified shipping address (mock saving for now)
-                var existingShippingAddress = _buyerShippingAddresses.FirstOrDefault(a => a.Id == shippingAddress.Id);
-                if (existingShippingAddress != null)
+                return PartialView("_EditShippingAddress", shippingAddressViewModel);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                // Get the current buyer
+                var user = new User { UserId = userIdInt };
+                var buyer = await _buyerService.GetBuyerByUser(user);
+
+                // Don't update shipping address if using same address as billing
+                if (buyer.UseSameAddress)
                 {
-                    existingShippingAddress.StreetLine = shippingAddress.StreetLine;
-                    existingShippingAddress.City = shippingAddress.City;
-                    existingShippingAddress.Country = shippingAddress.Country;
-                    existingShippingAddress.PostalCode = shippingAddress.PostalCode;
+                    return RedirectToAction(nameof(Index));
                 }
+
+                // Convert view model to domain model
+                var address = new Address
+                {
+                    Id = shippingAddressViewModel.Id,
+                    StreetLine = shippingAddressViewModel.StreetLine,
+                    City = shippingAddressViewModel.City,
+                    Country = shippingAddressViewModel.Country,
+                    PostalCode = shippingAddressViewModel.PostalCode
+                };
+
+                // Update or create the address
+                if (address.Id > 0)
+                {
+                    await _buyerAddressService.UpdateAddressAsync(address);
+                }
+                else
+                {
+                    await _buyerAddressService.AddAddressAsync(address);
+                }
+
+                // Update buyer's shipping address
+                buyer.ShippingAddress = address;
+                await _buyerService.SaveInfo(buyer);
+
                 return RedirectToAction(nameof(Index));
             }
-            return PartialView("_EditShippingAddress", shippingAddress);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving shipping address data for user {UserId}", userId);
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleSameAddress(bool useSameAddress)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int userIdInt))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                // Get the current buyer
+                var user = new User { UserId = userIdInt };
+                var buyer = await _buyerService.GetBuyerByUser(user);
+
+                // Store previous shipping address if toggling to "use same"
+                Address previousShippingAddress = null;
+                if (useSameAddress && !buyer.UseSameAddress)
+                {
+                    previousShippingAddress = buyer.ShippingAddress;
+                    buyer.ShippingAddress = buyer.BillingAddress;
+                }
+                else if (!useSameAddress && buyer.UseSameAddress)
+                {
+                    // Create new address for shipping if toggling to "different addresses"
+                    buyer.ShippingAddress = previousShippingAddress ?? new Address
+                    {
+                        StreetLine = "",
+                        City = "",
+                        Country = "",
+                        PostalCode = ""
+                    };
+                }
+
+                buyer.UseSameAddress = useSameAddress;
+                await _buyerService.SaveInfo(buyer);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling same address setting for user {UserId}", userId);
+                return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
     }
 }

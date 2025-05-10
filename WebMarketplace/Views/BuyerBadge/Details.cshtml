@@ -1,32 +1,24 @@
 ﻿@model WebMarketplace.Models.BuyerBadgeViewModel
 
 @{
-    ViewData["Title"] = "Edit Buyer Badge";
+    ViewData["Title"] = "Buyer Badge Details";
 }
 
-<h1>Edit Buyer Badge</h1>
+<h1 class="text-2xl font-bold mb-4">Buyer Badge Details</h1>
 
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label asp-for="BadgeName" class="control-label"></label>
-        <input asp-for="BadgeName" class="form-control" />
-        <span asp-validation-for="BadgeName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Discount" class="control-label"></label>
-        <input asp-for="Discount" class="form-control" />
-        <span asp-validation-for="Discount" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Progress" class="control-label"></label>
-        <input asp-for="Progress" class="form-control" />
-        <span asp-validation-for="Progress" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ImageSource" class="control-label"></label>
-        <input asp-for="ImageSource" class="form-control" />
-        <span asp-validation-for="ImageSource" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+<div class="mt-4">
+    <dl class="grid grid-cols-2 gap-4">
+        <dt class="font-medium text-gray-700">Badge Name</dt>
+        <dd class="text-gray-900">@Html.DisplayFor(model => model.BadgeName)</dd>
+        <dt class="font-medium text-gray-700">Discount</dt>
+        <dd class="text-gray-900">@Html.DisplayFor(model => model.Discount)</dd>
+        <dt class="font-medium text-gray-700">Progress</dt>
+        <dd class="text-gray-900">@Html.DisplayFor(model => model.Progress)</dd>
+        <dt class="font-medium text-gray-700">Image Source</dt>
+        <dd class="text-gray-900">@Html.DisplayFor(model => model.ImageSource)</dd>
+    </dl>
+</div>
+<div class="mt-6">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Edit</a>
+    <a asp-action="Index" class="ml-4 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Back to List</a>
+</div>

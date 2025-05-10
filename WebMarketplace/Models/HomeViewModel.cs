@@ -1,13 +1,23 @@
-﻿using System.Collections.Generic;
+﻿// File: ../WebMarketplace/Models/HomeViewModel.cs
+using System.Collections.Generic;
 
 namespace WebMarketplace.Models
 {
     public class HomeViewModel
     {
-        public IEnumerable<BuyerFamilySyncItemViewModel> BuyerFamilySyncItems { get; set; }
-        public IEnumerable<BuyerFamilySyncViewModel> BuyerFamilySyncs { get; set; }
-        public IEnumerable<BuyerBadgeViewModel> BuyerBadges { get; set; }
-        public IEnumerable<BuyerAddressViewModel> BuyerAddresses { get; set; }
-        public IEnumerable<BuyerAddressViewModel> BuyerShippingAddresses { get; set; }
+        public HomeViewModel()
+        {
+            BuyerFamilySyncItems = new List<BuyerFamilySyncItemViewModel>();
+            BuyerFamilySyncs = new List<BuyerFamilySyncViewModel>();
+            BuyerBadges = new List<BuyerBadgeViewModel>();
+            BuyerAddresses = new List<BuyerAddressViewModel>();
+            BuyerShippingAddresses = new List<BuyerAddressViewModel>();
+        }
+
+        public List<BuyerFamilySyncItemViewModel> BuyerFamilySyncItems { get; set; }
+        public List<BuyerFamilySyncViewModel> BuyerFamilySyncs { get; set; }
+        public List<BuyerBadgeViewModel> BuyerBadges { get; set; }
+        public List<BuyerAddressViewModel> BuyerAddresses { get; set; }
+        public List<BuyerAddressViewModel> BuyerShippingAddresses { get; set; }
     }
 }
