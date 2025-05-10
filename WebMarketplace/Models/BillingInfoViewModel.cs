@@ -88,6 +88,7 @@ namespace WebMarketplace.Models
             }
             catch (Exception ex)
             {
+                SetVisibilityRadioButtons();
                 // Log the exception
                 Console.WriteLine($"Error loading from order history: {ex.Message}");
             }
@@ -100,29 +101,9 @@ namespace WebMarketplace.Models
 
         public void SetVisibilityRadioButtons()
         {
-            if (ProductList.Count > 0)
-            {
-                string firstProductType = ProductList[0].ProductType;
-
-                if (firstProductType == "new" || firstProductType == "used" || firstProductType == "borrowed")
-                {
-                    IsCardEnabled = true;
-                    IsCashEnabled = true;
-                    IsWalletEnabled = false;
-                }
-                else if (firstProductType == "bid")
-                {
-                    IsCardEnabled = false;
-                    IsCashEnabled = false;
-                    IsWalletEnabled = true;
-                }
-                else if (firstProductType == "refill")
-                {
-                    IsCardEnabled = true;
-                    IsCashEnabled = false;
-                    IsWalletEnabled = false;
-                }
-            }
+            IsCardEnabled = true;
+            IsCashEnabled = true;
+            IsWalletEnabled = true;
         }
 
         public void CalculateOrderTotal()
