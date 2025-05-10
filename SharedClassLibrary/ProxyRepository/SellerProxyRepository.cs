@@ -14,6 +14,7 @@ namespace SharedClassLibrary.ProxyRepository
     using System.Web;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// A repository implementation that acts as a proxy for seller-related operations
@@ -22,7 +23,7 @@ namespace SharedClassLibrary.ProxyRepository
     public class SellerProxyRepository : ISellerRepository
     {
         private const string ApiBaseRoute = "api/sellers";
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SellerProxyRepository"/> class.
@@ -30,8 +31,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base URL of the API (e.g., "http://localhost:5000/").</param>
         public SellerProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />
