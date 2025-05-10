@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using MarketPlace924.ViewModel.Admin;
 using LiveChartsCore;
 using Microsoft.UI.Xaml.Controls;

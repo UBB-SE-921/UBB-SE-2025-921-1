@@ -1,5 +1,5 @@
 ﻿using SharedClassLibrary.Domain;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using MarketPlace924.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 using Moq;
@@ -89,7 +89,6 @@ namespace XUnitTestProject.ViewModelTests
             Assert.Null(newViewModel.BillingAddress);
             Assert.Null(newViewModel.ShippingAddress);
             Assert.Null(newViewModel.BuyerBadge);
-            Assert.False(newViewModel.CreationMode);
             Assert.False(newViewModel.ShippingAddressEnabled);
         }
 
@@ -130,7 +129,6 @@ namespace XUnitTestProject.ViewModelTests
             Assert.Contains(nameof(BuyerProfileViewModel.BuyerBadge), raisedProperties);
             Assert.Contains(nameof(BuyerProfileViewModel.ShippingAddressEnabled), raisedProperties);
             Assert.Contains(nameof(BuyerProfileViewModel.ShippingAddressDisabled), raisedProperties);
-            Assert.Contains(nameof(BuyerProfileViewModel.CreationMode), raisedProperties);
         }
 
         [Fact]
@@ -157,7 +155,6 @@ namespace XUnitTestProject.ViewModelTests
             
             // Assert
             Assert.NotNull(viewModel.Buyer);
-            Assert.True(viewModel.CreationMode);
             Assert.NotNull(viewModel.Buyer.BillingAddress);
             Assert.Same(viewModel.Buyer.BillingAddress, viewModel.Buyer.ShippingAddress);
             Assert.True(viewModel.Buyer.UseSameAddress);
@@ -268,7 +265,6 @@ namespace XUnitTestProject.ViewModelTests
             
             // Verify we're in creation mode
             Assert.NotNull(viewModel.Buyer);
-            Assert.True(viewModel.CreationMode, "ViewModel should be in creation mode");
             
             // Setup mock for CreateBuyer
             mockBuyerService

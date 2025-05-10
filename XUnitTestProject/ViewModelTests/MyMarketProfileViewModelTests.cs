@@ -3,7 +3,7 @@
     using Xunit;
     using MarketPlace924.ViewModel;
     using SharedClassLibrary.Domain;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
     using Moq;
     using System.Collections.ObjectModel;
 

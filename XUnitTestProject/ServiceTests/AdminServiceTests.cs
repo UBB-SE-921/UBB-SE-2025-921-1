@@ -3,7 +3,7 @@ namespace XUnitTestProject.ServiceTests
 {
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
-    using MarketPlace924.Service;
+    using SharedClassLibrary.Service;
     using Moq;
     using Xunit;
     public class AdminServiceTests

@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Helper;
-using MarketPlace924.Service;
+using SharedClassLibrary.Helper;
+using SharedClassLibrary.Service;
 using MarketPlace924.ViewModel.Admin;
 using Moq;
 using Xunit;

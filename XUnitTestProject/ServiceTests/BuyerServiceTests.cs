@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
 using SharedClassLibrary.IRepository;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using Moq;
 using Xunit;
 
@@ -263,7 +263,6 @@ namespace XUnitTestProject.ServiceTests
         {
             return new Buyer
             {
-                UserId = 2,
                 User = new User(2, "linkeduser", "linked@example.com", "0987654321"),
                 FirstName = "Linked",
                 LastName = "User",
@@ -313,81 +312,6 @@ namespace XUnitTestProject.ServiceTests
             mockUserRepository.Verify(repo => repo.LoadUserPhoneNumberAndEmailById(It.Is<User>(u => u.UserId == linkedBuyer.User.UserId)), Times.Once);
             // The main buyer's wishlist is NOT loaded when only Linkages flag is specified
             mockBuyerRepository.Verify(repo => repo.GetWishlist(It.Is<int>(id => id == linkedBuyer.Id)), Times.Once);
-        }
-
-        [Fact]
-        public async Task CreateLinkageRequest_ShouldCreateRequest()
-        {
-            // Arrange
-            var linkedBuyer = new Buyer { UserId = 2 };
-            mockBuyerRepository.Setup(repo => repo.CreateLinkageRequest(It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(Task.CompletedTask);
-
-            // Act
-            await buyerService.CreateLinkageRequest(testBuyer, linkedBuyer);
-
-            // Assert
-            mockBuyerRepository.Verify(repo => repo.CreateLinkageRequest(testBuyer.Id, linkedBuyer.Id), Times.Once);
-        }
-
-        [Fact]
-        public async Task BreakLinkage_ShouldDeleteLinkage()
-        {
-            // Arrange
-            var linkedBuyer = new Buyer { UserId = 2 };
-            mockBuyerRepository.Setup(repo => repo.DeleteLinkageRequest(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(true);
-
-            // Act
-            await buyerService.BreakLinkage(testBuyer, linkedBuyer);
-
-            // Assert
-            mockBuyerRepository.Verify(repo => repo.DeleteLinkageRequest(testBuyer.Id, linkedBuyer.Id), Times.Once);
-        }
-
-        [Fact]
-        public async Task CancelLinkageRequest_ShouldDeleteRequest()
-        {
-            // Arrange
-            var linkedBuyer = new Buyer { UserId = 2 };
-            mockBuyerRepository.Setup(repo => repo.DeleteLinkageRequest(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(true);
-
-            // Act
-            await buyerService.CancelLinkageRequest(testBuyer, linkedBuyer);
-
-            // Assert
-            mockBuyerRepository.Verify(repo => repo.DeleteLinkageRequest(testBuyer.Id, linkedBuyer.Id), Times.Once);
-        }
-
-        [Fact]
-        public async Task AcceptLinkageRequest_ShouldUpdateRequest()
-        {
-            // Arrange
-            var linkedBuyer = new Buyer { UserId = 2 };
-            mockBuyerRepository.Setup(repo => repo.UpdateLinkageRequest(It.IsAny<int>(), It.IsAny<int>()))
-                .Returns(Task.CompletedTask);
-
-            // Act
-            await buyerService.AcceptLinkageRequest(testBuyer, linkedBuyer);
-
-            // Assert
-            mockBuyerRepository.Verify(repo => repo.UpdateLinkageRequest(linkedBuyer.Id, testBuyer.Id), Times.Once);
-        }
-
-        [Fact]
-        public async Task RefuseLinkageRequest_ShouldDeleteRequest()
-        {
-            // Arrange
-            var linkedBuyer = new Buyer { UserId = 2 };
-            mockBuyerRepository.Setup(repo => repo.DeleteLinkageRequest(It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(true);
-
-            // Act
-            await buyerService.RefuseLinkageRequest(testBuyer, linkedBuyer);
-
-            // Assert
-            mockBuyerRepository.Verify(repo => repo.DeleteLinkageRequest(linkedBuyer.Id, testBuyer.Id), Times.Once);
         }
 
         [Fact]
@@ -805,24 +729,6 @@ namespace XUnitTestProject.ServiceTests
             var expectedExceptionMessage = "City is required";
             Assert.Contains(expectedExceptionMessage, exception.Message);
             mockBuyerRepository.Verify(repo => repo.SaveInfo(It.IsAny<Buyer>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task BreakLinkage_WhenFirstDeleteFails_ShouldTrySecondDelete()
-        {
-            // Arrange
-            var linkedBuyer = new Buyer { UserId = 2 };
-            mockBuyerRepository.Setup(repo => repo.DeleteLinkageRequest(testBuyer.Id, linkedBuyer.Id))
-                .ReturnsAsync(false);
-            mockBuyerRepository.Setup(repo => repo.DeleteLinkageRequest(linkedBuyer.Id, testBuyer.Id))
-                .ReturnsAsync(true);
-
-            // Act
-            await buyerService.BreakLinkage(testBuyer, linkedBuyer);
-
-            // Assert
-            mockBuyerRepository.Verify(repo => repo.DeleteLinkageRequest(testBuyer.Id, linkedBuyer.Id), Times.Once);
-            mockBuyerRepository.Verify(repo => repo.DeleteLinkageRequest(linkedBuyer.Id, testBuyer.Id), Times.Once);
         }
 
         [Fact]
