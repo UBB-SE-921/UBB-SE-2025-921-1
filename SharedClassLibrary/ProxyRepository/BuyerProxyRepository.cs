@@ -248,5 +248,58 @@ namespace SharedClassLibrary.ProxyRepository
                 throw new Exception($"{methodName}: {errorMessage}");
             }
         }
+
+        // Newly added methods
+
+        /// <inheritdoc />
+        public async Task<List<Address>> GetAllAddressesAsync()
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/addresses");
+            await this.ThrowOnError(nameof(GetAllAddressesAsync), response);
+            var addresses = await response.Content.ReadFromJsonAsync<List<Address>>();
+            return addresses ?? new List<Address>();
+        }
+
+        /// <inheritdoc />
+        public async Task<Address> GetAddressByIdAsync(int id)
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/addresses/{id}");
+            await this.ThrowOnError(nameof(GetAddressByIdAsync), response);
+            var address = await response.Content.ReadFromJsonAsync<Address>();
+            if (address == null)
+            {
+                throw new KeyNotFoundException($"Address with ID {id} not found.");
+            }
+            return address;
+        }
+
+        /// <inheritdoc />
+        public async Task AddAddressAsync(Address address)
+        {
+            var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}/addresses", address);
+            await this.ThrowOnError(nameof(AddAddressAsync), response);
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateAddressAsync(Address address)
+        {
+            var response = await this.httpClient.PutAsJsonAsync($"{ApiBaseRoute}/addresses/{address.Id}", address);
+            await this.ThrowOnError(nameof(UpdateAddressAsync), response);
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteAddressAsync(Address address)
+        {
+            var response = await this.httpClient.DeleteAsync($"{ApiBaseRoute}/addresses/{address.Id}");
+            await this.ThrowOnError(nameof(DeleteAddressAsync), response);
+        }
+
+        /// <inheritdoc />
+        public async Task<bool> AddressExistsAsync(int id)
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/addresses/{id}/exists");
+            await this.ThrowOnError(nameof(AddressExistsAsync), response);
+            return await response.Content.ReadFromJsonAsync<bool>();
+        }
     }
 }

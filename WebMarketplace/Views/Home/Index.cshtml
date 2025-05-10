@@ -1,11 +1,113 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model WebMarketplace.Models.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center">
-            <h1 class="text-4xl font-bold text-gray-900 mb-8">Welcome to WebMarketplace</h1>
-        </div>
+<h1>Home</h1>
+
+<h2>Buyer Family Sync Items</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Display Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.BuyerFamilySyncItems)
+        {
+            <tr>
+                <td>@item.DisplayName</td>
+                <td>@item.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Buyer Family Syncs</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Linked Buyer Name</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sync in Model.BuyerFamilySyncs)
+        {
+            <tr>
+                <td>@sync.LinkedBuyerName</td>
+                <td>@sync.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Buyer Badges</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Badge Name</th>
+            <th>Discount</th>
+            <th>Progress</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var badge in Model.BuyerBadges)
+        {
+            <tr>
+                <td>@badge.BadgeName</td>
+                <td>@badge.Discount%</td>
+                <td>@badge.Progress%</td>
+                <td><img src="@badge.ImageSource" alt="@badge.BadgeName" width="50" /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Buyer Address</h2>
+<form asp-action="SaveAddress" method="post">
+    <input type="hidden" asp-for="BuyerAddresses.First().Id" />
+    <div class="form-group">
+        <label asp-for="BuyerAddresses.First().StreetLine"></label>
+        <input asp-for="BuyerAddresses.First().StreetLine" class="form-control" />
     </div>
-</div>
+    <div class="form-group">
+        <label asp-for="BuyerAddresses.First().City"></label>
+        <input asp-for="BuyerAddresses.First().City" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="BuyerAddresses.First().Country"></label>
+        <input asp-for="BuyerAddresses.First().Country" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="BuyerAddresses.First().PostalCode"></label>
+        <input asp-for="BuyerAddresses.First().PostalCode" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save Address</button>
+</form>
+
+<h2>Buyer Shipping Address</h2>
+<form asp-action="SaveShippingAddress" method="post">
+    <input type="hidden" asp-for="BuyerShippingAddresses.First().Id" />
+    <div class="form-group">
+        <label asp-for="BuyerShippingAddresses.First().StreetLine"></label>
+        <input asp-for="BuyerShippingAddresses.First().StreetLine" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="BuyerShippingAddresses.First().City"></label>
+        <input asp-for="BuyerShippingAddresses.First().City" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="BuyerShippingAddresses.First().Country"></label>
+        <input asp-for="BuyerShippingAddresses.First().Country" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="BuyerShippingAddresses.First().PostalCode"></label>
+        <input asp-for="BuyerShippingAddresses.First().PostalCode" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save Shipping Address</button>
+</form>
+
