@@ -59,6 +59,16 @@ namespace Server.Repository
         }
 
         /// <summary>
+        /// Retrieves a user from the database by their ID.
+        /// </summary>
+        /// <param name="id">The ID of the user.</param>
+        /// <returns>A <see cref="Task{User?}"/> representing the result of the asynchronous operation, with a result of the user if found, or null if not found.</returns>
+        public async Task<User?> GetUserById(int id)
+        {
+            return await this.dbContext.Users.FirstOrDefaultAsync(user => user.UserId == id);
+        }
+
+        /// <summary>
         /// Retrieves a user from the database by their username. If no user is found, returns null.
         /// </summary>
         /// <param name="username">The username of the user that we search for.</param>

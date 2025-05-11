@@ -40,6 +40,22 @@ namespace SharedClassLibrary.ProxyRepository
         }
 
         /// <inheritdoc />
+        public async Task<User?> GetUserById(int userId)
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{userId}");
+            await this.ThrowOnError(nameof(GetUserById), response);
+
+            // Check if the response content is empty
+            if (response.Content.Headers.ContentLength == 0)
+            {
+                return null; // No content means no user
+            }
+
+            var user = await response.Content.ReadFromJsonAsync<User>();
+            return user;
+        }
+
+        /// <inheritdoc />
         public async Task<bool> EmailExists(string email)
         {
             var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/email-exists?email={email}");

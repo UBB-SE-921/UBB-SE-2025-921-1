@@ -23,6 +23,13 @@ namespace SharedClassLibrary.IRepository
         Task AddUser(User user);
 
         /// <summary>
+        /// Returns a user form the database by their id. If no user is found, returns null.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<User?> GetUserById(int id);
+
+        /// <summary>
         /// Retrieves a user from the database by their username. If no user is found, returns null.
         /// </summary>
         /// <param name="username">The username of the user that we search for.</param>
