@@ -27,6 +27,35 @@ namespace Server.Controllers
         }
 
         /// <summary>
+        /// Gets a user by their ID.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>An ActionResult containing the user if found, otherwise appropriate error status.</returns>
+        [HttpGet("{userId}")]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<User?>> GetUserById(int userId)
+        {
+            if (userId <= 0)
+            {
+                return this.BadRequest("User ID must be a positive integer.");
+            }
+
+            try
+            {
+                User? user = await this.userRepository.GetUserById(userId);
+
+                return this.Ok(user);
+            }
+            catch (Exception)
+            {
+                // Return a 500 Internal Server Error
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting user by ID.");
+            }
+        }
+
+        /// <summary>
         /// Gets a user by their email address.
         /// </summary>
         /// <param name="email">The email address of the user.</param>
