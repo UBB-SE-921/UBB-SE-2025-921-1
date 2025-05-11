@@ -27,9 +27,13 @@
         </div>
         <p class="text-gray-600 text-sm mb-4">@(Model.Description?.Length > 100 ? Model.Description.Substring(0, 100) + "..." : Model.Description)</p>
         <div class="flex justify-between items-center pt-3 border-t border-gray-200">
-            <a href="@Url.Action("Details", "Product", new { id = Model.ProductId })" class="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                View Details
-            </a>
+            <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                <input type="hidden" name="productId" value="@Model.ProductId" />
+                <input type="hidden" name="quantity" value="1" />
+                <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Add to Cart
+                </button>
+            </form>
             <form asp-controller="BuyerWishlist" asp-action="RemoveFromWishlist" method="post">
                 <input type="hidden" name="productId" value="@Model.ProductId" />
                 <button type="submit" class="px-3 py-1.5 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
