@@ -116,7 +116,7 @@ namespace WebMarketplace.Controllers
                 DateTime oldEndDate = details.Value.EndDate.Value;
                 DateTime currentDate = DateTime.Now.Date;
                 int daysUntilEnd = (oldEndDate - currentDate).Days;
-                bool isRenewalPeriodValid = daysUntilEnd <= 7 && daysUntilEnd >= 2;
+                bool isRenewalPeriodValid = true;
 
                 if (!isRenewalPeriodValid)
                 {
@@ -183,7 +183,7 @@ namespace WebMarketplace.Controllers
             }
 
             // Fallback if no contracts exist
-            return 2;
+            return (int)UserSession.CurrentUserId;
         }
 
         private async Task<int> GetSellerIdByContractId(long contractId)
