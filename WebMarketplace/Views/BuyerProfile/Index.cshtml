@@ -1,6 +1,7 @@
 ﻿@model WebMarketplace.Models.BuyerProfileViewModel
 @{
     ViewData["Title"] = "Buyer Profile";
+    var UserId = UserSession.CurrentUserId;
 }
 
 <div class="container mt-4">
@@ -121,13 +122,10 @@
             <div class="d-flex justify-content-center flex-wrap">
                 <a href="@Url.Action("Index", "BidProduct")" class="btn btn-outline-primary m-2">Bid Product</a>
                 <a href="@Url.Action("Index", "WalletRefill")" class="btn btn-outline-primary m-2">Refill Wallet</a>
-                <a href="@Url.Action("Index", "BorrowProduct")" class="btn btn-outline-primary m-2">Borrow Product</a>
             </div>
             <div class="d-flex justify-content-center flex-wrap mt-2">
-                <a href="@Url.Action("Index", "Notification")" class="btn btn-outline-primary m-2">Notifications</a>
-                <a href="@Url.Action("Index", "OrderHistory")" class="btn btn-outline-primary m-2">Order History</a>
+                <a asp-area="" asp-controller="Order" asp-action="OrderHistory" asp-route-userId="@UserId" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Order History</a>
                 <a href="@Url.Action("Index", "RenewContract")" class="btn btn-outline-primary m-2">Renew Contract</a>
-                <a href="@Url.Action("Index", "TrackOrder")" class="btn btn-outline-primary m-2">Track Order</a>
             </div>
         </div>
     </div>
