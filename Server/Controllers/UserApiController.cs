@@ -114,6 +114,7 @@ namespace Server.Controllers
         /// </summary>
         /// <param name="user">The user object to add.</param>
         /// <returns>An ActionResult indicating success or failure.</returns>
+        [AllowAnonymous]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -197,6 +198,7 @@ namespace Server.Controllers
         /// </summary>
         /// <param name="username">The username to check.</param>
         /// <returns>An ActionResult containing true if the username exists, false otherwise, or an error status.</returns>
+        [AllowAnonymous]
         [HttpGet("username-exists")]
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
