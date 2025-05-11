@@ -1,9 +1,7 @@
 ﻿namespace XUnitTestProject.RepositoryTests
 {
-    using MarketPlace924.DBConnection;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
-    using MarketPlace924.Service;
     using Microsoft.Data.SqlClient;
     using Xunit;
     using Moq;
@@ -22,11 +20,6 @@
 
         public SellerRepositoryTests(DatabaseFixture fixture)
         {
-            _fixture = fixture;
-            // Use the constructor of DatabaseConnection that takes a connection string
-            var connection = new DatabaseConnection(_fixture.TestConnectionString);
-            var mockUserRepository = new Mock<IUserRepository>();
-            sellerRepository = new SellerRepository(connection, mockUserRepository.Object);
         }
 
         public void Dispose()
