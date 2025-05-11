@@ -7,8 +7,6 @@ using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Service;
 using System;
 using Microsoft.EntityFrameworkCore;
-using Server.DBConnection;
-using Server.Repository;
 using SharedClassLibrary.Helper;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Service;
@@ -96,14 +94,6 @@ builder.Services.AddSingleton<IContractRepository>(provider => new ContractProxy
 builder.Services.AddSingleton<IContractRenewalRepository>(provider => new ContractRenewalProxyRepository(baseApiUrl));
 builder.Services.AddSingleton<IPDFRepository>(provider => new PDFProxyRepository(baseApiUrl));
 builder.Services.AddSingleton<INotificationRepository>(provider => new NotificationProxyRepository(baseApiUrl));
-
-// IMPORTANT: Remove database context - this should not be used with proxy repositories
-// REMOVE THESE LINES:
-// var connectionString = AppConfig.GetConnectionString("MyLocalDb");
-// builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
-//     options.UseSqlServer(connectionString)
-//         .EnableSensitiveDataLogging()
-// );
 
 // Register Order services
 builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
