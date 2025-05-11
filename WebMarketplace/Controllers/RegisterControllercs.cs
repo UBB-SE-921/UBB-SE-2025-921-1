@@ -73,6 +73,8 @@ namespace WebMarketplace.Controllers
             // Check if the user was successfully created
             if (createdUser)
             {
+                await this._userService.AuthorizationLogin();
+
                 // Automatically log the user in
                 var user = await _userService.GetUserByEmail(model.Email);
                 UserSession.CurrentUserId = user.UserId;

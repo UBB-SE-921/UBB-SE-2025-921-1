@@ -123,5 +123,7 @@ namespace SharedClassLibrary.IRepository
         /// The task result contains the total number of users in the database.
         /// </returns>
         Task<int> GetTotalNumberOfUsers();
+
+        Task<string> AuthorizationLogin();
     }
 }

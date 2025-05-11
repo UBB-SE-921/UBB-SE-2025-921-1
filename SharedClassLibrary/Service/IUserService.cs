@@ -145,5 +145,7 @@ namespace SharedClassLibrary.Service
         /// <returns>A <see cref="Task{List{User}}"/> representing the result of the asynchronous operation.
         /// The task result contains a list of all users.</returns>
         Task<List<User>> GetAllUsers();
+
+        Task<string> AuthorizationLogin();
     }
 }
