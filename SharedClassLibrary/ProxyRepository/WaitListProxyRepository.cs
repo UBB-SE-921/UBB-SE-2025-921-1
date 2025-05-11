@@ -11,6 +11,7 @@ namespace SharedClassLibrary.ProxyRepository
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// Proxy repository class for managing waitlist operations via REST API.
@@ -18,7 +19,7 @@ namespace SharedClassLibrary.ProxyRepository
     public class WaitListProxyRepository : IWaitListRepository
     {
         private const string ApiBaseRoute = "api/waitlist"; // Match the controller route
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WaitListProxyRepository"/> class.
@@ -26,8 +27,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base url of the API server.</param>
         public WaitListProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />

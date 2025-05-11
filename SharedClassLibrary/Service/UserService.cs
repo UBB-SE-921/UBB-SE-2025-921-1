@@ -390,5 +390,12 @@ namespace SharedClassLibrary.Service
             return await this.userRepository.GetAllUsers();
         }
 
+        public async Task<string> AuthorizationLogin()
+        {
+            string token = await this.userRepository.AuthorizationLogin();
+            AppConfig.AuthorizationToken = token;
+
+            return token;
+        }
     }
 }

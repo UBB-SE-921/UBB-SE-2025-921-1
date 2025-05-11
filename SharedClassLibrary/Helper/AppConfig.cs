@@ -25,6 +25,19 @@ namespace SharedClassLibrary.Helper
         /// </summary>
         public static IConfiguration? Configuration { get; private set; }
 
+        private static string authorizationToken = "NOT SET";
+
+        public static string AuthorizationToken {
+            get
+            {
+                return authorizationToken;
+            }
+            set
+            {
+                authorizationToken = value;
+            }
+        }
+
         /// <summary>
         /// Get the connection string
         /// !! Use throught the app like this: AppConfig.GetConnectionString("MyLocalDb");
@@ -49,13 +62,23 @@ namespace SharedClassLibrary.Helper
             return baseUrl;
         }
 
+        public static string GetJwtTokenKey()
+        {
+            return Configuration?["Jwt:Key"] ?? "NOT FOUND";
+        }
+
+        public static string GetJwtTokenIssuer()
+        {
+            return Configuration?["Jwt:Issuer"] ?? "NOT FOUND";
+        }
+
         /// <summary>
         /// Load the configuration.
         /// </summary>
         private static void LoadConfiguration()
         {
             Debug.WriteLine("LMAOOOOO");
-            string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+            string jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
             Debug.WriteLine(jsonFilePath);
 
             var builder = new ConfigurationBuilder()
