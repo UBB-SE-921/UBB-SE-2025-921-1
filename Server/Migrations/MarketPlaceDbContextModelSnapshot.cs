@@ -86,8 +86,8 @@ namespace Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<float>("Balance")
-                        .HasColumnType("real");
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
 
                     b.Property<int>("BuyerId")
                         .HasColumnType("int");
@@ -131,8 +131,8 @@ namespace Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<float>("Balance")
-                        .HasColumnType("real");
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
 
                     b.Property<int>("BuyerId")
                         .HasColumnType("int");
@@ -498,14 +498,14 @@ namespace Server.Migrations
                     b.Property<string>("ContractDetails")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("DeliveryFee")
-                        .HasColumnType("real");
+                    b.Property<double>("DeliveryFee")
+                        .HasColumnType("float");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("FinalTotal")
-                        .HasColumnType("real");
+                    b.Property<double>("FinalTotal")
+                        .HasColumnType("float");
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
@@ -516,11 +516,11 @@ namespace Server.Migrations
                     b.Property<string>("PostalCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Subtotal")
-                        .HasColumnType("real");
+                    b.Property<double>("Subtotal")
+                        .HasColumnType("float");
 
-                    b.Property<float>("WarrantyTax")
-                        .HasColumnType("real");
+                    b.Property<double>("WarrantyTax")
+                        .HasColumnType("float");
 
                     b.HasKey("ID");
 

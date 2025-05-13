@@ -39,7 +39,7 @@ namespace SharedClassLibrary.Helper
 
         public static string GetBaseApiUrl()
         {
-            string? baseUrl = Configuration?["BaseApiUrl"];
+            string? baseUrl = "https://localhost:7194/";
 
             if (string.IsNullOrEmpty(baseUrl))
             {
