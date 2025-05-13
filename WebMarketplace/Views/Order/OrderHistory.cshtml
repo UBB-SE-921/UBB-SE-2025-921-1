@@ -6,8 +6,34 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <h2 class="text-2xl font-bold text-gray-900 mb-6">Order History</h2>
 
+    <!-- Filter Controls -->
+    <div class="mb-6 flex flex-wrap gap-4 items-center">
+        <div class="flex-1">
+            <input type="text" id="searchInput" 
+                   class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                   placeholder="Search products...">
+        </div>
+        <div class="w-48">
+            <select id="timePeriodSelect" 
+                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                <option value="Last 3 Months">Last 3 Months</option>
+                <option value="Last 6 Months">Last 6 Months</option>
+                <option value="This Year">This Year</option>
+                <option value="all">All Orders</option>
+            </select>
+        </div>
+        <button onclick="refreshOrders()" 
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Refresh
+        </button>
+    </div>
+
+    <div id="noResultsMessage" class="hidden text-center text-gray-500 text-lg py-8">
+        No orders found matching your criteria
+    </div>
+
     <div class="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul class="divide-y divide-gray-200">
+        <ul id="ordersList" class="divide-y divide-gray-200">
             @foreach (var order in Model)
             {
                 <li class="px-6 py-4 hover:bg-gray-50">
@@ -66,6 +92,93 @@
 
 @section Scripts {
     <script>
+        let searchTimeout;
+        const searchInput = document.getElementById('searchInput');
+        const timePeriodSelect = document.getElementById('timePeriodSelect');
+        const ordersList = document.getElementById('ordersList');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadOrders();
+            }, 300);
+        });
+
+        timePeriodSelect.addEventListener('change', loadOrders);
+
+        function loadOrders() {
+            const searchText = searchInput.value;
+            const timePeriod = timePeriodSelect.value;
+
+            fetch(`/Order/GetFilteredOrders?searchText=${encodeURIComponent(searchText)}&timePeriod=${timePeriod}`)
+                .then(response => response.json())
+                .then(data => {
+                    ordersList.innerHTML = '';
+                    
+                    if (!data.success) {
+                        console.error('Error:', data.message);
+                        noResultsMessage.textContent = data.message;
+                        noResultsMessage.classList.remove('hidden');
+                        return;
+                    }
+
+                    if (data.orders.length === 0) {
+                        noResultsMessage.textContent = 'No orders found matching your criteria';
+                        noResultsMessage.classList.remove('hidden');
+                        return;
+                    }
+
+                    noResultsMessage.classList.add('hidden');
+                    data.orders.forEach(order => {
+                        const orderElement = createOrderElement(order);
+                        ordersList.appendChild(orderElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading orders:', error);
+                    noResultsMessage.textContent = 'Error loading orders. Please try again.';
+                    noResultsMessage.classList.remove('hidden');
+                });
+        }
+
+        function createOrderElement(order) {
+            const li = document.createElement('li');
+            li.className = 'px-6 py-4 hover:bg-gray-50';
+            li.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">
+                            Order #${order.orderSummaryID}
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            Product: ${order.productName}
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            Category: ${order.productCategory}
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            Date: ${order.orderDate}
+                        </p>
+                        <p class="text-sm text-gray-500">
+                            Payment: ${order.paymentMethod}
+                        </p>
+                    </div>
+                    <div class="ml-4 flex-shrink-0">
+                        <button onclick="showOrderDetails(${order.orderSummaryID})" 
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            `;
+            return li;
+        }
+
+        function refreshOrders() {
+            loadOrders();
+        }
+
         function showOrderDetails(orderId) {
             // Show loading state
             document.getElementById('orderDetailsContent').innerHTML = '<div class="flex justify-center"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>';
