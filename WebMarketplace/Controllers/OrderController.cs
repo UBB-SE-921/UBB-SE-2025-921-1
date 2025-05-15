@@ -4,6 +4,7 @@ using SharedClassLibrary.Service;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System;
 
 namespace WebMarketplace.Controllers
 {
@@ -31,8 +32,40 @@ namespace WebMarketplace.Controllers
         // GET: Order/OrderHistory
         public async Task<IActionResult> OrderHistory(int userId)
         {
-            var orders = await _orderService.GetOrdersWithProductInfoAsync(userId);
-            return View(orders);
+            try
+            {
+                var orders = await _orderService.GetOrdersWithProductInfoAsync(userId);
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in OrderHistory action");
+                return View(Array.Empty<OrderDisplayInfo>());
+            }
+        }
+
+        // GET: Order/GetFilteredOrders
+        [HttpGet]
+        public async Task<IActionResult> GetFilteredOrders(string searchText, string timePeriod)
+        {
+            try
+            {
+                _logger.LogInformation($"GetFilteredOrders called with searchText: {searchText}, timePeriod: {timePeriod}");
+                
+                // Get the current user's ID from the session or authentication
+                int userId = 1; // TODO: Replace with actual user ID from session/auth
+
+                _logger.LogInformation($"Getting orders for userId: {userId}");
+                var orders = await _orderService.GetOrdersWithProductInfoAsync(userId, searchText, timePeriod);
+                _logger.LogInformation($"Found {orders?.Count ?? 0} orders");
+
+                return Json(new { success = true, orders = orders });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error in GetFilteredOrders. searchText: {searchText}, timePeriod: {timePeriod}");
+                return Json(new { success = false, message = $"Error retrieving orders: {ex.Message}" });
+            }
         }
 
         // GET: Order/Track
