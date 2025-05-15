@@ -52,7 +52,9 @@ namespace SharedClassLibrary.Helper
 
         public static string GetBaseApiUrl()
         {
-            string? baseUrl = "https://localhost:7194/";
+            // string? baseUrl = "http://172.30.247.110:80/";
+            // take the url from the appsettings.json file
+            string? baseUrl = Configuration?["BaseApiUrl"];
 
             if (string.IsNullOrEmpty(baseUrl))
             {
