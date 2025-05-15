@@ -4,6 +4,7 @@
 
 namespace Server.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
@@ -11,6 +12,7 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing buyer data.
     /// </summary>
+    [Authorize]
     [Route("api/buyers")]
     [ApiController]
     public class BuyerApiController : ControllerBase

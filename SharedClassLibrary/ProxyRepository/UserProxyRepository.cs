@@ -13,6 +13,7 @@ namespace SharedClassLibrary.ProxyRepository
     using System.Threading.Tasks;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// A repository implementation that acts as a proxy for user-related operations.
@@ -20,7 +21,8 @@ namespace SharedClassLibrary.ProxyRepository
     public class UserProxyRepository : IUserRepository
     {
         private const string ApiBaseRoute = "api/users";
-        private readonly HttpClient httpClient;
+        private const string AuthorizationBaseRoute = "api/authorization";
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserProxyRepository"/> class.
@@ -28,8 +30,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base url of the API.</param>
         public UserProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />
@@ -37,6 +40,22 @@ namespace SharedClassLibrary.ProxyRepository
         {
             var response = await this.httpClient.PostAsJsonAsync($"{ApiBaseRoute}", user);
             await this.ThrowOnError(nameof(AddUser), response);
+        }
+
+        /// <inheritdoc />
+        public async Task<User?> GetUserById(int userId)
+        {
+            var response = await this.httpClient.GetAsync($"{ApiBaseRoute}/{userId}");
+            await this.ThrowOnError(nameof(GetUserById), response);
+
+            // Check if the response content is empty
+            if (response.Content.Headers.ContentLength == 0)
+            {
+                return null; // No content means no user
+            }
+
+            var user = await response.Content.ReadFromJsonAsync<User>();
+            return user;
         }
 
         /// <inheritdoc />
@@ -173,6 +192,13 @@ namespace SharedClassLibrary.ProxyRepository
                 }
                 throw new Exception($"{methodName}: {errorMessage}");
             }
+        }
+
+        public async Task<string> AuthorizationLogin()
+        {
+            var response = await this.httpClient.PostAsync($"{AuthorizationBaseRoute}/login", null);
+            var token = await response.Content.ReadAsStringAsync();
+            return token;
         }
     }
 }

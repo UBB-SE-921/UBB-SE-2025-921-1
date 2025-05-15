@@ -13,6 +13,7 @@ namespace SharedClassLibrary.ProxyRepository
     using System.Web;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
+    using SharedClassLibrary.Shared;
 
     /// <summary>
     /// Repository class for managing buyer-related database operations.
@@ -21,7 +22,7 @@ namespace SharedClassLibrary.ProxyRepository
     public class BuyerProxyRepository : IBuyerRepository
     {
         private const string ApiBaseRoute = "api/buyers";
-        private readonly HttpClient httpClient;
+        private readonly CustomHttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BuyerProxyRepository"/> class.
@@ -29,8 +30,9 @@ namespace SharedClassLibrary.ProxyRepository
         /// <param name="baseApiUrl">The base url of the API.</param>
         public BuyerProxyRepository(string baseApiUrl)
         {
-            this.httpClient = new HttpClient();
-            this.httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            var _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new System.Uri(baseApiUrl);
+            this.httpClient = new CustomHttpClient(_httpClient);
         }
 
         /// <inheritdoc />

@@ -111,7 +111,7 @@ namespace WebMarketplace.Controllers
             }
 
             // Redirect to checkout page
-            return RedirectToAction("FinalizePurchase", "Checkout");
+            return RedirectToAction("BillingInfo", "Checkout");
         }
 
         [HttpGet]

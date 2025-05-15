@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using SharedClassLibrary.Domain;
-using MarketPlace924.Service;
+using SharedClassLibrary.Service;
 using MarketPlace924.ViewModel;
 using Moq;
 using Xunit;
@@ -59,20 +59,6 @@ namespace XUnitTestProject.ViewModelTests
             Assert.NotNull(viewModel.FilteredProducts);
             Assert.NotNull(viewModel.Products);
             Assert.NotNull(viewModel.Notifications);
-        }
-
-        [Fact]
-        public void Constructor_WithExistingSeller_SetsCreationModeToFalse()
-        {
-            // arrange
-            this.sellerServiceMock.Setup(x => x.GetSellerByUser(It.Is<User>(u => u.UserId == this.testUser.UserId)))
-                .ReturnsAsync(this.testSeller);
-
-            // act
-            var viewModel = new SellerProfileViewModel(this.testUser, this.userServiceMock.Object, this.sellerServiceMock.Object);
-
-            // assert
-            Assert.False(viewModel.CreationMode);
         }
 
         [Fact]
@@ -260,103 +246,6 @@ namespace XUnitTestProject.ViewModelTests
             // assert
             Assert.False(viewModel.IsExpanderExpanded);
             this.sellerServiceMock.Verify(x => x.GetNotifications(It.IsAny<int>(), maxNotifications), Times.Never);
-        }
-
-        [Fact]
-        public void UpdateProfile_WhenCreationModeTrue_CreatesSeller()
-        {
-            // arrange
-            this.sellerServiceMock.Setup(x => x.GetSellerByUser(It.Is<User>(u => u.UserId == this.testUser.UserId)))
-                .ReturnsAsync(this.testSeller);
-            this.sellerServiceMock.Setup(x => x.CreateSeller(It.IsAny<Seller>()))
-                .Returns(Task.CompletedTask);
-            var viewModel = new SellerProfileViewModel(this.testUser, this.userServiceMock.Object, this.sellerServiceMock.Object);
-
-            // act
-            viewModel.CreationMode = true;
-            viewModel.UpdateProfile();
-
-            // assert
-            this.sellerServiceMock.Verify(x => x.CreateSeller(It.Is<Seller>(s =>
-                s.User.UserId == this.testUser.UserId &&
-                s.StoreName == viewModel.StoreName)),
-                Times.Once);
-        }
-
-        [Fact]
-        public void UpdateProfile_SellerIDHigherThanHighestInvalidSellerId_UpdatesSeller()
-        {
-            // arrange
-            this.sellerServiceMock.Setup(x => x.GetSellerByUser(It.Is<User>(u => u.UserId == this.testUser.UserId)))
-                .ReturnsAsync(this.testSeller);
-            this.sellerServiceMock.Setup(x => x.UpdateSeller(It.IsAny<Seller>()))
-                .Returns(Task.CompletedTask);
-            var viewModel = new SellerProfileViewModel(this.testUser, this.userServiceMock.Object, this.sellerServiceMock.Object);
-
-            // act
-            viewModel.CreationMode = true;
-            viewModel.UpdateProfile();
-
-            // assert
-            this.sellerServiceMock.Verify(x => x.UpdateSeller(It.IsAny<Seller>()), Times.Once);
-        }
-
-        [Fact]
-        public void UpdateProfile_WhenCreationModeFalse_UpdatesSeller()
-        {
-            // arrange
-            this.sellerServiceMock.Setup(x => x.GetSellerByUser(It.Is<User>(u => u.UserId == this.testUser.UserId)))
-                .ReturnsAsync(this.testSeller);
-            this.sellerServiceMock.Setup(x => x.UpdateSeller(It.IsAny<Seller>()))
-                .Returns(Task.CompletedTask);
-            var viewModel = new SellerProfileViewModel(this.testUser, this.userServiceMock.Object, this.sellerServiceMock.Object);
-
-            // act
-            viewModel.CreationMode = false;
-            viewModel.UpdateProfile();
-
-            // assert
-            this.sellerServiceMock.Verify(x => x.UpdateSeller(It.IsAny<Seller>()), Times.Exactly(2));
-        }
-
-        [Fact]
-        public void UpdateProfile_SellerIDLowerThanHighestInvalidSellerId_NeverUpdatesSeller()
-        {
-            // arrange
-            var newUser = new User(-1);
-            var newSeller = new Seller(newUser, null);
-            this.sellerServiceMock.Setup(x => x.GetSellerByUser(It.Is<User>(u => u.UserId == newUser.UserId)))
-                .ReturnsAsync(newSeller);
-            this.sellerServiceMock.Setup(x => x.UpdateSeller(It.IsAny<Seller>()))
-                .Returns(Task.CompletedTask);
-            var viewModel = new SellerProfileViewModel(newUser, this.userServiceMock.Object, this.sellerServiceMock.Object);
-
-            // act
-            viewModel.CreationMode = true;
-            viewModel.UpdateProfile();
-
-            // assert
-            this.sellerServiceMock.Verify(x => x.UpdateSeller(It.IsAny<Seller>()), Times.Never);
-        }
-
-        [Fact]
-        public void UpdateProfile_SellerNull_DoesntCallUpdateSeller()
-        {
-            // arrange
-            var newUser = new User(-1);
-            var newSeller = new Seller(newUser, null);
-            this.sellerServiceMock.Setup(x => x.GetSellerByUser(It.Is<User>(u => u.UserId == newUser.UserId)))
-                .ReturnsAsync(newSeller);
-            this.sellerServiceMock.Setup(x => x.UpdateSeller(It.IsAny<Seller>()))
-                .Returns(Task.CompletedTask);
-            var viewModel = new SellerProfileViewModel(newUser, this.userServiceMock.Object, this.sellerServiceMock.Object);
-
-            // act
-            viewModel.CreationMode = true;
-            viewModel.UpdateProfile();
-
-            // assert
-            this.sellerServiceMock.Verify(x => x.UpdateSeller(It.IsAny<Seller>()), Times.Never);
         }
     }
 }

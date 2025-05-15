@@ -14,7 +14,7 @@ namespace WebMarketplace.Models
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
         private readonly IDummyWalletService _dummyWalletService;
-
+        private readonly IShoppingCartService _shoppingCartService;
         public int OrderHistoryID { get; set; }
 
         public bool IsWalletEnabled { get; set; }
@@ -42,7 +42,7 @@ namespace WebMarketplace.Models
 
         [Required(ErrorMessage = "Zip code is required")]
         [Display(Name = "Zip Code")]
-        [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = "Please enter a valid zip code")]
+        [RegularExpression(@"^[0-9]{6}$", ErrorMessage = "Please enter a valid zip code")]
         public string ZipCode { get; set; }
 
         [Display(Name = "Additional Information")]
@@ -66,10 +66,11 @@ namespace WebMarketplace.Models
             _orderSummaryService = new OrderSummaryService();
             _dummyWalletService = new DummyWalletService();
             _productService = new ProductService();
-            
-            ProductList = new List<Product>();
+            _shoppingCartService = new ShoppingCartService();
+            ProductList = _shoppingCartService.GetCartItemsAsync(UserSession.CurrentUserId ?? 1).Result;
             StartDate = DateTime.Today;
             EndDate = DateTime.Today.AddMonths(1);
+            CalculateOrderTotal();
         }
 
         public BillingInfoViewModel(int orderHistoryID) : this()
@@ -88,6 +89,7 @@ namespace WebMarketplace.Models
             }
             catch (Exception ex)
             {
+                SetVisibilityRadioButtons();
                 // Log the exception
                 Console.WriteLine($"Error loading from order history: {ex.Message}");
             }
@@ -100,29 +102,9 @@ namespace WebMarketplace.Models
 
         public void SetVisibilityRadioButtons()
         {
-            if (ProductList.Count > 0)
-            {
-                string firstProductType = ProductList[0].ProductType;
-
-                if (firstProductType == "new" || firstProductType == "used" || firstProductType == "borrowed")
-                {
-                    IsCardEnabled = true;
-                    IsCashEnabled = true;
-                    IsWalletEnabled = false;
-                }
-                else if (firstProductType == "bid")
-                {
-                    IsCardEnabled = false;
-                    IsCashEnabled = false;
-                    IsWalletEnabled = true;
-                }
-                else if (firstProductType == "refill")
-                {
-                    IsCardEnabled = true;
-                    IsCashEnabled = false;
-                    IsWalletEnabled = false;
-                }
-            }
+            IsCardEnabled = true;
+            IsCashEnabled = true;
+            IsWalletEnabled = true;
         }
 
         public void CalculateOrderTotal()

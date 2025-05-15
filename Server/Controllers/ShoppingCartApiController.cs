@@ -5,6 +5,7 @@
 namespace Server.Controllers
 {
     using System.Diagnostics;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.Domain;
     using SharedClassLibrary.IRepository;
@@ -12,6 +13,7 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing shopping cart data.
     /// </summary>
+    [Authorize]
     [Route("api/shoppingcart")]
     [ApiController]
     public class ShoppingCartApiController : ControllerBase

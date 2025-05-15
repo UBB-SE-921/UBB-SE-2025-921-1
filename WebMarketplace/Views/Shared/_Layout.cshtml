@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WebMarketplace</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
-
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
@@ -22,7 +20,6 @@
                         </div>
                         <div class="hidden md:block">
                             <div class="ml-10 flex items-baseline space-x-4">
-                                <a asp-area="" asp-controller="Home" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Home</a>
 
                                 @if (UserSession.CurrentUserRole == "Buyer")
                                 {
@@ -40,7 +37,6 @@
                                     <!-- Buttons for Sellers -->
                                     <a asp-controller="SellerProfile" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Seller Profile</a>
                                     <a asp-controller="Order" asp-action="Track" asp-route-hasControl="true" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Track Orders</a>
-                                    <a asp-controller="Product" asp-action="Create" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Add Product</a>
                                 }
                             </div>
                         </div>
@@ -53,7 +49,7 @@
                                 <partial name="_NotificationsButton" />
                             </div>
                                 <a asp-controller="Login" asp-action="Index" class="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
-                                Logout
+                                Change Account
                             </a>
 
                         }
@@ -71,7 +67,6 @@
                 </div>
             </div>
         </nav>
-</header>
     <div class="container mx-auto px-4 py-8">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -92,6 +87,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

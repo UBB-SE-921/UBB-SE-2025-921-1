@@ -7,8 +7,6 @@ using SharedClassLibrary.ProxyRepository;
 using SharedClassLibrary.Service;
 using System;
 using Microsoft.EntityFrameworkCore;
-using Server.DBConnection;
-using Server.Repository;
 using SharedClassLibrary.Helper;
 using SharedClassLibrary.IRepository;
 using SharedClassLibrary.Service;
@@ -44,6 +42,10 @@ builder.Services.AddScoped<IContractRenewalService, ContractRenewalService>();
 builder.Services.AddScoped<IPDFService, PDFService>();
 builder.Services.AddScoped<INotificationContentService, NotificationContentService>();
 builder.Services.AddScoped<IBuyerAddressService, BuyerAddressService>();
+// Add services to DI container
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IPDFService, PDFService>();
+
 
 // Register user and buyer services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -93,13 +95,9 @@ builder.Services.AddSingleton<IContractRenewalRepository>(provider => new Contra
 builder.Services.AddSingleton<IPDFRepository>(provider => new PDFProxyRepository(baseApiUrl));
 builder.Services.AddSingleton<INotificationRepository>(provider => new NotificationProxyRepository(baseApiUrl));
 
-// IMPORTANT: Remove database context - this should not be used with proxy repositories
-// REMOVE THESE LINES:
-// var connectionString = AppConfig.GetConnectionString("MyLocalDb");
-// builder.Services.AddDbContext<MarketPlaceDbContext>(options =>
-//     options.UseSqlServer(connectionString)
-//         .EnableSensitiveDataLogging()
-// );
+// Register Order services
+builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Register Order services
 builder.Services.AddScoped<ITrackedOrderService, TrackedOrderService>();

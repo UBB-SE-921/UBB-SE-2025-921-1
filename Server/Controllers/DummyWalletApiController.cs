@@ -6,6 +6,7 @@ namespace Server.Controllers
 {
     using System;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using SharedClassLibrary.IRepository;
@@ -13,6 +14,7 @@ namespace Server.Controllers
     /// <summary>
     /// API controller for managing dummy wallet data.
     /// </summary>
+    [Authorize]
     [Route("api/wallets")] // Define the base route for wallet operations
     [ApiController]
     public class DummyWalletApiController : ControllerBase

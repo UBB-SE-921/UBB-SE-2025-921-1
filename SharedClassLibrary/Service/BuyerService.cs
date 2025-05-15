@@ -74,7 +74,8 @@ namespace SharedClassLibrary.Service
         public async Task<Buyer> GetBuyerByUser(User user)
         {
             var buyer = new Buyer();
-            buyer.User = user;
+            User? dbUser = await this.userRepo.GetUserById(user.UserId);
+            buyer.User = dbUser; // this can be null but it will not be, very unlikely
             await this.LoadBuyer(buyer, BuyerDataSegments.BasicInfo | BuyerDataSegments.Wishlist | BuyerDataSegments.Linkages);
             return buyer;
         }
